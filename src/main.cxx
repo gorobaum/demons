@@ -3,15 +3,15 @@
 #include <cstdio>
 
 #include "CImg.h"
+#include "deform.h"
+
 using namespace cimg_library;
 
 int main(int argc, char** argv) {
-	if (argc != 2) {
-		printf("Precisa passar o nome da imagem né coração?\n");
-		return -1;
-	} 
-	CImg<unsigned char> image("teste.jpg");
+	CImg<float> image("teste.jpg");
 	CImgDisplay main_disp(image,"Click a point");
+	Deform deform;
+	deform.applySinDeformation(image);
 	while (!main_disp.is_closed()) {}
 	return 0;
 }
