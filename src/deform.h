@@ -7,7 +7,7 @@ using namespace cimg_library;
 
 class Deform {
 public:
-	void applySinDeformation(CImg<float> image);
+	CImg<float> applySinDeformation(CImg<float> image);
 };
 
 #endif
