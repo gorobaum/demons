@@ -11,7 +11,7 @@ CImg<float> Deform::applySinDeformation() {
 			float newX, newY;
 			newX = x;
 			newY = y + 2*sin(x/16);
-			int newValue = bilinearInterpolation(originalImage_, newX, newY);
+			int newValue = NNInterpolation(originalImage_, newX, newY);
 			deformatedImage.set_linear_atXY(newValue, x, y);
 		}
 	}
@@ -31,7 +31,9 @@ float Deform::bilinearInterpolation(CImg<float> image, float x, float y) {
 }
 
 float Deform::NNInterpolation(CImg<float> image, float x, float y) {
-	return 0.0;
+	int realX = getNearestInteger(x);
+	int realY = getNearestInteger(y);
+	return image.atXY(realX, realY, 0, 0, 0.0);
 }
 
 int Deform::getNearestInteger(float number) {
