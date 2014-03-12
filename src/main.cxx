@@ -8,10 +8,13 @@
 using namespace cimg_library;
 
 int main(int argc, char** argv) {
-	CImg<float> image("teste.jpg");
+	if (argc != 2) {
+		printf("Dae, precisa passar a ibagem q vc quer usar né coração?\n");
+		return 0;
+	}
+	CImg<float> image(argv[1]);
 	Deform deform(image);
-	CImg<float> deformated = deform.applySinDeformation();
-	CImgDisplay main_disp(deformated,"Click a point");
-	while (!main_disp.is_closed()) {}
+	const CImg<float> modified = deform.applySinDeformation();
+	modified.save_jpeg("modified-teste.jpg");
 	return 0;
 }
