@@ -11,6 +11,9 @@ class Deform {
 			originalImage_(originalImage) {}
 		CImg<float> applySinDeformation ();
 	protected:
+		float NNInterpolation(CImg<float> image, float x, float y);
+		float bilinearInterpolation(CImg<float> image, float x, float y);
+		int getNearestInteger(float number);
 		CImg<float> originalImage_;
 };
 
