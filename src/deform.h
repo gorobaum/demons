@@ -1,5 +1,5 @@
-#ifndef DEMONS_AUX_H_
-#define DEMONS_AUX_H_
+#ifndef DEMONS_DEFORM_H_
+#define DEMONS_DEFORM_H_
 
 #include "CImg.h"
 
