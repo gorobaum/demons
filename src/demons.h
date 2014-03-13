@@ -17,7 +17,11 @@ class Demons {
 		CImg<float> staticImage_;
 		CImg<float> movingImage_;
 		struct Vector {
-			std::vector<float> vec;
+			float x;
+			float y;
+			Vector(float a=0, float b=0):
+					 x(a),
+           y(b){}
 		};
 		Vector* findGrad();
 };
