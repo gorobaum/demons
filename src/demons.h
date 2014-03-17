@@ -6,7 +6,7 @@
 
 #include "CImg.h"
 
-using namespace cimg_library;
+using namespace cimg_library; 
 
 class Demons {
 	public:
@@ -16,7 +16,6 @@ class Demons {
 	private:
 		CImg<float> staticImage_;
 		CImg<float> movingImage_;
-		time_t startTime;
 		float totalTime;
 		struct Vector {
 			float x;
@@ -25,8 +24,10 @@ class Demons {
 					 x(a),
            y(b){}
 		};
-		Vector* findGrad();
-		double getIterationTime();
+		typedef std::vector<Vector> Field;
+		Field findGrad();
+		double getIterationTime(time_t startTime);
+		void updateDisplField(CImg<float> deformed, Field displField, Field gradients, int x, int y, int position);
 };
 
 #endif
