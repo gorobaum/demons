@@ -1,14 +1,36 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <ctime>
 
 #include "demons.h"
+#include "interpolation.h"
 
 CImg<float> Demons::demons() {
 	Vector* gradients = findGrad();
-	printf("%f\n", gradients[0].x);
-	printf("%f\n", gradients[0].y);
-	return staticImage_;
+	int width = staticImage_.width(), height = staticImage_.height();
+	// Create the deformed image
+	CImg<float> deformed(staticImage_);
+	deformed.fill(0.0);
+	Vector* displField = (Vector*)malloc(width*height*sizeof(Vector));
+	Vector* CurrDisplField = (Vector*)malloc(width*height*sizeof(Vector));
+	int iteration = 1;
+	bool stop = false;
+	float norm[10] = {0, 0, 0, 0 ,0 ,0 ,0 ,0 ,0 ,0};
+	while (!stop) {
+		time(&startTime);
+		printf("Iteration number %d\n", iteration);
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				int position = y*height+x;
+				float mix = x - displField[position].x;
+				float miy = y - displField[position].y;
+				float newValue = Interpolation::bilinearInterpolation(movingImage_, mix, miy);
+				deformed.set_linear_atXY(newValue, x, y);
+			}
+		}
+	}
+	return deformed;
 }
 
 Demons::Vector* Demons::findGrad() {
@@ -24,4 +46,8 @@ Demons::Vector* Demons::findGrad() {
 		}
 	}
 	return grad;
+}
+
+double Demons::getIterationTime() {
+	return difftime(time(NULL), startTime);
 }

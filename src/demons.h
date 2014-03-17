@@ -16,6 +16,8 @@ class Demons {
 	private:
 		CImg<float> staticImage_;
 		CImg<float> movingImage_;
+		time_t startTime;
+		float totalTime;
 		struct Vector {
 			float x;
 			float y;
@@ -24,6 +26,7 @@ class Demons {
            y(b){}
 		};
 		Vector* findGrad();
+		double getIterationTime();
 };
 
 #endif
