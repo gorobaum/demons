@@ -22,7 +22,7 @@ int main(int argc, char** argv) {
         std::cout <<  "Could not open or find the image" << std::endl ;
         return -1;
     }
-
+    
     Deform deform(originalImage);
     Mat deformed = deform.applySinDeformation();
 

@@ -4,15 +4,13 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
-using namespace cv;
-
 class Deform {
 	public:
-		explicit Deform (Mat originalImage):
+		explicit Deform (cv::Mat originalImage):
 			originalImage_(originalImage) {}
-		Mat applySinDeformation();
+		cv::Mat applySinDeformation();
 	protected:
-		Mat originalImage_;
+		cv::Mat originalImage_;
 };
 
 #endif

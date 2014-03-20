@@ -8,7 +8,9 @@ find_package(Threads)
 find_package( OpenCV REQUIRED )
 
 add_executable(main 
-	src/main.cxx)
+	src/main.cxx
+	src/deform.cxx
+	src/interpolation.cxx)
 
 if (X11_FOUND)
 include_directories(${X11_INCLUDE_DIRS})

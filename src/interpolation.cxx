@@ -4,13 +4,13 @@
 
 #include "interpolation.h"
 
-float Interpolation::bilinearInterpolation(CImg<float> image, float x, float y) {
+float Interpolation::bilinearInterpolation(Mat image, float x, float y) {
 	int u = trunc(x);
 	int v = trunc(y);
-	float pixelOne = image.atXY(u, v, 0, 0, 0.0);
-	float pixelTwo = image.atXY(u+1, v, 0, 0, 0.0);
-	float pixelThree = image.atXY(u, v+1, 0, 0, 0.0);
-	float pixelFour = image.atXY(u+1, v+1, 0, 0, 0.0);
+	float pixelOne = getPixel(image, u, v);
+	float pixelTwo = getPixel(image, u+1, v);
+	float pixelThree = getPixel(image, u, v+1);
+	float pixelFour = getPixel(image, u+1, v+1);
 
 	float interpolation = (u+1-x)*(v+1-y)*pixelOne*1.0 
 												+ (x-u)*(v+1-y)*pixelTwo*1.0 
@@ -19,10 +19,21 @@ float Interpolation::bilinearInterpolation(CImg<float> image, float x, float y) 
 	return interpolation;
 }
 
-float Interpolation::NNInterpolation(CImg<float> image, float x, float y) {
+float Interpolation::NNInterpolation(Mat image, float x, float y) {
 	int realX = getNearestInteger(x);
 	int realY = getNearestInteger(y);
-	return image.atXY(realX, realY, 0, 0, 0.0);
+	return image.at<uchar>(realX, realY);
+}
+
+uchar Interpolation::getPixel(Mat image, int x, int y){
+
+	if (x > image.cols) {
+		return 0;
+	} else if (y > image.rows) {
+		return 0;
+	} else {
+		return image.at<uchar>(y,x);
+	}
 }
 
 int Interpolation::getNearestInteger(float number) {
