@@ -1,18 +1,37 @@
-
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
+#include <string>
 #include <iostream>
+#include <vector>
 
-#include <opencv2/opencv.hpp>
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+
+#include "deform.h"
+
+using namespace cv;
 
 int main(int argc, char** argv) {
-	if (argc <= 2) {
+	if (argc < 2) {
 		std::cout << "Precisa passar o nome dos arquivos coração! \n";
 		return 0;
 	}
 	if (strcmp(argv[1], "-d") == 0) {
-		std::cout << "Dae deformations \n";
+		Mat originalImage;
+    originalImage = imread(argv[2], CV_LOAD_IMAGE_GRAYSCALE);
+
+    if(! originalImage.data ) {
+        std::cout <<  "Could not open or find the image" << std::endl ;
+        return -1;
+    }
+
+    Deform deform(originalImage);
+    Mat deformed = deform.applySinDeformation();
+
+    vector<int> compression_params;
+    compression_params.push_back(CV_IMWRITE_JPEG_QUALITY);
+    compression_params.push_back(95);
+    std::string modified("modified-");
+    std::string imageName = modified + argv[2];
+    imwrite(imageName.c_str(), deformed, compression_params);
 	} else {
 		std::cout << "Dae demonsations \n";
 	}

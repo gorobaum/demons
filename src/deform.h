@@ -1,17 +1,18 @@
 #ifndef DEMONS_DEFORM_H_
 #define DEMONS_DEFORM_H_
 
-#include "CImg.h"
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
 
-using namespace cimg_library;
+using namespace cv;
 
 class Deform {
 	public:
-		explicit Deform (CImg<float> originalImage):
+		explicit Deform (Mat originalImage):
 			originalImage_(originalImage) {}
-		CImg<float> applySinDeformation ();
+		Mat applySinDeformation();
 	protected:
-		CImg<float> originalImage_;
+		Mat originalImage_;
 };
 
 #endif
