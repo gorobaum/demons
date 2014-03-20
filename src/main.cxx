@@ -2,25 +2,19 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
+#include <iostream>
 
-#include "CImg.h"
-#include "deform.h"
-#include "demons.h"
-
-using namespace cimg_library;
+#include <opencv2/opencv.hpp>
 
 int main(int argc, char** argv) {
+	if (argc <= 2) {
+		std::cout << "Precisa passar o nome dos arquivos coração! \n";
+		return 0;
+	}
 	if (strcmp(argv[1], "-d") == 0) {
-		CImg<float> image(argv[2]);
-		Deform deform(image);
-		const CImg<float> modified = deform.applySinDeformation();
-		modified.save_jpeg("modified-teste.jpg");
+		std::cout << "Dae deformations \n";
 	} else {
-		CImg<float> staticImage(argv[1]);
-		CImg<float> movingImage(argv[2]);
-		Demons demons(staticImage, movingImage);
-		CImg<float> registred = demons.demons();
-		registred.save_jpeg("registred.jpg");
+		std::cout << "Dae demonsations \n";
 	}
 	return 0;
 }
