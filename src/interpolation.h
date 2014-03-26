@@ -8,9 +8,9 @@ using namespace cv;
 
 class Interpolation {
 	public:
-		static float NNInterpolation(Mat image, float x, float y);
-		static float bilinearInterpolation(Mat image, float x, float y);
-		static uchar getPixel(Mat image, int x, int y);
+		static int NNInterpolation(Mat image, float row, float col);
+		static int bilinearInterpolation(Mat image, float row, float col);
+		static int getPixel(Mat image, int row, int col);
 	private:
 		static int getNearestInteger(float number);
 };

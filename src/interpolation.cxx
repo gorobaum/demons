@@ -1,45 +1,44 @@
 
 #include <cstdio>
 #include <cmath>
+#include <iostream>
 
 #include "interpolation.h"
 
-float Interpolation::bilinearInterpolation(Mat image, float x, float y) {
-	int u = trunc(x);
-	int v = trunc(y);
-	float pixelOne = getPixel(image, u, v);
-	float pixelTwo = getPixel(image, u+1, v);
-	float pixelThree = getPixel(image, u, v+1);
-	float pixelFour = getPixel(image, u+1, v+1);
+int Interpolation::bilinearInterpolation(Mat image, float row, float col) {
+	int u = trunc(row);
+	int v = trunc(col);
+	int pixelOne = getPixel(image, u, v);
+	int pixelTwo = getPixel(image, u+1, v);
+	int pixelThree = getPixel(image, u, v+1);
+	int pixelFour = getPixel(image, u+1, v+1);
 
-	float interpolation = (u+1-x)*(v+1-y)*pixelOne*1.0 
-												+ (x-u)*(v+1-y)*pixelTwo*1.0 
-												+ (u+1-x)*(y-v)*pixelThree*1.0
-												+ (x-u)*(y-v)*pixelFour*1.0;
+	int interpolation = (u+1-row)*(v+1-col)*pixelOne
+												+ (row-u)*(v+1-col)*pixelTwo 
+												+ (u+1-row)*(col-v)*pixelThree
+												+ (row-u)*(col-v)*pixelFour;
 	return interpolation;
 }
 
-float Interpolation::NNInterpolation(Mat image, float x, float y) {
-	int realX = getNearestInteger(x);
-	int realY = getNearestInteger(y);
-	return image.at<uchar>(realX, realY);
+int Interpolation::NNInterpolation(Mat image, float row, float col) {
+	int nearRow = getNearestInteger(row);
+	int nearCol = getNearestInteger(col);
+	return getPixel(image, nearRow, nearCol);
 }
 
-uchar Interpolation::getPixel(Mat image, int x, int y){
-
-	if (x > image.cols) {
+int Interpolation::getPixel(Mat image, int row, int col){
+	
+	if (col > image.cols-1 || col < 0)
 		return 0;
-	} else if (y > image.rows) {
+	else if (row > image.rows-1 || row < 0)
 		return 0;
-	} else {
-		return image.at<uchar>(y,x);
+	else {
+		uchar* iRow = image.ptr(row);
+		return iRow[col];
 	}
 }
 
 int Interpolation::getNearestInteger(float number) {
-	if ((number - floor(number)) <= 0.5) {
-		return floor(number);
-	} else {
-		return floor(number) + 1.0;
-	}
+	if ((number - floor(number)) <= 0.5) return floor(number);
+	return floor(number) + 1.0;
 }
