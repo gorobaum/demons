@@ -4,13 +4,11 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
-using namespace cv;
-
 class Interpolation {
 	public:
-		static int NNInterpolation(Mat image, float row, float col);
-		static int bilinearInterpolation(Mat image, float row, float col);
-		static int getPixel(Mat image, int row, int col);
+		static uchar NNInterpolation(cv::Mat image, float row, float col);
+		static uchar bilinearInterpolation(cv::Mat image, float row, float col);
+		static uchar getPixel(cv::Mat image, int row, int col);
 	private:
 		static int getNearestInteger(float number);
 };

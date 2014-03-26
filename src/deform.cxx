@@ -9,13 +9,13 @@
 using namespace cv;
 
 Mat Deform::applySinDeformation() {
-	Mat deformatedImage(originalImage_);
+	Mat deformatedImage(originalImage_.rows, originalImage_.cols, CV_LOAD_IMAGE_GRAYSCALE);
 	for(int row = 0; row < deformatedImage.rows; row++) {
 		uchar* di = deformatedImage.ptr(row);
-		uchar* oi = originalImage_.ptr(row);
     for(int col = 0; col < deformatedImage.cols; col++) {
-    	uchar aux = Interpolation::NNInterpolation(originalImage_, row + 2*sin(col/16), col);
-    	di[col] = aux;
+    	float newRow = row + 2*sin(col/16);
+    	float newCol = col;
+    	di[col] = Interpolation::NNInterpolation(originalImage_, newRow, newCol);
     }
   }
 	return deformatedImage;
