@@ -15,6 +15,7 @@ class Demons {
 	private:
 		cv::Mat staticImage_;
 		cv::Mat movingImage_;
+		time_t startTime;
 		float totalTime;
 		struct Vector {
 			float x;
@@ -24,9 +25,10 @@ class Demons {
 		};
 		typedef std::vector<Vector> Field;
 		Field findGrad();
+		Field createField();
 		double getIterationTime(time_t startTime);
 		cv::Mat normalizeSobelImage(cv::Mat sobelImage);
-		void updateDisplField(cv::Mat deformed, Field displField, Field gradients, int x, int y, int position);
+		void updateDisplField(uchar* deformedRow, Demons::Vector displacement, Demons::Vector gradient, int row, int col);
 };
 
 #endif

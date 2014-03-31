@@ -15,6 +15,9 @@ int main(int argc, char** argv) {
 		std::cout << "Precisa passar o nome dos arquivos coração! \n";
 		return 0;
 	}
+	vector<int> compression_params;
+  compression_params.push_back(CV_IMWRITE_JPEG_QUALITY);
+  compression_params.push_back(95);
 	if (strcmp(argv[1], "-d") == 0) {
 		Mat originalImage;
     originalImage = imread(argv[2], CV_LOAD_IMAGE_GRAYSCALE);
@@ -27,9 +30,7 @@ int main(int argc, char** argv) {
     Deform deform(originalImage);
     Mat deformed = deform.applySinDeformation();
 
-    vector<int> compression_params;
-    compression_params.push_back(CV_IMWRITE_JPEG_QUALITY);
-    compression_params.push_back(95);
+    
     std::string modified("modified-");
     std::string imageName = modified + argv[2];
     imwrite(imageName.c_str(), deformed, compression_params);
