@@ -6,6 +6,7 @@
 #include <opencv2/highgui/highgui.hpp>
 
 #include "deform.h"
+#include "demons.h"
 
 using namespace cv;
 
@@ -33,7 +34,12 @@ int main(int argc, char** argv) {
     std::string imageName = modified + argv[2];
     imwrite(imageName.c_str(), deformed, compression_params);
 	} else {
-		std::cout << "Dae demonsations \n";
+		Mat staticImage;
+		Mat movingImage;
+    staticImage = imread(argv[1], CV_LOAD_IMAGE_GRAYSCALE);
+    movingImage = imread(argv[2], CV_LOAD_IMAGE_GRAYSCALE);
+    Demons demons(staticImage, movingImage);
+    demons.demons();
 	}
 	return 0;
 }

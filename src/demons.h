@@ -4,30 +4,29 @@
 #include <vector>
 #include <array>
 
-#include "CImg.h"
-
-using namespace cimg_library; 
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
 
 class Demons {
 	public:
-		explicit Demons (CImg<float> staticImage, CImg<float> movingImage):
+		explicit Demons (cv::Mat staticImage, cv::Mat movingImage):
 			staticImage_(staticImage), movingImage_(movingImage) {}
-		CImg<float> demons();
+		cv::Mat demons();
 	private:
-		CImg<float> staticImage_;
-		CImg<float> movingImage_;
+		cv::Mat staticImage_;
+		cv::Mat movingImage_;
 		float totalTime;
 		struct Vector {
 			float x;
 			float y;
 			Vector(float a=0, float b=0):
-					 x(a),
-           y(b){}
+					 x(a), y(b){}
 		};
 		typedef std::vector<Vector> Field;
 		Field findGrad();
 		double getIterationTime(time_t startTime);
-		void updateDisplField(CImg<float> deformed, Field displField, Field gradients, int x, int y, int position);
+		cv::Mat normalizeSobelImage(cv::Mat sobelImage);
+		void updateDisplField(cv::Mat deformed, Field displField, Field gradients, int x, int y, int position);
 };
 
 #endif
