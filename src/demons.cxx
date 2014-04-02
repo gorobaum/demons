@@ -32,7 +32,7 @@ cv::Mat Demons::demons() {
 				float newCol = col - displField[position].y;
 				uchar newValue = Interpolation::bilinearInterpolation(movingImage_, newRow, newCol);
 				rowDeformed[col] = newValue;
-				updateDisplField(deformed.ptr(row), displField[position], gradients[position], row, col);
+				updateDisplField(deformed.ptr(row), displField, gradients[position], row, col, position);
 			}
 		}
 		std::cout << "Iteration " << iteration << '\n';
@@ -43,13 +43,13 @@ cv::Mat Demons::demons() {
 	return deformed;
 }
 
-void Demons::updateDisplField(uchar* deformedRow, Demons::Vector displacement, Demons::Vector gradient, int row, int col) {
+void Demons::updateDisplField(uchar* deformedRow, Demons::Field& displacement, Demons::Vector gradient, int row, int col, int position) {
 	uchar* staticRow = staticImage_.ptr(row);
 	float dif = (deformedRow[col] - staticRow[col]);
 	float division = pow(dif,2) + pow(gradient.x,2) + pow(gradient.y,2);
 	if (division > 0.0) {
-		displacement.x = dif/division*gradient.x;
-		displacement.y = dif/division*gradient.y;
+		displacement[position].x = displacement[position].x + dif/division*gradient.x;
+		displacement[position].y = displacement[position].y + dif/division*gradient.y;
 	}
 }
 

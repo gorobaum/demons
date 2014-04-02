@@ -28,7 +28,7 @@ class Demons {
 		Field createField();
 		double getIterationTime(time_t startTime);
 		cv::Mat normalizeSobelImage(cv::Mat sobelImage);
-		void updateDisplField(uchar* deformedRow, Demons::Vector displacement, Demons::Vector gradient, int row, int col);
+		void updateDisplField(uchar* deformedRow, Demons::Field& displacement, Demons::Vector gradient, int row, int col, int position);
 };
 
 #endif
