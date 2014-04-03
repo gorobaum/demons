@@ -8,25 +8,15 @@
 
 class VectorField {
 	public:
-		VectorField (cv::Mat vectorX, cv::Mat vectorY);
+		VectorField (cv::Mat &vectorX, cv::Mat &vectorY);
 		VectorField (int rows, int cols);
-		std::vector<uchar> getVectorAt(int row, int col);
-		void updateVector(int row, int col, uchar xValue, uchar yValue);
+		std::vector<float> getVectorAt(int row, int col);
+		void updateVector(int row, int col, float xValue, float yValue);
 		void applyGaussianFilter();
 	private:
 		cv::Mat vectorX_;
 		cv::Mat vectorY_;
-		uchar* ptrRowX;
-		uchar* ptrRowY;
-		int currentRow;
-		void updateCurrentRow(int newRow);
-		void startRow();
+		float getValue(cv::Mat image, int row, int col);
 };
-
-
-
-
-
-
 
 #endif

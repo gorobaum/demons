@@ -19,6 +19,6 @@ include_directories(${X11_INCLUDE_DIRS})
 target_link_libraries (main ${X11_LIBRARIES})
 endif (X11_FOUND)
 target_link_libraries (main ${CMAKE_THREAD_LIBS_INIT} ${OpenCV_LIBS})
-list( APPEND CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS}")
+list( APPEND CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS_DEBUG} -Wall")
 
 

@@ -30,7 +30,6 @@ int main(int argc, char** argv) {
     Deform deform(originalImage);
     Mat deformed = deform.applySinDeformation();
 
-    
     std::string modified("modified-");
     std::string imageName = modified + argv[2];
     imwrite(imageName.c_str(), deformed, compression_params);
@@ -41,6 +40,9 @@ int main(int argc, char** argv) {
     movingImage = imread(argv[2], CV_LOAD_IMAGE_GRAYSCALE);
     Demons demons(staticImage, movingImage);
     demons.demons();
+    Mat deformed = demons.getRegistration();
+    std::string imageName("Iteration.jpg");
+    imwrite(imageName.c_str(), deformed, compression_params);
 	}
 	return 0;
 }
