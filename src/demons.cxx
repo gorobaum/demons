@@ -10,12 +10,11 @@
 #include "interpolation.h"
 
 cv::Mat Demons::demons() {
-	Field gradients = findGrad();
 	int rows = staticImage_.rows, cols = staticImage_.cols;
 	// Create the deformed image
-	cv::Mat deformed(rows, cols, CV_LOAD_IMAGE_GRAYSCALE);
-	deformed = cv::Scalar(0);
-	Field displField = createField();
+	deformedImage_ = cv::Mat::zeros(rows, cols, CV_LOAD_IMAGE_GRAYSCALE);
+	VectorField gradients = findGrad();
+	VectorField displField(rows, cols);
 	int iteration = 1;
 	bool stop = false;
 	float norm[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -25,46 +24,40 @@ cv::Mat Demons::demons() {
 	for(int i = 0; i < 100; i++) {
 		time(&startTime);
 		for(int row = 0; row < rows; row++) {
-			uchar* rowDeformed = deformed.ptr(row);
+			uchar* rowDeformed = deformedImage_.ptr(row);
 			for(int col = 0; col < cols; col++) {
-				int position = row*rows + col;
-				float newRow = row - displField[position].x;
-				float newCol = col - displField[position].y;
+				std::vector<uchar> displVector = displField.getVectorAt(row, col);
+				float newRow = row - displVector[0];
+				float newCol = col - displVector[1];
 				uchar newValue = Interpolation::bilinearInterpolation(movingImage_, newRow, newCol);
 				rowDeformed[col] = newValue;
-				updateDisplField(deformed.ptr(row), displField, gradients[position], row, col, position);
+				std::vector<uchar> gradient = gradients.getVectorAt(row, col);
+				updateDisplField(displField, gradient, row, col);
 			}
 		}
+		displField.applyGaussianFilter();
 		std::cout << "Iteration " << iteration << '\n';
     std::string imageName("Iteration.jpg");
-    imwrite(imageName.c_str(), deformed, compression_params);
+    imwrite(imageName.c_str(), deformedImage_, compression_params);
     iteration++;
 	}
-	return deformed;
+	return deformedImage_;
 }
 
-void Demons::updateDisplField(uchar* deformedRow, Demons::Field& displacement, Demons::Vector gradient, int row, int col, int position) {
+void Demons::updateDisplField(VectorField displacement, std::vector<uchar> gradient, int row, int col) {
 	uchar* staticRow = staticImage_.ptr(row);
+	uchar* deformedRow = deformedImage_.ptr(row);
 	float dif = (deformedRow[col] - staticRow[col]);
-	float division = pow(dif,2) + pow(gradient.x,2) + pow(gradient.y,2);
+	float division = pow(dif,2) + pow(gradient[0],2) + pow(gradient[1],2);
 	if (division > 0.0) {
-		displacement[position].x = displacement[position].x + dif/division*gradient.x;
-		displacement[position].y = displacement[position].y + dif/division*gradient.y;
+		std::vector<uchar> displVector = displacement.getVectorAt(row, col);
+		uchar xValue = displVector[0] + dif/division*gradient[0];
+		uchar yValue = displVector[1] + dif/division*gradient[1];
+		displacement.updateVector(row, col, xValue, yValue);
 	}
 }
 
-Demons::Field Demons::createField() {
-	Field field;
-	int rows = staticImage_.rows, cols = staticImage_.cols;
-	for(int row = 0; row < rows; row++) 
-		for(int col = 0; col < cols; col++) {
-			Vector newVec(0,0);
-			field.push_back(newVec);
-		}
-	return field;
-}
-
-Demons::Field Demons::findGrad() {
+VectorField Demons::findGrad() {
 	int rows = staticImage_.rows, cols = staticImage_.cols;
 	cv::Mat sobelX;
 	cv::Mat sobelY;
@@ -72,15 +65,7 @@ Demons::Field Demons::findGrad() {
 	cv::Sobel(staticImage_, sobelY, CV_32F, 0, 1);
 	sobelX = normalizeSobelImage(sobelX);
 	sobelY = normalizeSobelImage(sobelY);
-	Demons::Field grad;
-	for(int row = 0; row < rows; row++) {
-		uchar* rowSobelX = sobelX.ptr(row);
-		uchar* rowSobelY = sobelY.ptr(row);
-		for(int col = 0; col < cols; col++) {
-			Vector newVec(rowSobelX[col], rowSobelY[col]);
-			grad.push_back(newVec);
-		}
-	}
+	VectorField grad(sobelX, sobelY);
 	return grad;
 }
 

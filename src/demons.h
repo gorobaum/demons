@@ -7,6 +7,8 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
+#include "vectorfield.h"
+
 class Demons {
 	public:
 		explicit Demons (cv::Mat staticImage, cv::Mat movingImage):
@@ -15,20 +17,13 @@ class Demons {
 	private:
 		cv::Mat staticImage_;
 		cv::Mat movingImage_;
+		cv::Mat deformedImage_;
 		time_t startTime;
 		float totalTime;
-		struct Vector {
-			float x;
-			float y;
-			Vector(float a=0, float b=0):
-					 x(a), y(b){}
-		};
-		typedef std::vector<Vector> Field;
-		Field findGrad();
-		Field createField();
+		VectorField findGrad();
 		double getIterationTime(time_t startTime);
 		cv::Mat normalizeSobelImage(cv::Mat sobelImage);
-		void updateDisplField(uchar* deformedRow, Demons::Field& displacement, Demons::Vector gradient, int row, int col, int position);
+		void updateDisplField(VectorField displacement, std::vector<uchar> gradient, int row, int col);
 };
 
 #endif
