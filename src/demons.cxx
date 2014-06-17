@@ -34,6 +34,9 @@ void Demons::demons() {
 		}
 		displField.applyGaussianFilter();
 		double iterTime = getIterationTime(startTime);
+		std::string imageName("Iteration"); 
+		imageName << iteration << ".jpg";
+		std::cout << imageName.c_str() << "\n";
 		std::cout << "Iteration " << iteration << " took " << iterTime << " seconds.\n";
     iteration++;
 	}
@@ -43,15 +46,13 @@ void Demons::demons() {
 void Demons::updateDisplField(VectorField displacement, std::vector<float> gradient, int row, int col) {
 	uchar* staticRow = staticImage_.ptr(row);
 	uchar* deformedRow = deformedImage_.ptr(row);
-	float dif = (deformedRow[col] - staticRow[col]);
-	float division = pow(dif,2) + pow(gradient[0],2) + pow(gradient[1],2);
-	if (division > 0.0) {
+	float diff = (staticRow[col] - deformedRow[col]);
+	float denominator = diff*diff + gradient[0]*gradient[0] + gradient[1]*gradient[1];
+	if (denominator > 0.0) {
 		std::vector<float> displVector = displacement.getVectorAt(row, col);
-		float xValue = displVector[0] + dif/division*gradient[0];
-		float yValue = displVector[1] + dif/division*gradient[1];
+		float xValue = displVector[0] + gradient[0]*diff/denominator;
+		float yValue = displVector[1] + gradient[1]*diff/denominator;
 		displacement.updateVector(row, col, xValue, yValue);
-	} else {
-		displacement.updateVector(row, col, 0.0, 0.0);
 	}
 }
 
