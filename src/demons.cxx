@@ -5,6 +5,7 @@
 #include <ctime>
 #include <vector>
 #include <opencv2/imgproc/imgproc.hpp>
+#include <sstream>
 
 #include "demons.h"
 #include "interpolation.h"
@@ -34,11 +35,15 @@ void Demons::demons() {
 		}
 		displField.applyGaussianFilter();
 		double iterTime = getIterationTime(startTime);
-		std::string imageName("Iteration"); 
-		imageName << iteration << ".jpg";
+		std::string imageName("Iteration");
+		std::ostringstream converter;
+		converter << iteration;
+		imageName += converter.str() + ".jpg";
 		std::cout << imageName.c_str() << "\n";
-		std::cout << "Iteration " << iteration << " took " << iterTime << " seconds.\n";
-    iteration++;
+		std::cout << "Iteration " << converter.str() << " took " << iterTime << " seconds.\n";
+    	iteration++;
+    	converter.flush();
+        imwrite(imageName.c_str(), deformedImage_, compression_params);
 	}
 	std::cout << "termino rapa\n";
 }

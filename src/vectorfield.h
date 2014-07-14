@@ -13,10 +13,13 @@ class VectorField {
 		std::vector<float> getVectorAt(int row, int col);
 		void updateVector(int row, int col, float xValue, float yValue);
 		void applyGaussianFilter();
+		VectorField getNormalized();
 	private:
 		cv::Mat vectorX_;
 		cv::Mat vectorY_;
 		float getValue(cv::Mat image, int row, int col);
+		int rows_;
+		int cols_;
 };
 
 #endif

@@ -12,37 +12,37 @@ using namespace cv;
 
 int main(int argc, char** argv) {
 	if (argc < 2) {
-		std::cout << "Precisa passar o nome dos arquivos coração! \n";
+		std::cout << "Precisa passar o nome dos arquivos coração! \n";    
 		return 0;
 	}
 	vector<int> compression_params;
-  compression_params.push_back(CV_IMWRITE_JPEG_QUALITY);
-  compression_params.push_back(95);
+    compression_params.push_back(CV_IMWRITE_JPEG_QUALITY);
+    compression_params.push_back(95);
 	if (strcmp(argv[1], "-d") == 0) {
 		Mat originalImage;
-    originalImage = imread(argv[2], CV_LOAD_IMAGE_GRAYSCALE);
+        originalImage = imread(argv[2], CV_LOAD_IMAGE_GRAYSCALE);
 
-    if(! originalImage.data ) {
-        std::cout <<  "Could not open or find the image" << std::endl ;
-        return -1;
-    }
-    
-    Deform deform(originalImage);
-    Mat deformed = deform.applySinDeformation();
+        if(!originalImage.data) {
+            std::cout <<  "Could not open or find the image" << std::endl ;
+            return -1;
+        }
+        
+        Deform deform(originalImage);
+        Mat deformed = deform.applySinDeformation();
 
-    std::string modified("modified-");
-    std::string imageName = modified + argv[2];
-    imwrite(imageName.c_str(), deformed, compression_params);
+        std::string modified("modified-");
+        std::string imageName = modified + argv[2];
+        imwrite(imageName.c_str(), deformed, compression_params);
 	} else {
 		Mat staticImage;
 		Mat movingImage;
-    staticImage = imread(argv[1], CV_LOAD_IMAGE_GRAYSCALE);
-    movingImage = imread(argv[2], CV_LOAD_IMAGE_GRAYSCALE);
-    Demons demons(staticImage, movingImage);
-    demons.demons();
-    Mat deformed = demons.getRegistration();
-    std::string imageName("Iteration.jpg");
-    imwrite(imageName.c_str(), deformed, compression_params);
+        staticImage = imread(argv[1], CV_LOAD_IMAGE_GRAYSCALE);
+        movingImage = imread(argv[2], CV_LOAD_IMAGE_GRAYSCALE);
+        Demons demons(staticImage, movingImage);
+        demons.demons();
+        Mat deformed = demons.getRegistration();
+        std::string imageName("deformed.jpg");
+        imwrite(imageName.c_str(), deformed, compression_params);
 	}
 	return 0;
 }
