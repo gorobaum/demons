@@ -28,7 +28,7 @@ int main(int argc, char** argv) {
         }
         
         Deform deform(originalImage);
-        Mat deformed = deform.applySinDeformation();
+        Mat deformed = deform.translation(100, 100);
 
         std::string modified("modified-");
         std::string imageName = modified + argv[2];

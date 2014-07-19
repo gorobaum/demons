@@ -64,8 +64,8 @@ void VectorField::printFieldImage(int iteration, std::vector<int> compression_pa
 	filenamebase += converter.str();
 	flx += filenamebase + "x.jpg";
 	fly += filenamebase + "y.jpg";
-	vectorX_.convertTo(abs_grad_x, CV_8U);
-	vectorY_.convertTo(abs_grad_y, CV_8U);
+	convertScaleAbs(vectorX_, abs_grad_x);
+	convertScaleAbs(vectorY_, abs_grad_y);
 	imwrite(flx.c_str(), abs_grad_x, compression_params);
 	imwrite(fly.c_str(), abs_grad_y, compression_params);
 }
