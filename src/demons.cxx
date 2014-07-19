@@ -15,6 +15,7 @@ void Demons::demons() {
 	// Create the deformed image
 	deformedImage_ = cv::Mat::zeros(rows, cols, CV_LOAD_IMAGE_GRAYSCALE);
 	VectorField gradients = findGrad();
+	gradients.printField("Gradients.dat");
 	VectorField displField(rows, cols);
 	int iteration = 1;
 	std::vector<int> compression_params;
@@ -35,6 +36,7 @@ void Demons::demons() {
 		}
 		displField.applyGaussianFilter();
 		double iterTime = getIterationTime(startTime);
+		printDisplField(displField, iteration);
 		std::string imageName("Iteration");
 		std::ostringstream converter;
 		converter << iteration;
@@ -42,10 +44,18 @@ void Demons::demons() {
 		std::cout << imageName.c_str() << "\n";
 		std::cout << "Iteration " << converter.str() << " took " << iterTime << " seconds.\n";
     	iteration++;
-    	converter.flush();
         imwrite(imageName.c_str(), deformedImage_, compression_params);
 	}
 	std::cout << "termino rapa\n";
+}
+
+void Demons::printDisplField(VectorField vectorField, int iteration) {
+	std::string filename("VectorField");
+	std::ostringstream converter;
+	converter << iteration;
+	filename += converter.str() + ".dat";
+	VectorField normalized = vectorField.getNormalized();
+	normalized.printField(filename.c_str());
 }
 
 void Demons::updateDisplField(VectorField displacement, std::vector<float> gradient, int row, int col) {
@@ -62,22 +72,27 @@ void Demons::updateDisplField(VectorField displacement, std::vector<float> gradi
 }
 
 VectorField Demons::findGrad() {
-	cv::Mat sobelX;
-	cv::Mat sobelY;
-	cv::Sobel(staticImage_, sobelX, CV_64F, 1, 0);
-	cv::Sobel(staticImage_, sobelY, CV_64F, 0, 1);
+	int rows = staticImage_.rows, cols = staticImage_.cols;
+	cv::Mat sobelX = cv::Mat::zeros(rows, cols, CV_32F);
+	cv::Mat sobelY = cv::Mat::zeros(rows, cols, CV_32F);
+	cv::Sobel(staticImage_, sobelX, CV_32F, 1, 0);
+	cv::Sobel(staticImage_, sobelY, CV_32F, 0, 1);
 	sobelX = normalizeSobelImage(sobelX);
 	sobelY = normalizeSobelImage(sobelY);
+		std::vector<int> compression_params;
+	compression_params.push_back(CV_IMWRITE_JPEG_QUALITY);
+	compression_params.push_back(95);
+	imwrite("macaco.jpg", sobelX, compression_params);
 	VectorField grad(sobelX, sobelY);
 	return grad;
 }
 
 cv::Mat Demons::normalizeSobelImage(cv::Mat sobelImage) {
 	double minVal, maxVal;
-  minMaxLoc(sobelImage, &minVal, &maxVal); //find minimum and maximum intensities
-  cv::Mat normalized;
-  sobelImage.convertTo(normalized, CV_8U, 255.0/(maxVal - minVal), -minVal * 255.0/(maxVal - minVal));
-  return normalized;
+	minMaxLoc(sobelImage, &minVal, &maxVal); //find minimum and maximum intensities
+	cv::Mat normalized;
+	sobelImage.convertTo(normalized, CV_32F, 255.0/(maxVal - minVal), -minVal * 255.0/(maxVal - minVal));
+	return normalized;
 }
 
 double Demons::getIterationTime(time_t startTime) {

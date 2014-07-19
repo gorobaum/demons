@@ -14,6 +14,7 @@ class VectorField {
 		void updateVector(int row, int col, float xValue, float yValue);
 		void applyGaussianFilter();
 		VectorField getNormalized();
+		void printField(std::string filename);
 	private:
 		cv::Mat vectorX_;
 		cv::Mat vectorY_;

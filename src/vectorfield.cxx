@@ -1,11 +1,12 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <iostream>
+#include <fstream>
 
 #include "vectorfield.h"
 
 VectorField::VectorField (cv::Mat &vectorX, cv::Mat &vectorY) {
-	rows_ = vectorX_.rows;
-	cols_ = vectorX_.cols;
+	rows_ = vectorX.rows;
+	cols_ = vectorX.cols;
   	vectorX_ = vectorX.clone();
 	vectorY_ = vectorY.clone();
 }
@@ -13,8 +14,8 @@ VectorField::VectorField (cv::Mat &vectorX, cv::Mat &vectorY) {
 VectorField::VectorField (int rows, int cols) {
 	rows_ = rows;
 	cols_ = cols;
-  	vectorX_ = cv::Mat::zeros(rows, cols, CV_64F);
-	vectorY_ = cv::Mat::zeros(rows, cols, CV_64F);
+  	vectorX_ = cv::Mat::zeros(rows, cols, CV_32F);
+	vectorY_ = cv::Mat::zeros(rows, cols, CV_32F);
 }
 
 std::vector<float> VectorField::getVectorAt(int row, int col) {
@@ -38,13 +39,29 @@ VectorField VectorField::getNormalized() {
 	VectorField normalized(rows_, cols_);
 	for(int row = 0; row < rows_; row++) {
 	    for(int col = 0; col < cols_; col++) {
-	    	std::vector<float> vector = this->getVectorAt(row, col);
-	    	float normalizedX = vector[0]/vector[0]*vector[1];
-	    	float normalizedY = vector[1]/vector[0]*vector[1];
-	        normalized.updateVector(row, col, normalizedX, normalizedY);
+	    	std::vector<float> vector = getVectorAt(row, col);
+	    	float normalizedX = 0.0, normalizedY = 0.0;
+	    	if ((vector[0]*vector[1]) != 0.0) {
+	    		normalizedX = vector[0]/vector[0]*vector[1];
+	    		normalizedY = vector[1]/vector[0]*vector[1];
+	    	}
+	        normalized.vectorX_.at<float>(row, col) = normalizedX;
+	        normalized.vectorY_.at<float>(row, col) = normalizedY;
 	    }
 	}
 	return normalized;
+}
+
+void VectorField::printField(std::string filename) {
+	std::ofstream myfile;
+	myfile.open(filename);
+	for(int row = 0; row < rows_; row++) {
+	    for(int col = 0; col < cols_; col++) {
+	    	std::vector<float> vector = getVectorAt(row, col);
+			myfile << row << " " << col << " " << vector[0] << " " << vector[1] << "\n";
+	    }
+	}
+	myfile.close();
 }
 
 float VectorField::getValue(cv::Mat image, int row, int col) {
