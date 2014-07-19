@@ -19,13 +19,15 @@ class Demons {
 		cv::Mat staticImage_;
 		cv::Mat movingImage_;
 		cv::Mat deformedImage_;
+		std::vector<int> compression_params;	
 		time_t startTime;
 		double totalTime;
 		VectorField findGrad();
 		double getIterationTime(time_t startTime);
 		cv::Mat normalizeSobelImage(cv::Mat sobelImage);
 		void updateDisplField(VectorField displacement, std::vector<float> gradient, int row, int col);
-		void printDisplField(VectorField vectorField, int iteration);
+		void printVFN(VectorField vectorField, int iteration);
+		void printVFI(VectorField vectorField, int iteration);
 };
 
 #endif

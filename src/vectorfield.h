@@ -15,6 +15,7 @@ class VectorField {
 		void applyGaussianFilter();
 		VectorField getNormalized();
 		void printField(std::string filename);
+		void printFieldImage(int iteration, std::vector<int> compression_params);
 	private:
 		cv::Mat vectorX_;
 		cv::Mat vectorY_;

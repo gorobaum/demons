@@ -15,10 +15,9 @@ void Demons::demons() {
 	// Create the deformed image
 	deformedImage_ = cv::Mat::zeros(rows, cols, CV_LOAD_IMAGE_GRAYSCALE);
 	VectorField gradients = findGrad();
-	printDisplField(gradients, 0);
+	printVFN(gradients, 0);
 	VectorField displField(rows, cols);
 	int iteration = 1;
-	std::vector<int> compression_params;
 	compression_params.push_back(CV_IMWRITE_JPEG_QUALITY);
 	compression_params.push_back(95);
 	for(int i = 0; i < 100; i++) {
@@ -36,7 +35,8 @@ void Demons::demons() {
 		}
 		displField.applyGaussianFilter();
 		double iterTime = getIterationTime(startTime);
-		printDisplField(displField, iteration);
+		printVFN(displField, iteration);
+		printVFI(displField, iteration);
 		std::string imageName("Iteration");
 		std::ostringstream converter;
 		converter << iteration;
@@ -49,13 +49,17 @@ void Demons::demons() {
 	std::cout << "termino rapa\n";
 }
 
-void Demons::printDisplField(VectorField vectorField, int iteration) {
-	std::string filename("VectorField");
+void Demons::printVFN(VectorField vectorField, int iteration) {
+	std::string filename("VFN-Iteration");
 	std::ostringstream converter;
 	converter << iteration;
 	filename += converter.str() + ".dat";
 	VectorField normalized = vectorField.getNormalized();
 	normalized.printField(filename.c_str());
+}
+
+void Demons::printVFI(VectorField vectorField, int iteration) {
+	vectorField.printFieldImage(iteration, compression_params);
 }
 
 void Demons::updateDisplField(VectorField displacement, std::vector<float> gradient, int row, int col) {
