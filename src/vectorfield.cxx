@@ -1,6 +1,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <iostream>
 #include <fstream>
+#include <cmath>
 
 #include "vectorfield.h"
 
@@ -35,6 +36,10 @@ void VectorField::applyGaussianFilter() {
 	GaussianBlur(vectorY_, vectorY_, cv::Size(3, 3), 0, 0);
 }
 
+float VectorField::vectorNorm(std::vector<float> v) {
+	return sqrt(pow(v[0],2)+pow(v[1],2));
+}
+
 VectorField VectorField::getNormalized() {
 	VectorField normalized(rows_, cols_);
 	for(int row = 0; row < rows_; row++) {
@@ -42,11 +47,10 @@ VectorField VectorField::getNormalized() {
 	    	std::vector<float> vector = getVectorAt(row, col);
 	    	float normalizedX = 0.0, normalizedY = 0.0;
 	    	if ((vector[0]*vector[1]) != 0.0) {
-	    		normalizedX = vector[0]/vector[0]*vector[1];
-	    		normalizedY = vector[1]/vector[0]*vector[1];
+	    		normalizedX = vector[0]/vectorNorm(vector);
+	    		normalizedY = vector[1]/vectorNorm(vector);
 	    	}
-	        normalized.vectorX_.at<float>(row, col) = normalizedX;
-	        normalized.vectorY_.at<float>(row, col) = normalizedY;
+	    	normalized.updateVector(row, col, normalizedX, normalizedY);
 	    }
 	}
 	return normalized;

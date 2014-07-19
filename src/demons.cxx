@@ -15,7 +15,7 @@ void Demons::demons() {
 	// Create the deformed image
 	deformedImage_ = cv::Mat::zeros(rows, cols, CV_LOAD_IMAGE_GRAYSCALE);
 	VectorField gradients = findGrad();
-	gradients.printField("Gradients.dat");
+	printDisplField(gradients, 0);
 	VectorField displField(rows, cols);
 	int iteration = 1;
 	std::vector<int> compression_params;
@@ -79,10 +79,6 @@ VectorField Demons::findGrad() {
 	cv::Sobel(staticImage_, sobelY, CV_32F, 0, 1);
 	sobelX = normalizeSobelImage(sobelX);
 	sobelY = normalizeSobelImage(sobelY);
-		std::vector<int> compression_params;
-	compression_params.push_back(CV_IMWRITE_JPEG_QUALITY);
-	compression_params.push_back(95);
-	imwrite("macaco.jpg", sobelX, compression_params);
 	VectorField grad(sobelX, sobelY);
 	return grad;
 }
