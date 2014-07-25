@@ -7,6 +7,7 @@
 
 #include "deform.h"
 #include "demons.h"
+#include "vectorfield.h"
 
 using namespace cv;
 
@@ -68,6 +69,17 @@ int main(int argc, char** argv) {
         std::string modified("modified-");
         std::string imageName = modified + argv[4];
         imwrite(imageName.c_str(), deformed, compression_params);
+    } else if (strcmp(argv[1], "-T") == 0) {
+        int size = 30;
+        VectorField teste(size,size);
+        for (int row =0; row < size; row++) {
+            for (int col = 0; col < size; col++) {
+                teste.updateVector(row, col, row, 1);
+            }
+        }
+        teste.printField("fieldTeste.dat");
+        teste.applyGaussianFilter();
+        teste.printField("fieldTesteG.dat");
     } else {
 		Mat staticImage;
 		Mat movingImage;
