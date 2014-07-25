@@ -73,10 +73,20 @@ void VectorField::printFieldImage(int iteration, std::vector<int> compression_pa
 void VectorField::printField(std::string filename) {
 	std::ofstream myfile;
 	myfile.open(filename);
+	double minValx, maxValx;
+	double minValy, maxValy;
+	minMaxLoc(vectorX_, &minValx, &maxValx);
+	minMaxLoc(vectorY_, &minValy, &maxValy);
 	for(int row = 0; row < rows_; row++) {
 	    for(int col = 0; col < cols_; col++) {
 	    	std::vector<float> vector = getVectorAt(row, col);
-			myfile << row << " " << col << " " << vector[0] << " " << vector[1] << "\n";
+    		double redX = 255*(vector[0]-minValx)/(maxValx-minValx);
+			double blueX = 255*(maxValx-vector[0])/(maxValx-minValx);
+			double redY = 255*(vector[1]-minValy)/(maxValy-minValy);
+			double blueY = 255*(maxValy-vector[1])/(maxValy-minValy);
+			int red = (redX + redY)/2;
+			int blue = (blueX + blueY)/2;
+			myfile << col << " " << (vectorX_.rows - row) << " " << vector[0] << " " << vector[1] << " " <<  red << " " << 0 << " " << blue << "\n";
 	    }
 	}
 	myfile.close();

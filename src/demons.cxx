@@ -20,7 +20,7 @@ void Demons::demons() {
 	int iteration = 1;
 	compression_params.push_back(CV_IMWRITE_JPEG_QUALITY);
 	compression_params.push_back(95);
-	for(int i = 0; i < 100; i++) {
+	// for(int i = 0; i < 100; i++) {
 		time(&startTime);
 		for(int row = 0; row < rows; row++) {
 			uchar* rowDeformed = deformedImage_.ptr(row);
@@ -45,7 +45,7 @@ void Demons::demons() {
 		std::cout << "Iteration " << converter.str() << " took " << iterTime << " seconds.\n";
     	iteration++;
         imwrite(imageName.c_str(), deformedImage_, compression_params);
-	}
+	// }
 	std::cout << "termino rapa\n";
 }
 
