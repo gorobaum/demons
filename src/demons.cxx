@@ -25,8 +25,8 @@ void Demons::demons() {
 	for(int i = 0; i < 300; i++) {
 		time(&startTime);
 		deltaField = newDeltaField(gradients);
+		deltaField.applyGaussianFilter();
 		updateDisplField(displField, deltaField);
-		displField.applyGaussianFilter();
 		updateDeformedImage(displField);
 		double iterTime = getIterationTime(startTime);
 		printVFN(displField, iteration);
