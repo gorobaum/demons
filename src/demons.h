@@ -25,11 +25,13 @@ class Demons {
 		VectorField findGrad();
 		double getIterationTime(time_t startTime);
 		cv::Mat normalizeSobelImage(cv::Mat sobelImage);
-		void updateDisplField(VectorField displacement, VectorField gradients);
+		VectorField newDeltaField(VectorField gradients);
+		void updateDisplField(VectorField displField, VectorField deltaField);
 		void printVFN(VectorField vectorField, int iteration);
 		void printVFI(VectorField vectorField, int iteration);
 		void printDeformedImage(int iteration);
 		void updateDeformedImage(VectorField displField);
+		bool stopCriteria(std::vector<double> norm, VectorField displField);
 };
 
 #endif

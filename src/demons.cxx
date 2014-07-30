@@ -14,15 +14,18 @@ void Demons::demons() {
 	int rows = staticImage_.rows, cols = staticImage_.cols;
 	// Create the deformed image
 	deformedImage_ = movingImage_.clone();
+	std::vector<double> norm(10,0.0);
 	VectorField gradients = findGrad();
 	gradients.printField("Gradients.dat");
 	VectorField displField(rows, cols);
+	VectorField deltaField(rows, cols);
 	int iteration = 1;
 	compression_params.push_back(CV_IMWRITE_JPEG_QUALITY);
 	compression_params.push_back(95);
 	for(int i = 0; i < 300; i++) {
 		time(&startTime);
-		updateDisplField(displField, gradients);
+		deltaField = newDeltaField(gradients);
+		updateDisplField(displField, deltaField);
 		displField.applyGaussianFilter();
 		updateDeformedImage(displField);
 		double iterTime = getIterationTime(startTime);
@@ -33,6 +36,11 @@ void Demons::demons() {
 		iteration++;
 	}
 	std::cout << "termino rapa\n";
+}
+
+bool Demons::stopCriteria(std::vector<double> norm, VectorField displField) {
+	double newNorm = displField.sumOfAbs();
+	return false;
 }
 
 void Demons::updateDeformedImage(VectorField displField) {
@@ -46,6 +54,51 @@ void Demons::updateDeformedImage(VectorField displField) {
 			deformedImageRow[col] = Interpolation::bilinearInterpolation(movingImage_, newRow, newCol);
 		}
 	}
+}
+
+void Demons::updateDisplField(VectorField displField, VectorField deltaField) {
+	displField.add(deltaField);
+}
+
+VectorField Demons::newDeltaField(VectorField gradients) {
+	int rows = gradients.getRows(), cols = gradients.getCols();
+	VectorField deltaField(rows, cols);
+	for(int row = 0; row < rows; row++) {
+		uchar* staticRow = staticImage_.ptr(row);
+		uchar* deformedRow = deformedImage_.ptr(row);
+		for(int col = 0; col < cols; col++) {
+			std::vector<float> gradient = gradients.getVectorAt(row, col);
+
+			float diff = (deformedRow[col] - staticRow[col]);
+			float denominator = diff*diff + gradient[0]*gradient[0] + gradient[1]*gradient[1];
+			if (denominator > 0.0) {
+				float xValue = gradient[0]*diff/denominator;
+				float yValue = gradient[1]*diff/denominator;
+				deltaField.updateVector(row, col, xValue, yValue);
+			}
+		}
+	}
+	return deltaField;
+}
+
+VectorField Demons::findGrad() {
+	int rows = staticImage_.rows, cols = staticImage_.cols;
+	cv::Mat sobelX = cv::Mat::zeros(rows, cols, CV_32F);
+	cv::Mat sobelY = cv::Mat::zeros(rows, cols, CV_32F);
+	cv::Sobel(staticImage_, sobelX, CV_32F, 1, 0);
+	cv::Sobel(staticImage_, sobelY, CV_32F, 0, 1);
+	sobelX = normalizeSobelImage(sobelX);
+	sobelY = normalizeSobelImage(sobelY);
+	VectorField grad(sobelX, sobelY);
+	return grad;
+}
+
+cv::Mat Demons::normalizeSobelImage(cv::Mat sobelImage) {
+	double minVal, maxVal;
+	minMaxLoc(sobelImage, &minVal, &maxVal); //find minimum and maximum intensities
+	cv::Mat normalized;
+	sobelImage.convertTo(normalized, CV_32F, 255.0/(maxVal - minVal), -minVal * 255.0/(maxVal - minVal));
+	return normalized;
 }
 
 void Demons::printDeformedImage(int iteration) {
@@ -68,46 +121,6 @@ void Demons::printVFN(VectorField vectorField, int iteration) {
 
 void Demons::printVFI(VectorField vectorField, int iteration) {
 	vectorField.printFieldImage(iteration, compression_params);
-}
-
-void Demons::updateDisplField(VectorField displacement, VectorField gradients) {
-	int rows = displacement.getRows(), cols = displacement.getCols();
-	for(int row = 0; row < rows; row++) {
-		uchar* staticRow = staticImage_.ptr(row);
-		uchar* deformedRow = deformedImage_.ptr(row);
-		for(int col = 0; col < cols; col++) {
-			std::vector<float> gradient = gradients.getVectorAt(row, col);
-
-			float diff = (deformedRow[col] - staticRow[col]);
-			float denominator = diff*diff + gradient[0]*gradient[0] + gradient[1]*gradient[1];
-			if (denominator > 0.0) {
-				std::vector<float> displVector = displacement.getVectorAt(row, col);
-				float xValue = displVector[0] + gradient[0]*diff/denominator;
-				float yValue = displVector[1] + gradient[1]*diff/denominator;
-				displacement.updateVector(row, col, xValue, yValue);
-			}
-		}
-	}
-}
-
-VectorField Demons::findGrad() {
-	int rows = staticImage_.rows, cols = staticImage_.cols;
-	cv::Mat sobelX = cv::Mat::zeros(rows, cols, CV_32F);
-	cv::Mat sobelY = cv::Mat::zeros(rows, cols, CV_32F);
-	cv::Sobel(staticImage_, sobelX, CV_32F, 1, 0);
-	cv::Sobel(staticImage_, sobelY, CV_32F, 0, 1);
-	sobelX = normalizeSobelImage(sobelX);
-	sobelY = normalizeSobelImage(sobelY);
-	VectorField grad(sobelX, sobelY);
-	return grad;
-}
-
-cv::Mat Demons::normalizeSobelImage(cv::Mat sobelImage) {
-	double minVal, maxVal;
-	minMaxLoc(sobelImage, &minVal, &maxVal); //find minimum and maximum intensities
-	cv::Mat normalized;
-	sobelImage.convertTo(normalized, CV_32F, 255.0/(maxVal - minVal), -minVal * 255.0/(maxVal - minVal));
-	return normalized;
 }
 
 double Demons::getIterationTime(time_t startTime) {

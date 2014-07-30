@@ -64,6 +64,11 @@ VectorField VectorField::getNormalized() {
 	return normalized;
 }
 
+void VectorField::add(VectorField adding) {
+	vectorX_ = vectorX_ + adding.vectorX_;
+	vectorY_ = vectorY_ + adding.vectorY_;
+}
+
 double VectorField::sumOfAbs() {
 	cv::Mat absMat = cv::abs(vectorX_) + cv::abs(vectorY_);
 	double total = 0.0;
