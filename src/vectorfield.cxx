@@ -64,6 +64,18 @@ VectorField VectorField::getNormalized() {
 	return normalized;
 }
 
+double VectorField::sumOfAbs() {
+	cv::Mat absMat = cv::abs(vectorX_) + cv::abs(vectorY_);
+	double total = 0.0;
+	for(int row = 0; row < rows_; row++) {
+		uchar* absMatRow = absMat.ptr(row);
+		for(int col = 0; col < cols_; col++) {
+			total += absMatRow[col];
+		}
+	}
+	return total;
+}
+
 void VectorField::printFieldImage(int iteration, std::vector<int> compression_params) {
 	cv::Mat abs_grad_x, abs_grad_y;
 	std::string filenamebase("DFI-Iteration"), flx, fly;
