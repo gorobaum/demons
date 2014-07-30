@@ -16,6 +16,8 @@ class VectorField {
 		VectorField getNormalized();
 		void printField(std::string filename);
 		void printFieldImage(int iteration, std::vector<int> compression_params);
+		int getRows();
+		int getCols();
 	private:
 		cv::Mat vectorX_;
 		cv::Mat vectorY_;

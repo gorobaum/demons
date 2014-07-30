@@ -13,40 +13,48 @@
 void Demons::demons() {
 	int rows = staticImage_.rows, cols = staticImage_.cols;
 	// Create the deformed image
-	deformedImage_ = cv::Mat::zeros(rows, cols, CV_LOAD_IMAGE_GRAYSCALE);
+	deformedImage_ = movingImage_.clone();
 	VectorField gradients = findGrad();
-	printVFN(gradients, 0);
+	gradients.printField("Gradients.dat");
 	VectorField displField(rows, cols);
 	int iteration = 1;
 	compression_params.push_back(CV_IMWRITE_JPEG_QUALITY);
 	compression_params.push_back(95);
-	// for(int i = 0; i < 100; i++) {
+	for(int i = 0; i < 300; i++) {
 		time(&startTime);
-		for(int row = 0; row < rows; row++) {
-			uchar* rowDeformed = deformedImage_.ptr(row);
-			for(int col = 0; col < cols; col++) {
-				std::vector<float> displVector = displField.getVectorAt(row, col);
-				float newRow = row - displVector[0];
-				float newCol = col - displVector[1];
-				rowDeformed[col] = Interpolation::bilinearInterpolation(movingImage_, newRow, newCol);
-				std::vector<float> gradient = gradients.getVectorAt(row, col);
-				updateDisplField(displField, gradient, row, col);
-			}
-		}
+		updateDisplField(displField, gradients);
 		displField.applyGaussianFilter();
+		updateDeformedImage(displField);
 		double iterTime = getIterationTime(startTime);
 		printVFN(displField, iteration);
 		printVFI(displField, iteration);
-		std::string imageName("Iteration");
-		std::ostringstream converter;
-		converter << iteration;
-		imageName += converter.str() + ".jpg";
-		std::cout << imageName.c_str() << "\n";
-		std::cout << "Iteration " << converter.str() << " took " << iterTime << " seconds.\n";
-    	iteration++;
-        imwrite(imageName.c_str(), deformedImage_, compression_params);
-	// }
+		printDeformedImage(iteration);
+		std::cout << "Iteration " << iteration << " took " << iterTime << " seconds.\n";
+		iteration++;
+	}
 	std::cout << "termino rapa\n";
+}
+
+void Demons::updateDeformedImage(VectorField displField) {
+	int rows = displField.getRows(), cols = displField.getCols();
+	for(int row = 0; row < rows; row++) {
+		uchar* deformedImageRow = deformedImage_.ptr(row);
+		for(int col = 0; col < cols; col++) {
+			std::vector<float> displVector = displField.getVectorAt(row, col);
+			float newRow = row - displVector[0];
+			float newCol = col - displVector[1];
+			deformedImageRow[col] = Interpolation::bilinearInterpolation(movingImage_, newRow, newCol);
+		}
+	}
+}
+
+void Demons::printDeformedImage(int iteration) {
+	std::string imageName("Iteration");
+	std::ostringstream converter;
+	converter << iteration;
+	imageName += converter.str() + ".jpg";
+	std::cout << imageName.c_str() << "\n";
+    imwrite(imageName.c_str(), deformedImage_, compression_params);
 }
 
 void Demons::printVFN(VectorField vectorField, int iteration) {
@@ -62,16 +70,23 @@ void Demons::printVFI(VectorField vectorField, int iteration) {
 	vectorField.printFieldImage(iteration, compression_params);
 }
 
-void Demons::updateDisplField(VectorField displacement, std::vector<float> gradient, int row, int col) {
-	uchar* staticRow = staticImage_.ptr(row);
-	uchar* deformedRow = deformedImage_.ptr(row);
-	float diff = (staticRow[col] - deformedRow[col]);
-	float denominator = diff*diff + gradient[0]*gradient[0] + gradient[1]*gradient[1];
-	if (denominator > 0.0) {
-		std::vector<float> displVector = displacement.getVectorAt(row, col);
-		float xValue = displVector[0] + gradient[0]*diff/denominator;
-		float yValue = displVector[1] + gradient[1]*diff/denominator;
-		displacement.updateVector(row, col, xValue, yValue);
+void Demons::updateDisplField(VectorField displacement, VectorField gradients) {
+	int rows = displacement.getRows(), cols = displacement.getCols();
+	for(int row = 0; row < rows; row++) {
+		uchar* staticRow = staticImage_.ptr(row);
+		uchar* deformedRow = deformedImage_.ptr(row);
+		for(int col = 0; col < cols; col++) {
+			std::vector<float> gradient = gradients.getVectorAt(row, col);
+
+			float diff = (deformedRow[col] - staticRow[col]);
+			float denominator = diff*diff + gradient[0]*gradient[0] + gradient[1]*gradient[1];
+			if (denominator > 0.0) {
+				std::vector<float> displVector = displacement.getVectorAt(row, col);
+				float xValue = displVector[0] + gradient[0]*diff/denominator;
+				float yValue = displVector[1] + gradient[1]*diff/denominator;
+				displacement.updateVector(row, col, xValue, yValue);
+			}
+		}
 	}
 }
 

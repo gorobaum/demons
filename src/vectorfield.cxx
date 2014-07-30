@@ -19,6 +19,14 @@ VectorField::VectorField (int rows, int cols) {
 	vectorY_ = cv::Mat::zeros(rows, cols, CV_32F);
 }
 
+int VectorField::getRows() {
+	return rows_;
+}	
+
+int VectorField::getCols() {
+	return cols_;
+}	
+
 std::vector<float> VectorField::getVectorAt(int row, int col) {
 	std::vector<float> auxVec;
 	auxVec.push_back(getValue(vectorX_, row, col));
@@ -32,8 +40,8 @@ void VectorField::updateVector(int row, int col, float xValue, float yValue) {
 }
 
 void VectorField::applyGaussianFilter() {
-	GaussianBlur(vectorX_, vectorX_, cv::Size(61, 61), 10, 10);
-	GaussianBlur(vectorY_, vectorY_, cv::Size(61, 61), 10, 10);
+	GaussianBlur(vectorX_, vectorX_, cv::Size(21, 21), 4, 4);
+	GaussianBlur(vectorY_, vectorY_, cv::Size(21, 21), 4, 4);
 }
 
 float VectorField::vectorNorm(std::vector<float> v) {
@@ -64,8 +72,8 @@ void VectorField::printFieldImage(int iteration, std::vector<int> compression_pa
 	filenamebase += converter.str();
 	flx += filenamebase + "x.jpg";
 	fly += filenamebase + "y.jpg";
-	convertScaleAbs(vectorX_, abs_grad_x);
-	convertScaleAbs(vectorY_, abs_grad_y);
+	convertScaleAbs(vectorX_, abs_grad_x, 255);
+	convertScaleAbs(vectorY_, abs_grad_y, 255);
 	imwrite(flx.c_str(), abs_grad_x, compression_params);
 	imwrite(fly.c_str(), abs_grad_y, compression_params);
 }
