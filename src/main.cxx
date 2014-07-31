@@ -33,9 +33,7 @@ int main(int argc, char** argv) {
         double freq = atof(argv[3]);
         Mat deformed = deform.applySinDeformation(amp, freq);
 
-        std::string modified("moving-");
-        std::string imageName = modified + argv[4];
-        imwrite(imageName.c_str(), deformed, compression_params);
+        imwrite("moving.jpg", deformed, compression_params);
 	} else if (strcmp(argv[1], "-r") == 0) {
         Mat originalImage;
         originalImage = imread(argv[3], CV_LOAD_IMAGE_GRAYSCALE);
@@ -49,9 +47,7 @@ int main(int argc, char** argv) {
         double angle = atof(argv[2]);
         Mat deformed = deform.rotate(angle);
 
-        std::string modified("moving-");
-        std::string imageName = modified + argv[3];
-        imwrite(imageName.c_str(), deformed, compression_params);
+        imwrite("moving.jpg", deformed, compression_params);
     } else if (strcmp(argv[1], "-t") == 0) {
         Mat originalImage;
         originalImage = imread(argv[4], CV_LOAD_IMAGE_GRAYSCALE);
@@ -66,9 +62,7 @@ int main(int argc, char** argv) {
         double height = atof(argv[3]);
         Mat deformed = deform.translation(width, height);
 
-        std::string modified("moving-");
-        std::string imageName = modified + argv[4];
-        imwrite(imageName.c_str(), deformed, compression_params);
+        imwrite("moving.jpg", deformed, compression_params);
     } else if (strcmp(argv[1], "-T") == 0) {
         int size = 30;
         VectorField teste(size,size);

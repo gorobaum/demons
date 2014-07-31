@@ -22,11 +22,12 @@ void Demons::demons() {
 	int iteration = 1;
 	compression_params.push_back(CV_IMWRITE_JPEG_QUALITY);
 	compression_params.push_back(95);
-	for(int i = 0; i < 300; i++) {
+	do {
 		time(&startTime);
 		deltaField = newDeltaField(gradients);
 		deltaField.applyGaussianFilter();
 		updateDisplField(displField, deltaField);
+		// displField.applyGaussianFilter();
 		updateDeformedImage(displField);
 		double iterTime = getIterationTime(startTime);
 		printVFN(displField, iteration);
@@ -34,12 +35,18 @@ void Demons::demons() {
 		printDeformedImage(iteration);
 		std::cout << "Iteration " << iteration << " took " << iterTime << " seconds.\n";
 		iteration++;
-	}
+	} while(stopCriteria(norm, displField, deltaField));
 	std::cout << "termino rapa\n";
 }
 
-bool Demons::stopCriteria(std::vector<double> norm, VectorField displField) {
-	double newNorm = displField.sumOfAbs();
+bool Demons::stopCriteria(std::vector<double> &norm, VectorField displField, VectorField deltaField) {
+	double newNorm = deltaField.sumOfAbs()/displField.sumOfAbs();
+	std::cout << (newNorm - norm[9]) << "\n";
+	if (std::abs((newNorm - norm[9])) > 0.0001) {
+		for (int i = 9; i > 0; i--) norm[i] = norm[i-1];
+		norm[0] = newNorm;
+		return true;
+	}
 	return false;
 }
 
