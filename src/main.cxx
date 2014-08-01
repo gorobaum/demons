@@ -64,16 +64,14 @@ int main(int argc, char** argv) {
 
         imwrite("moving.jpg", deformed, compression_params);
     } else if (strcmp(argv[1], "-T") == 0) {
-        int size = 30;
+        int size = 3;
         VectorField teste(size,size);
-        for (int row =0; row < size; row++) {
+        for (int row = 0; row < size; row++) {
             for (int col = 0; col < size; col++) {
-                teste.updateVector(row, col, row, 1);
+                teste.updateVector(row, col, 2, 2);
             }
         }
-        teste.printField("fieldTeste.dat");
-        teste.applyGaussianFilter();
-        teste.printField("fieldTesteG.dat");
+        std::cout << teste.sumOfAbs() << "\n";
     } else {
 		Mat staticImage;
 		Mat movingImage;

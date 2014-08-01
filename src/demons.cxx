@@ -25,7 +25,7 @@ void Demons::demons() {
 	do {
 		time(&startTime);
 		deltaField = newDeltaField(gradients);
-		deltaField.applyGaussianFilter();
+		// deltaField.applyGaussianFilter();
 		updateDisplField(displField, deltaField);
 		// displField.applyGaussianFilter();
 		updateDeformedImage(displField);
@@ -36,6 +36,7 @@ void Demons::demons() {
 		std::cout << "Iteration " << iteration << " took " << iterTime << " seconds.\n";
 		iteration++;
 	} while(stopCriteria(norm, displField, deltaField));
+	// } while(iteration < 200);
 	std::cout << "termino rapa\n";
 }
 

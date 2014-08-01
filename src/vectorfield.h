@@ -17,7 +17,7 @@ class VectorField {
 		void printField(std::string filename);
 		void printFieldImage(int iteration, std::vector<int> compression_params);
 		void add(VectorField adding);
-		double sumOfAbs();
+		float sumOfAbs();
 		int getRows();
 		int getCols();
 	private:

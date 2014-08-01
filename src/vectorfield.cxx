@@ -69,15 +69,16 @@ void VectorField::add(VectorField adding) {
 	vectorY_ = vectorY_ + adding.vectorY_;
 }
 
-double VectorField::sumOfAbs() {
-	cv::Mat absMat = cv::abs(vectorX_) + cv::abs(vectorY_);
-	double total = 0.0;
+float VectorField::sumOfAbs() {
+	float total = 0.0;
+	std::cout << rows_ << " " << cols_ << "\n";
 	for(int row = 0; row < rows_; row++) {
-		uchar* absMatRow = absMat.ptr(row);
 		for(int col = 0; col < cols_; col++) {
-			total += absMatRow[col];
+			std::cout << col << "\n";
+			total += std::abs(vectorX_.at<float>(row, col)) + std::abs(vectorY_.at<float>(row, col));
 		}
 	}
+	std::cout << total << "\n";
 	return total;
 }
 
