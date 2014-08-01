@@ -71,14 +71,11 @@ void VectorField::add(VectorField adding) {
 
 float VectorField::sumOfAbs() {
 	float total = 0.0;
-	std::cout << rows_ << " " << cols_ << "\n";
 	for(int row = 0; row < rows_; row++) {
 		for(int col = 0; col < cols_; col++) {
-			std::cout << col << "\n";
 			total += std::abs(vectorX_.at<float>(row, col)) + std::abs(vectorY_.at<float>(row, col));
 		}
 	}
-	std::cout << total << "\n";
 	return total;
 }
 
