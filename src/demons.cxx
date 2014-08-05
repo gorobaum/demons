@@ -25,7 +25,7 @@ void Demons::demons() {
 	while(1) {
 		time(&startTime);
 		deltaField = newDeltaField(gradients);
-		if(correlationCoef()) break;
+		if(iteration != 1 && stopCriteria(norm, displField, deltaField)) break;
 		updateDisplField(displField, deltaField);
 		updateDeformedImage(displField);
 		double iterTime = getIterationTime(startTime);
@@ -47,12 +47,15 @@ bool Demons::correlationCoef() {
 	calcHist(&staticImage_, 1, channels, cv::Mat(), staticImageHist, 1, &histSize, ranges);
 	calcHist(&deformedImage_, 1, channels, cv::Mat(), deformedImageHist, 1, &histSize, ranges);
 	std::cout << cv::compareHist(staticImageHist, deformedImageHist, CV_COMP_CORREL) << "\n";
-	return cv::compareHist(staticImageHist, deformedImageHist, CV_COMP_CORREL) < 0.95;
+	return cv::compareHist(staticImageHist, deformedImageHist, CV_COMP_CORREL) >= 0.95;
 }
 
 bool Demons::stopCriteria(std::vector<double> &norm, VectorField displField, VectorField deltaField) {
 	double newNorm = deltaField.sumOfAbs()/displField.sumOfAbs();
-	if ((newNorm - norm[9]) > 0.0001) {
+	for (int i = 0; i < 10; i++) std::cout << "norm[" << i << "] = " << norm[i] << "\n";
+	std::cout << "newNorm = " << newNorm << "\n";
+	std::cout << "newNorm - norm = " << std::abs((newNorm - norm[9])) << "\n";
+	if (std::abs((newNorm - norm[9])) > 0.0001) {
 		for (int i = 9; i >= 0; i--) norm[i] = norm[i-1];
 		norm[0] = newNorm;
 		return false;
