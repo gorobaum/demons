@@ -22,12 +22,11 @@ void Demons::demons() {
 	int iteration = 1;
 	compression_params.push_back(CV_IMWRITE_JPEG_QUALITY);
 	compression_params.push_back(95);
-	do {
+	while(1) {
 		time(&startTime);
 		deltaField = newDeltaField(gradients);
-		// deltaField.applyGaussianFilter();
+		if(correlationCoef()) break;
 		updateDisplField(displField, deltaField);
-		// displField.applyGaussianFilter();
 		updateDeformedImage(displField);
 		double iterTime = getIterationTime(startTime);
 		printVFN(displField, iteration);
@@ -35,20 +34,30 @@ void Demons::demons() {
 		printDeformedImage(iteration);
 		std::cout << "Iteration " << iteration << " took " << iterTime << " seconds.\n";
 		iteration++;
-	} while(stopCriteria(norm, displField, deltaField));
-	// } while(iteration < 200);
+	}
 	std::cout << "termino rapa\n";
+}
+
+bool Demons::correlationCoef() {	
+	cv::MatND staticImageHist, deformedImageHist;
+	int channels[] = {0};
+	int histSize = 256;
+    float range[] = { 0, 255 };
+    const float* ranges[] = { range };
+	calcHist(&staticImage_, 1, channels, cv::Mat(), staticImageHist, 1, &histSize, ranges);
+	calcHist(&deformedImage_, 1, channels, cv::Mat(), deformedImageHist, 1, &histSize, ranges);
+	std::cout << cv::compareHist(staticImageHist, deformedImageHist, CV_COMP_CORREL) << "\n";
+	return cv::compareHist(staticImageHist, deformedImageHist, CV_COMP_CORREL) < 0.95;
 }
 
 bool Demons::stopCriteria(std::vector<double> &norm, VectorField displField, VectorField deltaField) {
 	double newNorm = deltaField.sumOfAbs()/displField.sumOfAbs();
-	std::cout << (newNorm - norm[9]) << "\n";
-	if (std::abs((newNorm - norm[9])) > 0.0001) {
-		for (int i = 9; i > 0; i--) norm[i] = norm[i-1];
+	if ((newNorm - norm[9]) > 0.0001) {
+		for (int i = 9; i >= 0; i--) norm[i] = norm[i-1];
 		norm[0] = newNorm;
-		return true;
+		return false;
 	}
-	return false;
+	return true;
 }
 
 void Demons::updateDeformedImage(VectorField displField) {
@@ -66,6 +75,7 @@ void Demons::updateDeformedImage(VectorField displField) {
 
 void Demons::updateDisplField(VectorField displField, VectorField deltaField) {
 	displField.add(deltaField);
+	// displField.applyGaussianFilter();
 }
 
 VectorField Demons::newDeltaField(VectorField gradients) {
@@ -86,6 +96,7 @@ VectorField Demons::newDeltaField(VectorField gradients) {
 			}
 		}
 	}
+	// deltaField.applyGaussianFilter();
 	return deltaField;
 }
 
