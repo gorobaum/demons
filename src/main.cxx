@@ -8,6 +8,7 @@
 #include "deform.h"
 #include "demons.h"
 #include "vectorfield.h"
+#include "interpolation.h"
 
 using namespace cv;
 
@@ -64,14 +65,21 @@ int main(int argc, char** argv) {
 
         imwrite("moving.jpg", deformed, compression_params);
     } else if (strcmp(argv[1], "-T") == 0) {
-        int size = 3;
-        VectorField teste(size,size);
-        for (int row = 0; row < size; row++) {
-            for (int col = 0; col < size; col++) {
-                teste.updateVector(row, col, 2, 2);
+        int rows = 3, cols = 4;
+        cv::Mat teste = cv::Mat::zeros(rows, cols, CV_32F);
+        for(int row = 0; row < rows; row++) {
+            for(int col = 0; col < cols; col++) {
+                teste.at<float>(row, col) = row*0.1;
             }
         }
-        std::cout << teste.sumOfAbs() << "\n";
+        for(int row = 0; row < rows; row++) {
+            for(int col = 0; col < cols; col++) {
+                std::cout << teste.at<float>(row, col) << " ";
+            }
+            std::cout << "\n";
+        }
+        cv::Scalar inter = Interpolation::bilinearInterpolation(teste, 2.5, 2);
+        std::cout << inter << "\n";
     } else {
 		Mat staticImage;
 		Mat movingImage;

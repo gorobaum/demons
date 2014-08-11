@@ -14,7 +14,7 @@ void Demons::demons() {
 	int rows = staticImage_.rows, cols = staticImage_.cols;
 	// Create the deformed image
 	deformedImage_ = movingImage_.clone();
-	std::vector<double> norm(10,0.0);
+	std::vector<float> norm(10,0.0);
 	VectorField gradients = findGrad();
 	gradients.printField("Gradients.dat");
 	VectorField displField(rows, cols);
@@ -46,15 +46,15 @@ bool Demons::correlationCoef() {
     const float* ranges[] = { range };
 	calcHist(&staticImage_, 1, channels, cv::Mat(), staticImageHist, 1, &histSize, ranges);
 	calcHist(&deformedImage_, 1, channels, cv::Mat(), deformedImageHist, 1, &histSize, ranges);
-	std::cout << cv::compareHist(staticImageHist, deformedImageHist, CV_COMP_CORREL) << "\n";
+	// std::cout << cv::compareHist(staticImageHist, deformedImageHist, CV_COMP_CORREL) << "\n";
 	return cv::compareHist(staticImageHist, deformedImageHist, CV_COMP_CORREL) >= 0.95;
 }
 
-bool Demons::stopCriteria(std::vector<double> &norm, VectorField displField, VectorField deltaField) {
-	double newNorm = deltaField.sumOfAbs()/displField.sumOfAbs();
-	for (int i = 0; i < 10; i++) std::cout << "norm[" << i << "] = " << norm[i] << "\n";
-	std::cout << "newNorm = " << newNorm << "\n";
-	std::cout << "newNorm - norm = " << std::abs((newNorm - norm[9])) << "\n";
+bool Demons::stopCriteria(std::vector<float> &norm, VectorField displField, VectorField deltaField) {
+	float newNorm = deltaField.sumOfAbs()/displField.sumOfAbs();
+	// for (int i = 0; i < 10; i++) std::cout << "norm[" << i << "] = " << norm[i] << "\n";
+	// std::cout << "newNorm = " << newNorm << "\n";
+	// std::cout << "newNorm - norm = " << std::abs((newNorm - norm[9])) << "\n";
 	if (std::abs((newNorm - norm[9])) > 0.0001) {
 		for (int i = 9; i >= 0; i--) norm[i] = norm[i-1];
 		norm[0] = newNorm;
@@ -72,13 +72,20 @@ void Demons::updateDeformedImage(VectorField displField) {
 			float newRow = row - displVector[0];
 			float newCol = col - displVector[1];
 			deformedImageRow[col] = Interpolation::bilinearInterpolation(movingImage_, newRow, newCol);
+			// if (displVector[0] != 0 || displVector[1] != 0) {
+			// 	std::cout << "row = " << row << " col = " << col << "\n";
+			// 	std::cout << "displVector[0] = " << displVector[0] << " displVector[1] = " << displVector[1] << "\n";
+			// 	std::cout << "pixel = " << movingImage_.at<uchar>(row,col) << "\n";
+			// 	std::cout << "newRow = " << newRow << " newCol = " << newCol << "\n";
+			// 	std::cout << "pixel = " << deformedImage_.at<uchar>(row,col) << "\n";
+			// }
 		}
 	}
 }
 
 void Demons::updateDisplField(VectorField displField, VectorField deltaField) {
 	displField.add(deltaField);
-	// displField.applyGaussianFilter();
+	displField.applyGaussianFilter();
 }
 
 VectorField Demons::newDeltaField(VectorField gradients) {
@@ -139,6 +146,8 @@ void Demons::printVFN(VectorField vectorField, int iteration) {
 	filename += converter.str() + ".dat";
 	VectorField normalized = vectorField.getNormalized();
 	normalized.printField(filename.c_str());
+	std::string vfName("VectorFieldInformation.info");
+	vectorField.printFieldInfos(vfName, iteration);
 }
 
 void Demons::printVFI(VectorField vectorField, int iteration) {

@@ -8,7 +8,7 @@ class Interpolation {
 	public:
 		static uchar NNInterpolation(cv::Mat image, float row, float col);
 		static uchar bilinearInterpolation(cv::Mat image, float row, float col);
-		static uchar getPixel(cv::Mat image, int row, int col);
+		static cv::Scalar getPixel(cv::Mat image, int row, int col);
 	private:
 		static int getNearestInteger(float number);
 };

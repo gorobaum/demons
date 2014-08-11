@@ -40,8 +40,8 @@ void VectorField::updateVector(int row, int col, float xValue, float yValue) {
 }
 
 void VectorField::applyGaussianFilter() {
-	GaussianBlur(vectorX_, vectorX_, cv::Size(5, 5), 0.03, 0.03);
-	GaussianBlur(vectorY_, vectorY_, cv::Size(5, 5), 0.03, 0.03);
+	GaussianBlur(vectorX_, vectorX_, cv::Size(3, 3), 0.1, 0.1);
+	GaussianBlur(vectorY_, vectorY_, cv::Size(3, 3), 0.1, 0.1);
 }
 
 float VectorField::vectorNorm(std::vector<float> v) {
@@ -91,6 +91,14 @@ void VectorField::printFieldImage(int iteration, std::vector<int> compression_pa
 	convertScaleAbs(vectorY_, abs_grad_y, 255);
 	imwrite(flx.c_str(), abs_grad_x, compression_params);
 	imwrite(fly.c_str(), abs_grad_y, compression_params);
+}
+
+void VectorField::printFieldInfos(std::string filename, int iteration) {
+	std::ofstream myfile;
+	myfile.open(filename);
+	myfile.seekp(0,std::ios_base::end);
+	myfile << iteration << "\n";
+	myfile.close();
 }
 
 void VectorField::printField(std::string filename) {

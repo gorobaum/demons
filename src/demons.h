@@ -31,7 +31,7 @@ class Demons {
 		void printVFI(VectorField vectorField, int iteration);
 		void printDeformedImage(int iteration);
 		void updateDeformedImage(VectorField displField);
-		bool stopCriteria(std::vector<double> &norm, VectorField displField, VectorField deltaField);
+		bool stopCriteria(std::vector<float> &norm, VectorField displField, VectorField deltaField);
 		bool correlationCoef();
 };
 

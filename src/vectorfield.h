@@ -15,6 +15,7 @@ class VectorField {
 		void applyGaussianFilter();
 		VectorField getNormalized();
 		void printField(std::string filename);
+		void printFieldInfos(std::string filename, int iteration);
 		void printFieldImage(int iteration, std::vector<int> compression_params);
 		void add(VectorField adding);
 		float sumOfAbs();
