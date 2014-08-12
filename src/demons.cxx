@@ -10,7 +10,7 @@
 #include "demons.h"
 #include "interpolation.h"
 
-#define RMSEcriteria 1
+#define RMSEcriteria 10
 #define CORRCOEFcriteria 0.95
 #define STOPcriteria 0.0001
 

@@ -114,6 +114,7 @@ std::vector<double> VectorField::getInfos() {
 	for (it=magnitudes.begin(); it!=magnitudes.end(); ++it) {
     	deviation += std::pow((*it - mean),2);
     	if (count == size/2) median = *it;
+    	count++;
 	}
 	deviation /= size;
 	deviation = std::sqrt(deviation);
