@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <cmath>
+#include <set>
 
 #include "vectorfield.h"
 
@@ -93,11 +94,45 @@ void VectorField::printFieldImage(int iteration, std::vector<int> compression_pa
 	imwrite(fly.c_str(), abs_grad_y, compression_params);
 }
 
+std::vector<double> VectorField::getInfos() {
+	std::multiset<double> magnitudes;
+	int size = (rows_*cols_);
+	double max= 0.0, min = 0.0, mean = 0.0, median = 0.0, deviation = 0.0;
+	for(int row = 0; row < rows_; row++) {
+	    for(int col = 0; col < cols_; col++) {
+	    	std::vector<float> vector = getVectorAt(row, col);
+    		double mag = std::sqrt(vector[0]*vector[0] + vector[1]*vector[1]);
+    		if (max < mag) max = mag;
+    		if (min > mag) min = mag;
+    		mean += mag;
+			magnitudes.insert(mag);
+	    }
+	}
+	mean /= size;
+	int count = 1;
+	std::multiset<double>::iterator it;
+	for (it=magnitudes.begin(); it!=magnitudes.end(); ++it) {
+    	deviation += std::pow((*it - mean),2);
+    	if (count == size/2) median = *it;
+	}
+	deviation /= size;
+	deviation = std::sqrt(deviation);
+	std::vector<double> results;
+	results.push_back(min);
+	results.push_back(max);
+	results.push_back(median);
+	results.push_back(mean);
+	results.push_back(deviation);
+	return results;
+}
+
 void VectorField::printFieldInfos(std::string filename, int iteration) {
 	std::ofstream myfile;
-	myfile.open(filename);
-	myfile.seekp(0,std::ios_base::end);
-	myfile << iteration << "\n";
+	if (iteration == 1) myfile.open(filename);
+	else myfile.open(filename, std::ios_base::app);
+	myfile << "Iteration " << iteration << "\n";
+	std::vector<double> results = getInfos();
+	myfile << "Min = " << results[0] << " Max = \t" << results[1] << " Median = \t" << results[2] << " Mean = \t" << results[3] << " Standard Deviaon = \t" << results[4] << "\n";
 	myfile.close();
 }
 

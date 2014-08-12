@@ -10,6 +10,10 @@
 #include "demons.h"
 #include "interpolation.h"
 
+#define RMSEcriteria 1
+#define CORRCOEFcriteria 0.95
+#define STOPcriteria 0.0001
+
 void Demons::demons() {
 	int rows = staticImage_.rows, cols = staticImage_.cols;
 	// Create the deformed image
@@ -25,7 +29,7 @@ void Demons::demons() {
 	while(1) {
 		time(&startTime);
 		deltaField = newDeltaField(gradients);
-		if(iteration != 1 && stopCriteria(norm, displField, deltaField)) break;
+		if(iteration != 1 && rootMeanSquareError()) break;
 		updateDisplField(displField, deltaField);
 		updateDeformedImage(displField);
 		double iterTime = getIterationTime(startTime);
@@ -47,7 +51,23 @@ bool Demons::correlationCoef() {
 	calcHist(&staticImage_, 1, channels, cv::Mat(), staticImageHist, 1, &histSize, ranges);
 	calcHist(&deformedImage_, 1, channels, cv::Mat(), deformedImageHist, 1, &histSize, ranges);
 	// std::cout << cv::compareHist(staticImageHist, deformedImageHist, CV_COMP_CORREL) << "\n";
-	return cv::compareHist(staticImageHist, deformedImageHist, CV_COMP_CORREL) >= 0.95;
+	return cv::compareHist(staticImageHist, deformedImageHist, CV_COMP_CORREL) >= CORRCOEFcriteria;
+}
+
+bool Demons::rootMeanSquareError() {
+	cv::Mat diff;
+	diff = deformedImage_.clone();
+	diff = diff - staticImage_;
+	int rows = diff.rows, cols = diff.cols;
+	double rmse = 0.0;
+	for(int row = 0; row < rows; row++) {
+		uchar* diffRow = diff.ptr(row);
+		for(int col = 0; col < cols; col++) {
+			rmse += diffRow[col]*diffRow[col];
+		}
+	}
+	rmse = std::sqrt(rmse/(rows*cols));
+	return rmse < RMSEcriteria;
 }
 
 bool Demons::stopCriteria(std::vector<float> &norm, VectorField displField, VectorField deltaField) {
@@ -55,7 +75,7 @@ bool Demons::stopCriteria(std::vector<float> &norm, VectorField displField, Vect
 	// for (int i = 0; i < 10; i++) std::cout << "norm[" << i << "] = " << norm[i] << "\n";
 	// std::cout << "newNorm = " << newNorm << "\n";
 	// std::cout << "newNorm - norm = " << std::abs((newNorm - norm[9])) << "\n";
-	if (std::abs((newNorm - norm[9])) > 0.0001) {
+	if (std::abs((newNorm - norm[9])) > STOPcriteria) {
 		for (int i = 9; i >= 0; i--) norm[i] = norm[i-1];
 		norm[0] = newNorm;
 		return false;
@@ -135,7 +155,6 @@ void Demons::printDeformedImage(int iteration) {
 	std::ostringstream converter;
 	converter << iteration;
 	imageName += converter.str() + ".jpg";
-	std::cout << imageName.c_str() << "\n";
     imwrite(imageName.c_str(), deformedImage_, compression_params);
 }
 

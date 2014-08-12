@@ -33,6 +33,7 @@ class Demons {
 		void updateDeformedImage(VectorField displField);
 		bool stopCriteria(std::vector<float> &norm, VectorField displField, VectorField deltaField);
 		bool correlationCoef();
+		bool rootMeanSquareError();
 };
 
 #endif
