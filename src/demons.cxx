@@ -29,7 +29,7 @@ void Demons::demons() {
 	while(1) {
 		time(&startTime);
 		deltaField = newDeltaField(gradients);
-		if(iteration != 1 && rootMeanSquareError()) break;
+		if(iteration != 1 && stopCriteria(norm, displField, deltaField)) break;
 		updateDisplField(displField, deltaField);
 		updateDeformedImage(displField);
 		double iterTime = getIterationTime(startTime);
@@ -42,7 +42,7 @@ void Demons::demons() {
 	std::cout << "termino rapa\n";
 }
 
-bool Demons::correlationCoef() {	
+bool Demons::correlationCoef() {
 	cv::MatND staticImageHist, deformedImageHist;
 	int channels[] = {0};
 	int histSize = 256;
@@ -89,9 +89,9 @@ void Demons::updateDeformedImage(VectorField displField) {
 		uchar* deformedImageRow = deformedImage_.ptr(row);
 		for(int col = 0; col < cols; col++) {
 			std::vector<float> displVector = displField.getVectorAt(row, col);
-			float newRow = row - displVector[0];
-			float newCol = col - displVector[1];
-			deformedImageRow[col] = Interpolation::bilinearInterpolation(movingImage_, newRow, newCol);
+			float newRow = row + displVector[0];
+			float newCol = col + displVector[1];
+			deformedImageRow[col] = Interpolation::NNInterpolation(movingImage_, newRow, newCol);
 			// if (displVector[0] != 0 || displVector[1] != 0) {
 			// 	std::cout << "row = " << row << " col = " << col << "\n";
 			// 	std::cout << "displVector[0] = " << displVector[0] << " displVector[1] = " << displVector[1] << "\n";
@@ -105,7 +105,7 @@ void Demons::updateDeformedImage(VectorField displField) {
 
 void Demons::updateDisplField(VectorField displField, VectorField deltaField) {
 	displField.add(deltaField);
-	displField.applyGaussianFilter();
+	// displField.applyGaussianFilter();
 }
 
 VectorField Demons::newDeltaField(VectorField gradients) {
@@ -136,8 +136,8 @@ VectorField Demons::findGrad() {
 	cv::Mat sobelY = cv::Mat::zeros(rows, cols, CV_32F);
 	cv::Sobel(staticImage_, sobelX, CV_32F, 1, 0);
 	cv::Sobel(staticImage_, sobelY, CV_32F, 0, 1);
-	sobelX = normalizeSobelImage(sobelX);
-	sobelY = normalizeSobelImage(sobelY);
+	// sobelX = normalizeSobelImage(sobelX);
+	// sobelY = normalizeSobelImage(sobelY);
 	VectorField grad(sobelX, sobelY);
 	return grad;
 }
