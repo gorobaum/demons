@@ -1,0 +1,17 @@
+- olhar exemplos da itk
+- Rodar o octave e o itk
+- testar outros gradientes
+- testar com uma imagem mais básica
+
+= pa depois =
+
+- Achar a lena em RGB e deformar um dos componentes.
+- teste com imagem de ressonancia cardiaca
+
+= finished =
+
+- testar interpolação (Ok)
+- RMSerror como criterio de parada (ok)
+- calcular media, mediana, minimo, maximo e desvio padrao das magnitudes dos vetores e imprimir (ok)
+- Razão de aspecto do plot (ok)
+- tirar normalização do sobel (ok)
