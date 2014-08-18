@@ -28,6 +28,14 @@ int VectorField::getCols() {
 	return cols_;
 }	
 
+cv::Mat VectorField::getMatRow() {
+	return vectorRow_;
+}	
+
+cv::Mat VectorField::getMatCol() {
+	return vectorCol_;
+}	
+
 std::vector<float> VectorField::getVectorAt(int row, int col) {
 	std::vector<float> auxVec;
 	auxVec.push_back(getValue(vectorRow_, row, col));
@@ -41,8 +49,8 @@ void VectorField::updateVector(int row, int col, float rowValue, float colValue)
 }
 
 void VectorField::applyGaussianFilter() {
-	GaussianBlur(vectorRow_, vectorRow_, cv::Size(3, 3), 0.3, 0.3);
-	GaussianBlur(vectorCol_, vectorCol_, cv::Size(3, 3), 0.3, 0.3);
+	GaussianBlur(vectorRow_, vectorRow_, cv::Size(3, 3), 1, 1);
+	GaussianBlur(vectorCol_, vectorCol_, cv::Size(3, 3), 1, 1);
 }
 
 float VectorField::vectorNorm(std::vector<float> v) {
@@ -129,7 +137,7 @@ std::vector<double> VectorField::getInfos() {
 
 void VectorField::printFieldInfos(std::string filename, int iteration) {
 	std::ofstream myfile;
-	if (iteration == 1) myfile.open(filename);
+	if (iteration <= 1) myfile.open(filename);
 	else myfile.open(filename, std::ios_base::app);
 	myfile << "Iteration " << iteration << "\n";
 	std::vector<double> results = getInfos();

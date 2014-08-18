@@ -21,6 +21,8 @@ class VectorField {
 		float sumOfAbs();
 		int getRows();
 		int getCols();
+		cv::Mat getMatRow();
+		cv::Mat getMatCol();
 	private:
 		cv::Mat vectorCol_;
 		cv::Mat vectorRow_;
