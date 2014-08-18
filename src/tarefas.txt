@@ -3,6 +3,7 @@
 - Rodar o itk
 - Rodar o bioimages
 - testar com uma imagem mais básica
+- setar criterio de parada para o RMS
 
 = pa depois =
 
@@ -12,7 +13,7 @@
 = finished =
 
 - testar outros gradientes (ok)
-- testar interpolação (Ok)
+- testar interpolação (ok)
 - RMSerror como criterio de parada (ok)
 - calcular media, mediana, minimo, maximo e desvio padrao das magnitudes dos vetores e imprimir (ok)
 - Razão de aspecto do plot (ok)

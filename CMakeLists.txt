@@ -21,4 +21,9 @@ endif (X11_FOUND)
 target_link_libraries (main ${CMAKE_THREAD_LIBS_INIT} ${OpenCV_LIBS})
 list( APPEND CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS_DEBUG} -Wall -g")
 
+add_custom_target (
+	cleanShit
+	COMMAND ${CMAKE_COMMAND} -E remove VFN-Iteration* Iteration* DFI-Iteration* VectorFieldInformation.info deformed* Gradients*
+)
+
 
