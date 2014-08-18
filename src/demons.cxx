@@ -19,7 +19,7 @@ void Demons::demons() {
 	// Create the deformed image
 	deformedImage_ = movingImage_.clone();
 	std::vector<float> norm(10,0.0);
-	VectorField gradients = findGrad();
+	VectorField gradients = findGradSobel();
 	gradients.printField("Gradients.dat");
 	gradients.getNormalized().printField("GradientsN.dat");
 	VectorField displField(rows, cols);
@@ -107,7 +107,7 @@ void Demons::updateDeformedImage(VectorField displField) {
 void Demons::updateDisplField(VectorField displField, VectorField deltaField) {
 	// deltaField.applyGaussianFilter();
 	displField.add(deltaField);
-	// displField.applyGaussianFilter();
+	displField.applyGaussianFilter();
 }
 
 VectorField Demons::newDeltaField(VectorField gradients) {
@@ -137,10 +137,10 @@ VectorField Demons::findGrad() {
 	cv::Mat kernelCol = cv::Mat::zeros(3, 3, CV_32F);
 	cv::Mat gradRow = cv::Mat::zeros(rows, cols, CV_32F);
 	cv::Mat gradCol = cv::Mat::zeros(rows, cols, CV_32F);
-	kernelRow.at<float>(0,1) = -1;
-	kernelRow.at<float>(2,1) = 1;
-	kernelCol.at<float>(1,0) = -1;
-	kernelCol.at<float>(1,2) = 1;
+	kernelRow.at<float>(1,0) = -1;
+	kernelRow.at<float>(1,2) = 1;
+	kernelCol.at<float>(0,1) = -1;
+	kernelCol.at<float>(2,1) = 1;
 	filter2D(staticImage_, gradRow, CV_32F , kernelRow);
 	filter2D(staticImage_, gradCol, CV_32F , kernelCol);
 	VectorField grad(gradRow, gradCol);
