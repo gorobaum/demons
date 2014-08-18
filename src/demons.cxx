@@ -19,8 +19,9 @@ void Demons::demons() {
 	// Create the deformed image
 	deformedImage_ = movingImage_.clone();
 	std::vector<float> norm(10,0.0);
-	VectorField gradients = findGradsobel();
+	VectorField gradients = findGrad();
 	gradients.printField("Gradients.dat");
+	gradients.getNormalized().printField("GradientsN.dat");
 	VectorField displField(rows, cols);
 	VectorField deltaField(rows, cols);
 	int iteration = 1;
@@ -146,7 +147,7 @@ VectorField Demons::findGrad() {
 	return grad;
 }
 
-VectorField Demons::findGradsobel() {
+VectorField Demons::findGradSobel() {
 	int rows = staticImage_.rows, cols = staticImage_.cols;
 	cv::Mat gradRow = cv::Mat::zeros(rows, cols, CV_32F);
 	cv::Mat gradCol = cv::Mat::zeros(rows, cols, CV_32F);

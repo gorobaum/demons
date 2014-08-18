@@ -1,6 +1,7 @@
 - olhar exemplos da itk
-- Rodar o octave e o itk
-- testar outros gradientes
+- Rodar o octave 
+- Rodar o itk
+- Rodar o bioimages
 - testar com uma imagem mais básica
 
 = pa depois =
@@ -10,6 +11,7 @@
 
 = finished =
 
+- testar outros gradientes (ok)
 - testar interpolação (Ok)
 - RMSerror como criterio de parada (ok)
 - calcular media, mediana, minimo, maximo e desvio padrao das magnitudes dos vetores e imprimir (ok)
