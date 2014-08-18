@@ -8,10 +8,10 @@
 
 class VectorField {
 	public:
-		VectorField (cv::Mat &vectorX, cv::Mat &vectorY);
-		VectorField (int rows, int cols);
+		VectorField(cv::Mat &vectorRow, cv::Mat &vectorCol);
+		VectorField(int rows, int cols);
 		std::vector<float> getVectorAt(int row, int col);
-		void updateVector(int row, int col, float xValue, float yValue);
+		void updateVector(int row, int col, float rowValue, float colValue);
 		void applyGaussianFilter();
 		VectorField getNormalized();
 		void printField(std::string filename);
@@ -22,8 +22,8 @@ class VectorField {
 		int getRows();
 		int getCols();
 	private:
-		cv::Mat vectorX_;
-		cv::Mat vectorY_;
+		cv::Mat vectorCol_;
+		cv::Mat vectorRow_;
 		float getValue(cv::Mat image, int row, int col);
 		float vectorNorm(std::vector<float> v);
 		std::vector<double> getInfos();

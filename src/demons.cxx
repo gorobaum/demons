@@ -89,9 +89,9 @@ void Demons::updateDeformedImage(VectorField displField) {
 		uchar* deformedImageRow = deformedImage_.ptr(row);
 		for(int col = 0; col < cols; col++) {
 			std::vector<float> displVector = displField.getVectorAt(row, col);
-			float newRow = row + displVector[1];
-			float newCol = col + displVector[0];
-			deformedImageRow[col] = Interpolation::NNInterpolation(movingImage_, newRow, newCol);
+			float newRow = row + displVector[0];
+			float newCol = col + displVector[1];
+			deformedImageRow[col] = Interpolation::bilinearInterpolation(movingImage_, newRow, newCol);
 			// if (displVector[0] != 0 || displVector[1] != 0) {
 			// 	std::cout << "row = " << row << " col = " << col << "\n";
 			// 	std::cout << "displVector[0] = " << displVector[0] << " displVector[1] = " << displVector[1] << "\n";
@@ -104,6 +104,7 @@ void Demons::updateDeformedImage(VectorField displField) {
 }
 
 void Demons::updateDisplField(VectorField displField, VectorField deltaField) {
+	// deltaField.applyGaussianFilter();
 	displField.add(deltaField);
 	// displField.applyGaussianFilter();
 }
@@ -120,25 +121,24 @@ VectorField Demons::newDeltaField(VectorField gradients) {
 			float diff = (deformedRow[col] - staticRow[col]);
 			float denominator = diff*diff + gradient[0]*gradient[0] + gradient[1]*gradient[1];
 			if (denominator > 0.0) {
-				float xValue = gradient[0]*diff/denominator;
-				float yValue = gradient[1]*diff/denominator;
-				deltaField.updateVector(row, col, xValue, yValue);
+				float rowValue = gradient[0]*diff/denominator;
+				float colValue = gradient[1]*diff/denominator;
+				deltaField.updateVector(row, col, rowValue, colValue);
 			}
 		}
 	}
-	// deltaField.applyGaussianFilter();
 	return deltaField;
 }
 
 VectorField Demons::findGrad() {
 	int rows = staticImage_.rows, cols = staticImage_.cols;
-	cv::Mat sobelX = cv::Mat::zeros(rows, cols, CV_32F);
-	cv::Mat sobelY = cv::Mat::zeros(rows, cols, CV_32F);
-	cv::Sobel(staticImage_, sobelX, CV_32F, 1, 0);
-	cv::Sobel(staticImage_, sobelY, CV_32F, 0, 1);
-	// sobelX = normalizeSobelImage(sobelX);
-	// sobelY = normalizeSobelImage(sobelY);
-	VectorField grad(sobelX, sobelY);
+	cv::Mat sobelRow = cv::Mat::zeros(rows, cols, CV_32F);
+	cv::Mat sobelCol = cv::Mat::zeros(rows, cols, CV_32F);
+	cv::Sobel(staticImage_, sobelRow, CV_32F, 0, 1);
+	cv::Sobel(staticImage_, sobelCol, CV_32F, 1, 0);
+	// sobelCol = normalizeSobelImage(sobelCol);
+	// sobelRow = normalizeSobelImage(sobelRow);
+	VectorField grad(sobelRow, sobelCol);
 	return grad;
 }
 
