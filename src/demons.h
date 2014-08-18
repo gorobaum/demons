@@ -23,6 +23,7 @@ class Demons {
 		time_t startTime;
 		double totalTime;
 		VectorField findGrad();
+		VectorField findGradsobel();
 		double getIterationTime(time_t startTime);
 		cv::Mat normalizeSobelImage(cv::Mat sobelImage);
 		VectorField newDeltaField(VectorField gradients);

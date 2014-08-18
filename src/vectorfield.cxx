@@ -147,13 +147,13 @@ void VectorField::printField(std::string filename) {
 	for(int row = 0; row < rows_; row++) {
 	    for(int col = 0; col < cols_; col++) {
 	    	std::vector<float> vector = getVectorAt(row, col);
-    		double redCol = 255*(vector[0]-minValCol)/(maxValCol-minValCol);
-			double blueCol = 255*(maxValCol-vector[0])/(maxValCol-minValCol);
-			double redRow = 255*(vector[1]-minValRow)/(maxValRow-minValRow);
-			double blueRow = 255*(maxValRow-vector[1])/(maxValRow-minValRow);
+    		double redCol = 255*(vector[1]-minValCol)/(maxValCol-minValCol);
+			double blueCol = 255*(maxValCol-vector[1])/(maxValCol-minValCol);
+			double redRow = 255*(vector[0]-minValRow)/(maxValRow-minValRow);
+			double blueRow = 255*(maxValRow-vector[0])/(maxValRow-minValRow);
 			int red = (redCol + redRow)/2;
 			int blue = (blueCol + blueRow)/2;
-			myfile << col << " " << (vectorCol_.rows - row) << " " << vector[0] << " " << vector[1] << " " <<  red << " " << 0 << " " << blue << "\n";
+			myfile << col << " " << (vectorCol_.rows - row) << " " << vector[1] << " " << vector[0] << " " <<  red << " " << 0 << " " << blue << "\n";
 	    }
 	}
 	myfile.close();
