@@ -89,8 +89,8 @@ void Demons::updateDeformedImage(VectorField displField) {
 		uchar* deformedImageRow = deformedImage_.ptr(row);
 		for(int col = 0; col < cols; col++) {
 			std::vector<float> displVector = displField.getVectorAt(row, col);
-			float newRow = row + displVector[0];
-			float newCol = col + displVector[1];
+			float newRow = row + displVector[1];
+			float newCol = col + displVector[0];
 			deformedImageRow[col] = Interpolation::NNInterpolation(movingImage_, newRow, newCol);
 			// if (displVector[0] != 0 || displVector[1] != 0) {
 			// 	std::cout << "row = " << row << " col = " << col << "\n";
