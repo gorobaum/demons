@@ -1,0 +1,52 @@
+\documentclass[compress]{beamer}
+\usepackage{default}
+\usepackage{graphicx}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage[brazil]{babel}
+\usepackage[utf8]{inputenc}
+\usetheme{Szeged}
+\usecolortheme{whale}
+
+\title{Registo de Imagens\\Algoritmo Demons}
+\author{Thiago de Gouveia Nunes}
+\date{}
+
+\begin{document}
+
+\frame{\titlepage}
+
+\begin{frame}
+  O algoritmo Demons foi desenvolvido utilizando o método de fluxo óptico. Esse métoo é usado para encontrar um campo vetorial de deslocamento que leva
+  um volume móvel até outro volume estático. \\
+  A principal hipótese desse método é que as intensidades dos dois volumes são iguais.
+\end{frame}
+
+\begin{frame}
+  Partindo da hipótese acima, o campo vetorial é dado por: \\
+  \begin{equation*}
+    \overrightarrow{v_i} . \overrightarrow{\triangledown}s_i = M(i) - S(i)
+  \end{equation*}
+\end{frame}
+
+\begin{frame}
+  A equação acima tem váriaveis demais, e não pode ser resolvida. Para resolver esse problema, o demons foi desenvolvido usando um processo
+  iterativo. A cada passo um campo novo é calculado, e esse campo é aplicado a um novo volume, chamado de deformado, até que o campo se estabilize.
+\end{frame}
+
+\begin{frame}
+  Algumas variantes do algoritmo:
+  \begin{itemize}
+    \item Cálculo do campo usando as informações dos dois volumes. \\
+    \item Introdução de um valor para ajuste iterativo do campo. \\
+    \item Utilização da intensidade do volume móvel ao invés do estático.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  Podemos modificar o critério de parada também. Definindo uma norma relativa, que representa o incremento da iteração atual no campo, podemos parar o
+  algoritmo quando esse incremento é baixo.
+\end{frame}
+
+\end{document}
