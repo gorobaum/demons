@@ -1,11 +1,11 @@
+- arrumar a interpolação. Ela pode cair em qq dos 4 quadrantes
 - olhar exemplos da itk
-- Rodar o octave 
+- Rodar o octave
 - Rodar o itk
 - Rodar o bioimages
-- testar com uma imagem mais básica
+- passar a deformed para float (?)
 - setar criterio de parada para o RMS
-- passar a deformed para float
-- arrumar a interpolação. Ela pode cair em qq dos 4 quadrantes.
+- testar com uma imagem mais básica
 
 = pa depois =
 
