@@ -18,26 +18,27 @@
 void Demons::demons() {
 	int rows = staticImage_.rows, cols = staticImage_.cols;
 	// Create the deformed image
-	deformedImage_ = movingImage_.clone();
+	deformedImage_ = cv::Mat::zeros(rows, cols, CV_32F);
+	movingImage_.convertTo(deformedImage_,CV_32F,1,0);
 	std::vector<float> norm(10,0.0);
 	VectorField gradients = findGradSobel();
 	gradients.printField("Gradients.dat");
 	std::string gfName("GradientInformation.info");
 	gradients.printFieldInfos(gfName, 1);
-	for(int i = POS - 1; i < POS + 2; i ++) {
-		for(int j = POS - 1; j < POS + 2; j++) {
-			std::cout << (int)staticImage_.at<uchar>(i,j) << "\t";
-		}
-		std::cout << "\n";
-	}
-	std::cout << "\n";
-	for(int i = POS - 1; i < POS + 2; i ++) {
-		for(int j = POS - 1; j < POS + 2; j++) {
-			std::cout << (int)movingImage_.at<uchar>(i,j) << "\t";
-		}
-		std::cout << "\n";
-	}
-	std::cout << "Gradient[" << POS << "][" << POS << "] = [" << gradients.getVectorAt(POS,POS)[0] << "][" << gradients.getVectorAt(POS,POS)[1] << "]\n";
+	// for(int i = POS - 1; i < POS + 2; i ++) {
+	// 	for(int j = POS - 1; j < POS + 2; j++) {
+	// 		std::cout << (int)staticImage_.at<uchar>(i,j) << "\t";
+	// 	}
+	// 	std::cout << "\n";
+	// }
+	// std::cout << "\n";
+	// for(int i = POS - 1; i < POS + 2; i ++) {
+	// 	for(int j = POS - 1; j < POS + 2; j++) {
+	// 		std::cout << (int)movingImage_.at<uchar>(i,j) << "\t";
+	// 	}
+	// 	std::cout << "\n";
+	// }
+	// std::cout << "Gradient[" << POS << "][" << POS << "] = [" << gradients.getVectorAt(POS,POS)[0] << "][" << gradients.getVectorAt(POS,POS)[1] << "]\n";
 	// float gradRow = -1*(int)staticImage_.at<uchar>(0,0)-2*(int)staticImage_.at<uchar>(0,1)-1*(int)staticImage_.at<uchar>(0,2)
 	// 				+1*(int)staticImage_.at<uchar>(2,0)-2*(int)staticImage_.at<uchar>(2,1)+1*(int)staticImage_.at<uchar>(2,2);
 	// std::cout<< "GradRow = " << gradRow << "\n";
@@ -49,12 +50,12 @@ void Demons::demons() {
 	compression_params.push_back(CV_IMWRITE_JPEG_QUALITY);
 	compression_params.push_back(95);
 	while(1) {
-		for(int i = POS - 1; i < POS + 2; i ++) {
-			for(int j = POS - 1; j < POS + 2; j++) {
-				std::cout << (int)deformedImage_.at<uchar>(i,j) << "\t";
-			}
-			std::cout << "\n";
-		}
+		// for(int i = POS - 1; i < POS + 2; i ++) {
+		// 	for(int j = POS - 1; j < POS + 2; j++) {
+		// 		std::cout << (int)deformedImage_.at<float>(i,j) << "\t";
+		// 	}
+		// 	std::cout << "\n";
+		// }
 		time(&startTime);
 		deltaField = newDeltaField(gradients);
 		if(iteration != 1 && stopCriteria(norm, displField, deltaField)) break;
@@ -83,15 +84,13 @@ bool Demons::correlationCoef() {
 }
 
 bool Demons::rootMeanSquareError() {
-	cv::Mat diff;
-	diff = deformedImage_.clone();
-	diff = diff - staticImage_;
-	int rows = diff.rows, cols = diff.cols;
+	int rows = deformedImage_.rows, cols = deformedImage_.cols;
 	double rmse = 0.0;
 	for(int row = 0; row < rows; row++) {
-		uchar* diffRow = diff.ptr(row);
+		uchar* dRow = deformedImage_.ptr(row);
+		uchar* mRow = staticImage_.ptr(row);
 		for(int col = 0; col < cols; col++) {
-			rmse += diffRow[col]*diffRow[col];
+			rmse += (dRow[col]-mRow[col])*(dRow[col]-mRow[col]);
 		}
 	}
 	rmse = std::sqrt(rmse/(rows*cols));
@@ -120,10 +119,10 @@ void Demons::updateDeformedImage(VectorField displField) {
 			double newRow = row - displVector[0];
 			double newCol = col - displVector[1];
 			bool print = false;
-			if (col == POS && row == POS) {
-				std::cout << "newRow = " << newRow << " newCol = " << newCol << "\n";
-				print = true;
-			}
+			// if (col == POS && row == POS) {
+			// 	std::cout << "newRow = " << newRow << " newCol = " << newCol << "\n";
+			// 	print = true;
+			// }
 			deformedImageRow[col] = Interpolation::bilinearInterpolation(movingImage_, newRow, newCol, print);
 			// if (displVector[0] != 0 || displVector[1] != 0) {
 			// 	std::cout << "row = " << row << " col = " << col << "\n";
@@ -137,30 +136,30 @@ void Demons::updateDeformedImage(VectorField displField) {
 
 void Demons::updateDisplField(VectorField displField, VectorField deltaField) {
 	// deltaField.applyGaussianFilter();
-	std::cout << "DisplField[" << POS << "][" << POS << "] = [" << displField.getVectorAt(POS,POS)[0] << "][" << displField.getVectorAt(POS,POS)[1] << "]\n";
+	// std::cout << "DisplField[" << POS << "][" << POS << "] = [" << displField.getVectorAt(POS,POS)[0] << "][" << displField.getVectorAt(POS,POS)[1] << "]\n";
 	displField.add(deltaField);
-	std::cout << "DisplField[" << POS << "][" << POS << "] = [" << displField.getVectorAt(POS,POS)[0] << "][" << displField.getVectorAt(POS,POS)[1] << "]\n";
+	// std::cout << "DisplField[" << POS << "][" << POS << "] = [" << displField.getVectorAt(POS,POS)[0] << "][" << displField.getVectorAt(POS,POS)[1] << "]\n";
 	// displField.applyGaussianFilter();
 }
 
 VectorField Demons::newDeltaField(VectorField gradients) {
 	int rows = gradients.getRows(), cols = gradients.getCols();
 	VectorField deltaField(rows, cols);
-	cv::Mat diffImage = deformedImage_ - staticImage_;
 	for(int row = 0; row < rows; row++) {
-		uchar* diffRow = diffImage.ptr(row);
+		uchar* dRow = deformedImage_.ptr(row);
+		uchar* sRow = staticImage_.ptr(row);
 		for(int col = 0; col < cols; col++) {
 			std::vector<float> gradient = gradients.getVectorAt(row, col);
-
-			float denominator = diffRow[col]*diffRow[col] + gradient[0]*gradient[0] + gradient[1]*gradient[1];
+			float diff = dRow[col] - sRow[col];
+			float denominator = diff*diff + gradient[0]*gradient[0] + gradient[1]*gradient[1];
 			if (denominator > 0.0) {
-				float rowValue = gradient[0]*diffRow[col]/denominator;
-				float colValue = gradient[1]*diffRow[col]/denominator;
+				float rowValue = gradient[0]*diff/denominator;
+				float colValue = gradient[1]*diff/denominator;
 				deltaField.updateVector(row, col, rowValue, colValue);
 			}
 		}
 	}
-	std::cout << "DeltaField[" << POS << "][" << POS << "] = [" << deltaField.getVectorAt(POS,POS)[0] << "][" << deltaField.getVectorAt(POS,POS)[1] << "]\n";
+	// std::cout << "DeltaField[" << POS << "][" << POS << "] = [" << deltaField.getVectorAt(POS,POS)[0] << "][" << deltaField.getVectorAt(POS,POS)[1] << "]\n";
 	return deltaField;
 }
 
