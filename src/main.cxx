@@ -78,13 +78,11 @@ int main(int argc, char** argv) {
             }
             std::cout << "\n";
         }
-        cv::Scalar inter = Interpolation::bilinearInterpolation(teste, 2.5, 2);
+        cv::Scalar inter = Interpolation::bilinearInterpolation(teste, 2.5, 2, false);
         std::cout << inter << "\n";
     } else {
-		Mat staticImage;
-		Mat movingImage;
-        staticImage = imread(argv[1], CV_LOAD_IMAGE_GRAYSCALE);
-        movingImage = imread(argv[2], CV_LOAD_IMAGE_GRAYSCALE);
+		Mat staticImage = imread(argv[1], CV_LOAD_IMAGE_GRAYSCALE);
+		Mat movingImage = imread(argv[2], CV_LOAD_IMAGE_GRAYSCALE);
         Demons demons(staticImage, movingImage);
         demons.demons();
         Mat deformed = demons.getRegistration();

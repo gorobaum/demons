@@ -13,7 +13,7 @@
 #define RMSEcriteria 10
 #define CORRCOEFcriteria 0.95
 #define STOPcriteria 0.0001
-#define POS 129
+#define POS 131
 
 void Demons::demons() {
 	int rows = staticImage_.rows, cols = staticImage_.cols;
@@ -31,6 +31,12 @@ void Demons::demons() {
 		std::cout << "\n";
 	}
 	std::cout << "\n";
+	for(int i = POS - 1; i < POS + 2; i ++) {
+		for(int j = POS - 1; j < POS + 2; j++) {
+			std::cout << (int)movingImage_.at<uchar>(i,j) << "\t";
+		}
+		std::cout << "\n";
+	}
 	std::cout << "Gradient[" << POS << "][" << POS << "] = [" << gradients.getVectorAt(POS,POS)[0] << "][" << gradients.getVectorAt(POS,POS)[1] << "]\n";
 	// float gradRow = -1*(int)staticImage_.at<uchar>(0,0)-2*(int)staticImage_.at<uchar>(0,1)-1*(int)staticImage_.at<uchar>(0,2)
 	// 				+1*(int)staticImage_.at<uchar>(2,0)-2*(int)staticImage_.at<uchar>(2,1)+1*(int)staticImage_.at<uchar>(2,2);
@@ -113,10 +119,12 @@ void Demons::updateDeformedImage(VectorField displField) {
 			std::vector<float> displVector = displField.getVectorAt(row, col);
 			double newRow = row - displVector[0];
 			double newCol = col - displVector[1];
+			bool print = false;
 			if (col == POS && row == POS) {
 				std::cout << "newRow = " << newRow << " newCol = " << newCol << "\n";
+				print = true;
 			}
-			deformedImageRow[col] = Interpolation::bilinearInterpolation(movingImage_, newRow, newCol);
+			deformedImageRow[col] = Interpolation::bilinearInterpolation(movingImage_, newRow, newCol, print);
 			// if (displVector[0] != 0 || displVector[1] != 0) {
 			// 	std::cout << "row = " << row << " col = " << col << "\n";
 			// 	std::cout << "displVector[0] = " << displVector[0] << " displVector[1] = " << displVector[1] << "\n";
