@@ -13,7 +13,8 @@
 #define RMSEcriteria 10
 #define CORRCOEFcriteria 0.95
 #define STOPcriteria 0.0001
-#define POS 131
+#define POSR 130
+#define POSC 131
 
 void Demons::demons() {
 	int rows = staticImage_.rows, cols = staticImage_.cols;
@@ -24,36 +25,36 @@ void Demons::demons() {
 	gradients.printField("Gradients.dat");
 	std::string gfName("GradientInformation.info");
 	gradients.printFieldInfos(gfName, 1);
-	// for(int i = POS - 1; i < POS + 2; i ++) {
-	// 	for(int j = POS - 1; j < POS + 2; j++) {
+	// for(int i = POSR - 1; i < POSR + 2; i ++) {
+	// 	for(int j = POSC - 1; j < POSC + 2; j++) {
 	// 		std::cout << (int)staticImage_.at<uchar>(i,j) << "\t";
 	// 	}
 	// 	std::cout << "\n";
 	// }
 	// std::cout << "\n";
-	// for(int i = POS - 1; i < POS + 2; i ++) {
-	// 	for(int j = POS - 1; j < POS + 2; j++) {
+	// for(int i = POSR - 1; i < POSR + 2; i ++) {
+	// 	for(int j = POSC - 1; j < POSC + 2; j++) {
 	// 		std::cout << (int)movingImage_.at<uchar>(i,j) << "\t";
 	// 	}
 	// 	std::cout << "\n";
 	// }
-	// std::cout << "Gradient[" << POS << "][" << POS << "] = [" << gradients.getVectorAt(POS,POS)[0] << "][" << gradients.getVectorAt(POS,POS)[1] << "]\n";
+	// std::cout << "Gradient[" << POSR << "][" << POSC << "] = [" << gradients.getVectorAt(POSR,POSC)[0] << "][" << gradients.getVectorAt(POSR,POSC)[1] << "]\n";
 	// gradients.getNormalized().printField("GradientsN.dat");
 	VectorField displField(rows, cols);
 	VectorField deltaField(rows, cols);
 	int iteration = 1;
 	compression_params.push_back(CV_IMWRITE_JPEG_QUALITY);
 	compression_params.push_back(95);
-	while(1) {
-		// for(int i = POS - 1; i < POS + 2; i ++) {
-		// 	for(int j = POS - 1; j < POS + 2; j++) {
-		// 		std::cout << (int)deformedImage_.at<float>(i,j) << "\t";
-		// 	}
-		// 	std::cout << "\n";
-		// }
+	while(iteration <= 50) {
+		for(int i = POSR - 1; i < POSR + 2; i ++) {
+			for(int j = POSC - 1; j < POSC + 2; j++) {
+				std::cout << (int)deformedImage_.at<float>(i,j) << "\t";
+			}
+			std::cout << "\n";
+		}
 		time(&startTime);
 		deltaField = newDeltaField(gradients);
-		if(iteration != 1 && stopCriteria(norm, displField, deltaField)) break;
+		// if(iteration != 1 && stopCriteria(norm, displField, deltaField)) break;
 		updateDisplField(displField, deltaField);
 		updateDeformedImage(displField);
 		double iterTime = getIterationTime(startTime);
@@ -116,22 +117,22 @@ void Demons::updateDeformedImage(VectorField displField) {
 			double newRow = row - displVector[0];
 			double newCol = col - displVector[1];
 			bool print = false;
-			// if (col == POS && row == POS) {
-			// 	std::cout << "newRow = " << newRow << " newCol = " << newCol << "\n";
-			// 	print = true;
-			// }
+			if (col == POSC && row == POSR) {
+				std::cout << "newRow = " << newRow << " newCol = " << newCol << "\n";
+				print = true;
+			}
 			deformedImageRow[col] = Interpolation::fbilinearInterpolation(movingImage_, newRow, newCol, print);
-			// if (col == POS && row == POS) std::cout << "Interpolation = " << deformedImageRow[col] << "\n";
+			if (col == POSC && row == POSR) std::cout << "Interpolation = " << deformedImageRow[col] << "\n";
 		}
 	}
 }
 
 void Demons::updateDisplField(VectorField displField, VectorField deltaField) {
 	// deltaField.applyGaussianFilter();
-	// std::cout << "DisplField[" << POS << "][" << POS << "] = [" << displField.getVectorAt(POS,POS)[0] << "][" << displField.getVectorAt(POS,POS)[1] << "]\n";
+	std::cout << "DisplField[" << POSR << "][" << POSC << "] = [" << displField.getVectorAt(POSR,POSC)[0] << "][" << displField.getVectorAt(POSR,POSC)[1] << "]\n";
 	displField.add(deltaField);
-	// std::cout << "DisplField[" << POS << "][" << POS << "] = [" << displField.getVectorAt(POS,POS)[0] << "][" << displField.getVectorAt(POS,POS)[1] << "]\n";
-	// displField.applyGaussianFilter();
+	std::cout << "DisplField[" << POSR << "][" << POSC << "] = [" << displField.getVectorAt(POSR,POSC)[0] << "][" << displField.getVectorAt(POSR,POSC)[1] << "]\n";
+	displField.applyGaussianFilter();
 }
 
 VectorField Demons::newDeltaField(VectorField gradients) {
@@ -143,12 +144,14 @@ VectorField Demons::newDeltaField(VectorField gradients) {
 		for(int col = 0; col < cols; col++) {
 			std::vector<float> gradient = gradients.getVectorAt(row, col);
 			float diff = dRow[col] - sRow[col];
-			// if (row == POS && col == POS) {
-			// 	std::cout << "deformedImage_[" << row << "][" << col << "] = " << dRow[col] << "\n";
-			// 	std::cout << "staticImage_[" << row << "][" << col << "] = " << sRow[col] << "\n";
-			// 	std::cout << "Diff = " << diff << "\n";
-			// }
 			float denominator = diff*diff + gradient[0]*gradient[0] + gradient[1]*gradient[1];
+			if (row == POSR && col == POSC) {
+				std::cout << "deformedImage_[" << row << "][" << col << "] = " << dRow[col] << "\n";
+				std::cout << "staticImage_[" << row << "][" << col << "] = " << (int)sRow[col] << "\n";
+				std::cout << "Diff = " << diff << "\n";
+				std::cout << "Gradient[" << POSR << "][" << POSC << "] = [" << gradients.getVectorAt(POSR,POSC)[0] << "][" << gradients.getVectorAt(POSR,POSC)[1] << "]\n";
+				std::cout << "Denominator = " << denominator << "\n";
+			}
 			if (denominator > 0.0) {
 				float rowValue = gradient[0]*diff/denominator;
 				float colValue = gradient[1]*diff/denominator;
@@ -156,7 +159,7 @@ VectorField Demons::newDeltaField(VectorField gradients) {
 			}
 		}
 	}
-	// std::cout << "DeltaField[" << POS << "][" << POS << "] = [" << deltaField.getVectorAt(POS,POS)[0] << "][" << deltaField.getVectorAt(POS,POS)[1] << "]\n";
+	std::cout << "DeltaField[" << POSR << "][" << POSC << "] = [" << deltaField.getVectorAt(POSR,POSC)[0] << "][" << deltaField.getVectorAt(POSR,POSC)[1] << "]\n";
 	return deltaField;
 }
 
