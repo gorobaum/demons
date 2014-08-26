@@ -28,7 +28,7 @@ class Demons {
 		cv::Mat normalizeSobelImage(cv::Mat sobelImage);
 		VectorField newDeltaField(VectorField gradients);
 		void updateDisplField(VectorField displField, VectorField deltaField);
-		void printVFN(VectorField vectorField, int iteration);
+		void printVFN(VectorField vectorField, VectorField deltaField, int iteration);
 		void printVFI(VectorField vectorField, int iteration);
 		void printDeformedImage(int iteration);
 		void updateDeformedImage(VectorField displField);
