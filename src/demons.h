@@ -12,14 +12,18 @@
 class Demons {
 	public:
 		explicit Demons (cv::Mat staticImage, cv::Mat movingImage):
-			staticImage_(staticImage), movingImage_(movingImage) {}
+			staticImage_(staticImage), 
+			movingImage_(movingImage),
+			displField(staticImage.rows, staticImage.cols) {}
 		void demons();
 		cv::Mat getRegistration();
+		VectorField getDisplField();
 	private:
 		cv::Mat staticImage_;
 		cv::Mat movingImage_;
 		cv::Mat deformedImage_;
-		std::vector<int> compression_params;	
+		VectorField displField;
+		std::vector<int> compression_params;
 		time_t startTime;
 		double totalTime;
 		VectorField findGrad();

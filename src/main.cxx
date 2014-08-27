@@ -52,6 +52,27 @@ Mat histogramMatching(Mat staticImage, Mat movingImage) {
     return LUT;
 }
 
+Mat applyVectorField(Mat image, VectorField vectorField) {
+    Mat deformed = image.clone();
+    int rows = vectorField.getRows(), cols = vectorField.getCols();
+    for(int row = 0; row < rows; row++) {
+        float* deformedRow = deformed.ptr<float>(row);
+        for(int col = 0; col < cols; col++) {
+            std::vector<float> displVector = vectorField.getVectorAt(row, col);
+            double newRow = row - displVector[0];
+            double newCol = col - displVector[1];
+            bool print = false;
+            // if (col == POSC && row == POSR) {
+            //  std::cout << "newRow = " << newRow << " newCol = " << newCol << "\n";
+            //  print = true;
+            // }
+            deformedRow[col] = Interpolation::fbilinearInterpolation(image, newRow, newCol, print);
+            // if (col == POSC && row == POSR) std::cout << "Interpolation = " << deformedImageRow[col] << "\n";
+        }
+    }
+    return deformed;
+}
+
 int main(int argc, char** argv) {
 	if (argc < 2) {
 		std::cout << "Precisa passar o nome dos arquivos coração! \n";    
@@ -123,13 +144,16 @@ int main(int argc, char** argv) {
     } else {
 		Mat staticImage = imread(argv[1], CV_LOAD_IMAGE_GRAYSCALE);
 		Mat movingImage = imread(argv[2], CV_LOAD_IMAGE_GRAYSCALE);
+        Mat originalMovingImage = movingImage.clone();
         Mat lut = histogramMatching(staticImage, movingImage);
         cv::LUT(movingImage, lut, movingImage);
         std::string mn("moving_M.jpg");
         imwrite(mn.c_str(), movingImage, compression_params);
         Demons demons(staticImage, movingImage);
         demons.demons();
-        Mat deformed = demons.getRegistration();
+        VectorField vectorField = demons.getDisplField();
+        Mat deformed = applyVectorField(originalMovingImage, vectorField);
+        // Mat deformed = demons.getRegistration();
         std::string imageName("deformed.jpg");
         imwrite(imageName.c_str(), deformed, compression_params);
 	}
