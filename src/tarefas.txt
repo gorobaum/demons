@@ -1,10 +1,8 @@
-- passar a deformed para float (?)
-- olhar exemplos da itk
 - Rodar o octave
-- Rodar o itk
 - Rodar o bioimages
 - setar criterio de parada para o RMS
-- testar com uma imagem mais básica
+- Separar o codigo bonitinho
+- Estudar o histogram matching
 
 = pa depois =
 
@@ -13,6 +11,10 @@
 
 = finished =
 
+- testar com uma imagem mais básica (ok)
+- Rodar o itk (ok)
+- olhar exemplos da itk (ok)
+- passar a deformed para float (Ok)
 - testar outros gradientes (ok)
 - testar interpolação (ok)
 - RMSerror como criterio de parada (ok)
