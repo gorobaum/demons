@@ -46,12 +46,12 @@ void Demons::demons() {
 	compression_params.push_back(CV_IMWRITE_JPEG_QUALITY);
 	compression_params.push_back(95);
 	while(iteration <= 50) {
-		for(int i = POSR - 1; i < POSR + 2; i ++) {
-			for(int j = POSC - 1; j < POSC + 2; j++) {
-				std::cout << (int)deformedImage_.at<float>(i,j) << "\t";
-			}
-			std::cout << "\n";
-		}
+		// for(int i = POSR - 1; i < POSR + 2; i ++) {
+		// 	for(int j = POSC - 1; j < POSC + 2; j++) {
+		// 		std::cout << (int)deformedImage_.at<float>(i,j) << "\t";
+		// 	}
+		// 	std::cout << "\n";
+		// }
 		time(&startTime);
 		deltaField = newDeltaField(gradients);
 		// if(iteration != 1 && stopCriteria(norm, displField, deltaField)) break;
@@ -117,21 +117,21 @@ void Demons::updateDeformedImage(VectorField displField) {
 			double newRow = row - displVector[0];
 			double newCol = col - displVector[1];
 			bool print = false;
-			if (col == POSC && row == POSR) {
-				std::cout << "newRow = " << newRow << " newCol = " << newCol << "\n";
-				print = true;
-			}
+			// if (col == POSC && row == POSR) {
+			// 	std::cout << "newRow = " << newRow << " newCol = " << newCol << "\n";
+			// 	print = true;
+			// }
 			deformedImageRow[col] = Interpolation::fbilinearInterpolation(movingImage_, newRow, newCol, print);
-			if (col == POSC && row == POSR) std::cout << "Interpolation = " << deformedImageRow[col] << "\n";
+			// if (col == POSC && row == POSR) std::cout << "Interpolation = " << deformedImageRow[col] << "\n";
 		}
 	}
 }
 
 void Demons::updateDisplField(VectorField displField, VectorField deltaField) {
 	// deltaField.applyGaussianFilter();
-	std::cout << "DisplField[" << POSR << "][" << POSC << "] = [" << displField.getVectorAt(POSR,POSC)[0] << "][" << displField.getVectorAt(POSR,POSC)[1] << "]\n";
+	// std::cout << "DisplField[" << POSR << "][" << POSC << "] = [" << displField.getVectorAt(POSR,POSC)[0] << "][" << displField.getVectorAt(POSR,POSC)[1] << "]\n";
 	displField.add(deltaField);
-	std::cout << "DisplField[" << POSR << "][" << POSC << "] = [" << displField.getVectorAt(POSR,POSC)[0] << "][" << displField.getVectorAt(POSR,POSC)[1] << "]\n";
+	// std::cout << "DisplField[" << POSR << "][" << POSC << "] = [" << displField.getVectorAt(POSR,POSC)[0] << "][" << displField.getVectorAt(POSR,POSC)[1] << "]\n";
 	displField.applyGaussianFilter();
 }
 
@@ -145,13 +145,13 @@ VectorField Demons::newDeltaField(VectorField gradients) {
 			std::vector<float> gradient = gradients.getVectorAt(row, col);
 			float diff = dRow[col] - sRow[col];
 			float denominator = diff*diff + gradient[0]*gradient[0] + gradient[1]*gradient[1];
-			if (row == POSR && col == POSC) {
-				std::cout << "deformedImage_[" << row << "][" << col << "] = " << dRow[col] << "\n";
-				std::cout << "staticImage_[" << row << "][" << col << "] = " << (int)sRow[col] << "\n";
-				std::cout << "Diff = " << diff << "\n";
-				std::cout << "Gradient[" << POSR << "][" << POSC << "] = [" << gradients.getVectorAt(POSR,POSC)[0] << "][" << gradients.getVectorAt(POSR,POSC)[1] << "]\n";
-				std::cout << "Denominator = " << denominator << "\n";
-			}
+			// if (row == POSR && col == POSC) {
+			// 	std::cout << "deformedImage_[" << row << "][" << col << "] = " << dRow[col] << "\n";
+			// 	std::cout << "staticImage_[" << row << "][" << col << "] = " << (int)sRow[col] << "\n";
+			// 	std::cout << "Diff = " << diff << "\n";
+			// 	std::cout << "Gradient[" << POSR << "][" << POSC << "] = [" << gradients.getVectorAt(POSR,POSC)[0] << "][" << gradients.getVectorAt(POSR,POSC)[1] << "]\n";
+			// 	std::cout << "Denominator = " << denominator << "\n";
+			// }
 			if (denominator > 0.0) {
 				float rowValue = gradient[0]*diff/denominator;
 				float colValue = gradient[1]*diff/denominator;
@@ -159,7 +159,7 @@ VectorField Demons::newDeltaField(VectorField gradients) {
 			}
 		}
 	}
-	std::cout << "DeltaField[" << POSR << "][" << POSC << "] = [" << deltaField.getVectorAt(POSR,POSC)[0] << "][" << deltaField.getVectorAt(POSR,POSC)[1] << "]\n";
+	// std::cout << "DeltaField[" << POSR << "][" << POSC << "] = [" << deltaField.getVectorAt(POSR,POSC)[0] << "][" << deltaField.getVectorAt(POSR,POSC)[1] << "]\n";
 	return deltaField;
 }
 
