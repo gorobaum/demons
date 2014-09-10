@@ -11,12 +11,14 @@ add_executable(demon
 	src/demon.cxx
 	src/interpolation.cxx
 	src/demons.cxx
-	src/vectorfield.cxx)
+	src/vectorfield.cxx
+	src/imagefunctions.cxx)
 
 add_executable(deform 
 	src/deform.cxx
 	src/deformation.cxx
-	src/interpolation.cxx)
+	src/interpolation.cxx
+	src/imagefunctions.cxx)
 
 if (X11_FOUND)
 include_directories(${X11_INCLUDE_DIRS})
