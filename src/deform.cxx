@@ -1,38 +1,83 @@
-
-#include <cstdio>
-#include <cmath>
+#include <string>
 #include <iostream>
 #include <vector>
 
-#include "deform.h"
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+
+#include "deformation.h"
 #include "interpolation.h"
 
-cv::Mat Deform::applySinDeformation(double amp, double freq) {
-    cv::Mat deformatedImage(originalImage_.rows, originalImage_.cols, CV_LOAD_IMAGE_GRAYSCALE);
-    for(int row = 0; row < deformatedImage.rows; row++) {
-        uchar* di = deformatedImage.ptr(row);
-        for(int col = 0; col < deformatedImage.cols; col++) {
-            float newRow = row + amp*sin(col/freq);
-            float newCol = col ;
-            di[col] = Interpolation::bilinearInterpolation(originalImage_, newRow, newCol, false);
+using namespace cv;
+
+int main(int argc, char** argv) {
+	if (argc < 2) {
+		std::cout << "Precisa passar o nome dos arquivos coração! \n";    
+		return 0;
+	}
+	vector<int> compression_params;
+    compression_params.push_back(CV_IMWRITE_JPEG_QUALITY);
+    compression_params.push_back(95);
+	if (strcmp(argv[1], "-d") == 0) {
+		Mat originalImage;
+        originalImage = imread(argv[4], CV_LOAD_IMAGE_GRAYSCALE);
+
+        if(!originalImage.data) {
+            std::cout <<  "Could not open or find the image" << std::endl ;
+            return -1;
         }
+        
+        Deform deform(originalImage);
+        double amp = atof(argv[2]);
+        double freq = atof(argv[3]);
+        Mat deformed = deform.applySinDeformation(amp, freq);
+
+        imwrite("moving.jpg", deformed, compression_params);
+	} else if (strcmp(argv[1], "-r") == 0) {
+        Mat originalImage;
+        originalImage = imread(argv[3], CV_LOAD_IMAGE_GRAYSCALE);
+
+        if(!originalImage.data) {
+            std::cout <<  "Could not open or find the image" << std::endl ;
+            return -1;
+        }
+        
+        Deform deform(originalImage);
+        double angle = atof(argv[2]);
+        Mat deformed = deform.rotate(angle);
+
+        imwrite("moving.jpg", deformed, compression_params);
+    } else if (strcmp(argv[1], "-t") == 0) {
+        Mat originalImage;
+        originalImage = imread(argv[4], CV_LOAD_IMAGE_GRAYSCALE);
+
+        if(!originalImage.data) {
+            std::cout <<  "Could not open or find the image" << std::endl ;
+            return -1;
+        }
+        
+        Deform deform(originalImage);
+        double width = atof(argv[2]);
+        double height = atof(argv[3]);
+        Mat deformed = deform.translation(width, height);
+
+        imwrite("moving.jpg", deformed, compression_params);
+    } else if (strcmp(argv[1], "-T") == 0) {
+        int rows = 3, cols = 4;
+        cv::Mat teste = cv::Mat::zeros(rows, cols, CV_32F);
+        for(int row = 0; row < rows; row++) {
+            for(int col = 0; col < cols; col++) {
+                teste.at<float>(row, col) = row*0.1;
+            }
+        }
+        for(int row = 0; row < rows; row++) {
+            for(int col = 0; col < cols; col++) {
+                std::cout << teste.at<float>(row, col) << " ";
+            }
+            std::cout << "\n";
+        }
+        cv::Scalar inter = Interpolation::bilinearInterpolation(teste, 2.5, 2, false);
+        std::cout << inter << "\n";
     }
-    return deformatedImage;
-}
-
-cv::Mat Deform::rotate(double angle) {
-    cv::Mat deformatedImage(originalImage_.rows, originalImage_.cols, CV_LOAD_IMAGE_GRAYSCALE);
-    double col = originalImage_.cols/2., row = originalImage_.rows/2.;
-    cv::Point2f pt(col, row);
-    cv::Mat r = cv::getRotationMatrix2D(pt, angle, 1.0);
-    cv::warpAffine(originalImage_, deformatedImage, r, originalImage_.size());
-
-    return deformatedImage;
-}
-
-cv::Mat Deform::translation(int width, int height) {
-    cv::Mat deformatedImage(originalImage_.rows, originalImage_.cols, CV_LOAD_IMAGE_GRAYSCALE);
-    cv::Mat translationMatrix = (cv::Mat_<double>(2,3) << 1, 0, width, 0, 1, height);
-    warpAffine(originalImage_, deformatedImage, translationMatrix, originalImage_.size());
-    return deformatedImage;
+	return 0;
 }
