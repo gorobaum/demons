@@ -26,8 +26,8 @@ class Demons {
 		std::vector<int> compression_params;
 		time_t startTime;
 		double totalTime;
-		VectorField findGrad();
-		VectorField findGradSobel();
+		VectorField findGrad(cv::Mat image);
+		VectorField findGradSobel(cv::Mat image);
 		double getIterationTime(time_t startTime);
 		cv::Mat normalizeSobelImage(cv::Mat sobelImage);
 		VectorField newDeltaField(VectorField gradients);

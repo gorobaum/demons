@@ -13,6 +13,7 @@
 #define RMSEcriteria 10
 #define CORRCOEFcriteria 0.95
 #define STOPcriteria 0.0001
+#define SPACING 0.16
 #define POSR 130
 #define POSC 131
 
@@ -21,7 +22,7 @@ void Demons::demons() {
 	// Create the deformed image
 	movingImage_.convertTo(deformedImage_, CV_32F, 1);
 	std::vector<float> norm(10,0.0);
-	VectorField gradients = findGradSobel();
+	VectorField gradients = findGradSobel(staticImage_);
 	gradients.printField("Gradients.dat");
 	std::string gfName("GradientInformation.info");
 	gradients.printFieldInfos(gfName, 1);
@@ -137,13 +138,16 @@ void Demons::updateDisplField(VectorField displField, VectorField deltaField) {
 VectorField Demons::newDeltaField(VectorField gradients) {
 	int rows = gradients.getRows(), cols = gradients.getCols();
 	VectorField deltaField(rows, cols);
+	VectorField gradientDeformed = findGradSobel(deformedImage_);
 	for(int row = 0; row < rows; row++) {
 		const float* dRow = deformedImage_.ptr<float>(row);
 		uchar* sRow = staticImage_.ptr(row);
 		for(int col = 0; col < cols; col++) {
-			std::vector<float> gradient = gradients.getVectorAt(row, col);
+			std::vector<float> sGrad = gradients.getVectorAt(row, col);
+			std::vector<float> dGrad = gradientDeformed.getVectorAt(row, col);
 			float diff = dRow[col] - sRow[col];
-			float denominator = diff*diff + gradient[0]*gradient[0] + gradient[1]*gradient[1];
+			// float k = std::sqrt(SPACING);
+			float denominator = (diff*diff) + (sGrad[0]+dGrad[0])*(sGrad[0]+dGrad[0]) + (sGrad[1]+dGrad[1])*(sGrad[1]+dGrad[1]);
 			// if (row == POSR && col == POSC) {
 			// 	std::cout << "deformedImage_[" << row << "][" << col << "] = " << dRow[col] << "\n";
 			// 	std::cout << "staticImage_[" << row << "][" << col << "] = " << (int)sRow[col] << "\n";
@@ -152,8 +156,8 @@ VectorField Demons::newDeltaField(VectorField gradients) {
 			// 	std::cout << "Denominator = " << denominator << "\n";
 			// }
 			if (denominator > 0.0) {
-				float rowValue = gradient[0]*diff/denominator;
-				float colValue = gradient[1]*diff/denominator;
+				float rowValue = 2*(sGrad[0]+dGrad[0])*diff/denominator;
+				float colValue = 2*(sGrad[1]+dGrad[1])*diff/denominator;
 				deltaField.updateVector(row, col, rowValue, colValue);
 			}
 		}
@@ -162,8 +166,8 @@ VectorField Demons::newDeltaField(VectorField gradients) {
 	return deltaField;
 }
 
-VectorField Demons::findGrad() {
-	int rows = staticImage_.rows, cols = staticImage_.cols;
+VectorField Demons::findGrad(cv::Mat image) {
+	int rows = image.rows, cols = image.cols;
 	cv::Mat kernelRow = cv::Mat::zeros(3, 3, CV_32F); 
 	cv::Mat kernelCol = cv::Mat::zeros(3, 3, CV_32F);
 	cv::Mat gradRow = cv::Mat::zeros(rows, cols, CV_32F);
@@ -172,18 +176,18 @@ VectorField Demons::findGrad() {
 	kernelRow.at<float>(1,2) = 1;
 	kernelCol.at<float>(0,1) = -1;
 	kernelCol.at<float>(2,1) = 1;
-	filter2D(staticImage_, gradRow, CV_32F , kernelRow);
-	filter2D(staticImage_, gradCol, CV_32F , kernelCol);
+	filter2D(image, gradRow, CV_32F , kernelRow);
+	filter2D(image, gradCol, CV_32F , kernelCol);
 	VectorField grad(gradRow, gradCol);
 	return grad;
 }
 
-VectorField Demons::findGradSobel() {
-	int rows = staticImage_.rows, cols = staticImage_.cols;
+VectorField Demons::findGradSobel(cv::Mat image) {
+	int rows = image.rows, cols = image.cols;
 	cv::Mat gradRow = cv::Mat::zeros(rows, cols, CV_32F);
 	cv::Mat gradCol = cv::Mat::zeros(rows, cols, CV_32F);
-	cv::Sobel(staticImage_, gradRow, CV_32F, 0, 1);
-	cv::Sobel(staticImage_, gradCol, CV_32F, 1, 0);
+	cv::Sobel(image, gradRow, CV_32F, 0, 1);
+	cv::Sobel(image, gradCol, CV_32F, 1, 0);
 	// gradCol = normalizeSobelImage(gradCol);
 	// gradRow = normalizeSobelImage(gradRow);
 	VectorField grad(gradRow, gradCol);
