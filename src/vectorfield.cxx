@@ -5,6 +5,7 @@
 #include <set>
 
 #include "vectorfield.h"
+#include "imagefunctions.h"
 
 VectorField::VectorField(cv::Mat &vectorRow, cv::Mat &vectorCol) {
 	rows_ = vectorCol.rows;
@@ -38,8 +39,8 @@ cv::Mat VectorField::getMatCol() {
 
 std::vector<float> VectorField::getVectorAt(int row, int col) {
 	std::vector<float> auxVec;
-	auxVec.push_back(getValue(vectorRow_, row, col));
-	auxVec.push_back(getValue(vectorCol_, row, col));
+	auxVec.push_back(ImageFunctions::getValue<float>(vectorRow_, row, col));
+	auxVec.push_back(ImageFunctions::getValue<float>(vectorCol_, row, col));
 	return auxVec;
 }
 
@@ -165,14 +166,4 @@ void VectorField::printField(std::string filename) {
 	    }
 	}
 	myfile.close();
-}
-
-float VectorField::getValue(cv::Mat image, int row, int col) {
-	if (col > image.cols-1 || col < 0)
-		return 0;
-	else if (row > image.rows-1 || row < 0)
-		return 0;
-	else {
-		return image.at<float>(row, col);
-	}
 }

@@ -26,7 +26,6 @@ class VectorField {
 	private:
 		cv::Mat vectorCol_;
 		cv::Mat vectorRow_;
-		float getValue(cv::Mat image, int row, int col);
 		float vectorNorm(std::vector<float> v);
 		std::vector<double> getInfos();
 		int rows_;

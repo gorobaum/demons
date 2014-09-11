@@ -8,12 +8,12 @@
 
 class ImageFunctions {
 public:
-	template<typename T> static T getPixel(const cv::Mat &image, int row, int col);
+	template<typename T> static T getValue(const cv::Mat &image, int row, int col);
 	static cv::Mat histogramMatching(cv::Mat staticImage, cv::Mat movingImage);
 };
 
 template<typename T>
-T ImageFunctions::getPixel(const cv::Mat &image, int row, int col) {
+T ImageFunctions::getValue(const cv::Mat &image, int row, int col) {
 	if (col > image.cols-1 || col < 0)
 		return 0;
 	else if (row > image.rows-1 || row < 0)

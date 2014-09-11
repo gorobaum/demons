@@ -20,10 +20,10 @@ template<typename T>
 T Interpolation::bilinearInterpolation(cv::Mat image, float row, float col, bool print) {
 	int u = trunc(row);
 	int v = trunc(col);
-	uchar pixelOne = ImageFunctions::getPixel<uchar>(image, u, v);
-	uchar pixelTwo = ImageFunctions::getPixel<uchar>(image, u+1, v);
-	uchar pixelThree = ImageFunctions::getPixel<uchar>(image, u, v+1);
-	uchar pixelFour = ImageFunctions::getPixel<uchar>(image, u+1, v+1);
+	uchar pixelOne = ImageFunctions::getValue<uchar>(image, u, v);
+	uchar pixelTwo = ImageFunctions::getValue<uchar>(image, u+1, v);
+	uchar pixelThree = ImageFunctions::getValue<uchar>(image, u, v+1);
+	uchar pixelFour = ImageFunctions::getValue<uchar>(image, u+1, v+1);
 
 	T interpolation = (u+1-row)*(v+1-col)*pixelOne
 												+ (row-u)*(v+1-col)*pixelTwo 
@@ -45,7 +45,7 @@ template<typename T>
 T Interpolation::NNInterpolation(cv::Mat image, float row, float col) {
 	int nearRow = getNearestInteger(row);
 	int nearCol = getNearestInteger(col);
-	T aux = ImageFunctions::getPixel<T>(image, nearRow, nearCol);
+	T aux = ImageFunctions::getValue<T>(image, nearRow, nearCol);
 	return aux;
 }
 
