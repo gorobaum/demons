@@ -33,12 +33,12 @@ void Demons::demons() {
 
 void Demons::updateDeformedImage(VectorField displField) {
 	for(int row = 0; row < rows; row++) {
-		float* deformedImageRow = deformedImage_.ptr<float>(row);
+		double* deformedImageRow = deformedImage_.ptr<double>(row);
 		for(int col = 0; col < cols; col++) {
-			std::vector<float> displVector = displField.getVectorAt(row, col);
+			std::vector<double> displVector = displField.getVectorAt(row, col);
 			double newRow = row - displVector[0];
 			double newCol = col - displVector[1];
-			deformedImageRow[col] = movingInterpolator.bilinearInterpolation<float>(newRow, newCol);
+			deformedImageRow[col] = movingInterpolator.bilinearInterpolation<double>(newRow, newCol);
 		}
 	}
 }

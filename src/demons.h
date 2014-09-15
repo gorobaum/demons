@@ -20,7 +20,7 @@ class Demons {
 			displField(staticImage.rows, staticImage.cols) {
 				rows = staticImage_.rows;
 				cols = staticImage_.cols;
-				movingImage_.convertTo(deformedImage_, CV_32F, 1);
+				movingImage_.convertTo(deformedImage_, CV_64F, 1);
 			}
 		void demons();
 		cv::Mat getRegistration();

@@ -10,15 +10,15 @@ class VectorField {
 	public:
 		VectorField(cv::Mat &vectorRow, cv::Mat &vectorCol);
 		VectorField(int rows, int cols);
-		std::vector<float> getVectorAt(int row, int col);
-		void updateVector(int row, int col, float rowValue, float colValue);
+		std::vector<double> getVectorAt(int row, int col);
+		void updateVector(int row, int col, double rowValue, double colValue);
 		void applyGaussianFilter();
 		VectorField getNormalized();
 		void printField(std::string filename);
 		void printFieldInfos(std::string filename, int iteration);
 		void printFieldImage(int iteration, std::vector<int> compression_params);
 		void add(VectorField adding);
-		float sumOfAbs();
+		double sumOfAbs();
 		int getRows();
 		int getCols();
 		cv::Mat getMatRow();
@@ -26,7 +26,7 @@ class VectorField {
 	private:
 		cv::Mat vectorCol_;
 		cv::Mat vectorRow_;
-		float vectorNorm(std::vector<float> v);
+		double vectorNorm(std::vector<double> v);
 		std::vector<double> getInfos();
 		int rows_;
 		int cols_;

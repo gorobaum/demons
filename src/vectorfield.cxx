@@ -17,8 +17,8 @@ VectorField::VectorField(cv::Mat &vectorRow, cv::Mat &vectorCol) {
 VectorField::VectorField(int rows, int cols) {
 	rows_ = rows;
 	cols_ = cols;
-	vectorRow_ = cv::Mat::zeros(rows, cols, CV_32F);
-  	vectorCol_ = cv::Mat::zeros(rows, cols, CV_32F);
+	vectorRow_ = cv::Mat::zeros(rows, cols, CV_64F);
+  	vectorCol_ = cv::Mat::zeros(rows, cols, CV_64F);
 }
 
 int VectorField::getRows() {
@@ -37,16 +37,16 @@ cv::Mat VectorField::getMatCol() {
 	return vectorCol_;
 }	
 
-std::vector<float> VectorField::getVectorAt(int row, int col) {
-	std::vector<float> auxVec;
-	auxVec.push_back(ImageFunctions::getValue<float>(vectorRow_, row, col));
-	auxVec.push_back(ImageFunctions::getValue<float>(vectorCol_, row, col));
+std::vector<double> VectorField::getVectorAt(int row, int col) {
+	std::vector<double> auxVec;
+	auxVec.push_back(ImageFunctions::getValue<double>(vectorRow_, row, col));
+	auxVec.push_back(ImageFunctions::getValue<double>(vectorCol_, row, col));
 	return auxVec;
 }
 
-void VectorField::updateVector(int row, int col, float rowValue, float colValue) {
-	vectorRow_.at<float>(row, col) = rowValue;
-	vectorCol_.at<float>(row, col) = colValue;
+void VectorField::updateVector(int row, int col, double rowValue, double colValue) {
+	vectorRow_.at<double>(row, col) = rowValue;
+	vectorCol_.at<double>(row, col) = colValue;
 }
 
 void VectorField::applyGaussianFilter() {
@@ -54,7 +54,7 @@ void VectorField::applyGaussianFilter() {
 	GaussianBlur(vectorCol_, vectorCol_, cv::Size(3,3), 1.0);
 }
 
-float VectorField::vectorNorm(std::vector<float> v) {
+double VectorField::vectorNorm(std::vector<double> v) {
 	return sqrt(pow(v[0],2)+pow(v[1],2));
 }
 
@@ -62,8 +62,8 @@ VectorField VectorField::getNormalized() {
 	VectorField normalized(rows_, cols_);
 	for(int row = 0; row < rows_; row++) {
 	    for(int col = 0; col < cols_; col++) {
-	    	std::vector<float> vector = getVectorAt(row, col);
-	    	float normalizedRow = 0.0, normalizedCol = 0.0;
+	    	std::vector<double> vector = getVectorAt(row, col);
+	    	double normalizedRow = 0.0, normalizedCol = 0.0;
 	    	if ((vector[0]*vector[1]) != 0.0) {
 	    		normalizedRow = vector[0]/vectorNorm(vector);
 	    		normalizedCol = vector[1]/vectorNorm(vector);
@@ -79,11 +79,11 @@ void VectorField::add(VectorField adding) {
 	vectorCol_ = vectorCol_ + adding.vectorCol_;
 }
 
-float VectorField::sumOfAbs() {
-	float total = 0.0;
+double VectorField::sumOfAbs() {
+	double total = 0.0;
 	for(int row = 0; row < rows_; row++) {
 		for(int col = 0; col < cols_; col++) {
-			total += std::abs(vectorCol_.at<float>(row, col)) + std::abs(vectorRow_.at<float>(row, col));
+			total += std::abs(vectorCol_.at<double>(row, col)) + std::abs(vectorRow_.at<double>(row, col));
 		}
 	}
 	return total;
@@ -109,7 +109,7 @@ std::vector<double> VectorField::getInfos() {
 	double max= 0.0, min = 0.0, mean = 0.0, median = 0.0, deviation = 0.0;
 	for(int row = 0; row < rows_; row++) {
 	    for(int col = 0; col < cols_; col++) {
-	    	std::vector<float> vector = getVectorAt(row, col);
+	    	std::vector<double> vector = getVectorAt(row, col);
     		double mag = std::sqrt(vector[0]*vector[0] + vector[1]*vector[1]);
     		if (max < mag) max = mag;
     		if (min > mag) min = mag;
@@ -155,7 +155,7 @@ void VectorField::printField(std::string filename) {
 	minMaxLoc(vectorRow_, &minValRow, &maxValRow);
 	for(int row = 0; row < rows_; row++) {
 	    for(int col = 0; col < cols_; col++) {
-	    	std::vector<float> vector = getVectorAt(row, col);
+	    	std::vector<double> vector = getVectorAt(row, col);
     		double redCol = 255*(vector[1]-minValCol)/(maxValCol-minValCol);
 			double blueCol = 255*(maxValCol-vector[1])/(maxValCol-minValCol);
 			double redRow = 255*(vector[0]-minValRow)/(maxValRow-minValRow);
