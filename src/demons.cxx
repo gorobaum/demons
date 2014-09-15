@@ -44,9 +44,9 @@ void Demons::updateDeformedImage(VectorField displField) {
 }
 
 void Demons::updateDisplField(VectorField displField, VectorField deltaField) {
-	deltaField.applyGaussianFilter();
+	// deltaField.applyGaussianFilter();
 	displField.add(deltaField);
-	// displField.applyGaussianFilter();
+	displField.applyGaussianFilter();
 }
 
 cv::Mat Demons::getRegistration() {
