@@ -15,7 +15,7 @@ cv::Mat Deform::applySinDeformation(double amp, double freq) {
         for(int col = 0; col < deformatedImage.cols; col++) {
             float newRow = row + amp*sin(col/freq);
             float newCol = col ;
-            di[col] = imageInterpolator.bilinearInterpolation<uchar>(newRow, newCol, false);
+            di[col] = imageInterpolator.bilinearInterpolation<uchar>(newRow, newCol);
         }
     }
     return deformatedImage;

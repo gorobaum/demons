@@ -27,18 +27,8 @@ class Demons {
 		cv::Mat deformedImage_;
 		Interpolation movingInterpolator;
 		VectorField displField;
-		std::vector<int> compression_params;
-		time_t startTime;
-		double totalTime;
-		VectorField findGrad(cv::Mat image);
-		VectorField findGradSobel(cv::Mat image);
-		double getIterationTime(time_t startTime);
-		cv::Mat normalizeSobelImage(cv::Mat sobelImage);
 		VectorField newDeltaField(VectorField gradients, Gradient deformedImageGradient);
 		void updateDisplField(VectorField displField, VectorField deltaField);
-		void printVFN(VectorField vectorField, VectorField deltaField, int iteration);
-		void printVFI(VectorField vectorField, int iteration);
-		void printDeformedImage(int iteration);
 		void updateDeformedImage(VectorField displField);
 		bool stopCriteria(std::vector<float> &norm, VectorField displField, VectorField deltaField);
 		bool correlationCoef();

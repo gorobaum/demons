@@ -27,43 +27,13 @@ void Demons::demons() {
 	gradients.printField("Gradients.dat");
 	std::string gfName("GradientInformation.info");
 	gradients.printFieldInfos(gfName, 1);
-	// for(int i = POSR - 1; i < POSR + 2; i ++) {
-	// 	for(int j = POSC - 1; j < POSC + 2; j++) {
-	// 		std::cout << (int)staticImage_.at<uchar>(i,j) << "\t";
-	// 	}
-	// 	std::cout << "\n";
-	// }
-	// std::cout << "\n";
-	// for(int i = POSR - 1; i < POSR + 2; i ++) {
-	// 	for(int j = POSC - 1; j < POSC + 2; j++) {
-	// 		std::cout << (int)movingImage_.at<uchar>(i,j) << "\t";
-	// 	}
-	// 	std::cout << "\n";
-	// }
-	// std::cout << "Gradient[" << POSR << "][" << POSC << "] = [" << gradients.getVectorAt(POSR,POSC)[0] << "][" << gradients.getVectorAt(POSR,POSC)[1] << "]\n";
-	// gradients.getNormalized().printField("GradientsN.dat");
 	VectorField deltaField(rows, cols);
-	int iteration = 1;
-	compression_params.push_back(CV_IMWRITE_JPEG_QUALITY);
-	compression_params.push_back(95);
-	while(iteration <= 50) {
-		// for(int i = POSR - 1; i < POSR + 2; i ++) {
-		// 	for(int j = POSC - 1; j < POSC + 2; j++) {
-		// 		std::cout << (int)deformedImage_.at<float>(i,j) << "\t";
-		// 	}
-		// 	std::cout << "\n";
-		// }
-		time(&startTime);
+	for(int iteration = 1; iteration <= 50; iteration++) {
 		deltaField = newDeltaField(gradients, deformedImageGradient);
 		// if(iteration != 1 && stopCriteria(norm, displField, deltaField)) break;
 		updateDisplField(displField, deltaField);
 		updateDeformedImage(displField);
-		double iterTime = getIterationTime(startTime);
-		printVFN(displField, deltaField ,iteration);
-		printVFI(displField, iteration);
-		printDeformedImage(iteration);
-		std::cout << "Iteration " << iteration << " took " << iterTime << " seconds.\n";
-		iteration++;
+		std::cout << "Iteration " << iteration << "\n";
 	}
 	std::cout << "termino rapa\n";
 }
@@ -96,11 +66,6 @@ bool Demons::rootMeanSquareError() {
 
 bool Demons::stopCriteria(std::vector<float> &norm, VectorField displField, VectorField deltaField) {
 	float newNorm = deltaField.sumOfAbs()/displField.sumOfAbs();
-	// for (int i = 0; i < 10; i++) std::cout << "norm[" << i << "] = " << norm[i] << "\n";
-	// std::cout << "deltaField.sumOfAbs() = " << deltaField.sumOfAbs() << "\n";
-	// std::cout << "displField.sumOfAbs() = " << displField.sumOfAbs() << "\n";
-	// std::cout << "newNorm = " << newNorm << "\n";
-	// std::cout << "newNorm - norm = " << std::abs((newNorm - norm[9])) << "\n";
 	if (std::abs((newNorm - norm[9])) > STOPcriteria) {
 		for (int i = 9; i >= 0; i--) norm[i] = norm[i-1];
 		norm[0] = newNorm;
@@ -117,22 +82,14 @@ void Demons::updateDeformedImage(VectorField displField) {
 			std::vector<float> displVector = displField.getVectorAt(row, col);
 			double newRow = row - displVector[0];
 			double newCol = col - displVector[1];
-			bool print = false;
-			if (col == POSC && row == POSR) {
-				std::cout << "newRow = " << newRow << " newCol = " << newCol << "\n";
-				print = true;
-			}
-			deformedImageRow[col] = movingInterpolator.bilinearInterpolation<float>(newRow, newCol, print);
-			// if (col == POSC && row == POSR) std::cout << "Interpolation = " << deformedImageRow[col] << "\n";
+			deformedImageRow[col] = movingInterpolator.bilinearInterpolation<float>(newRow, newCol);
 		}
 	}
 }
 
 void Demons::updateDisplField(VectorField displField, VectorField deltaField) {
 	// deltaField.applyGaussianFilter();
-	// std::cout << "DisplField[" << POSR << "][" << POSC << "] = [" << displField.getVectorAt(POSR,POSC)[0] << "][" << displField.getVectorAt(POSR,POSC)[1] << "]\n";
 	displField.add(deltaField);
-	// std::cout << "DisplField[" << POSR << "][" << POSC << "] = [" << displField.getVectorAt(POSR,POSC)[0] << "][" << displField.getVectorAt(POSR,POSC)[1] << "]\n";
 	displField.applyGaussianFilter();
 }
 
@@ -149,13 +106,6 @@ VectorField Demons::newDeltaField(VectorField gradients, Gradient deformedImageG
 			float diff = dRow[col] - sRow[col];
 			// float k = std::sqrt(SPACING);
 			float denominator = (diff*diff) + (sGrad[0]+dGrad[0])*(sGrad[0]+dGrad[0]) + (sGrad[1]+dGrad[1])*(sGrad[1]+dGrad[1]);
-			// if (row == POSR && col == POSC) {
-			// 	std::cout << "deformedImage_[" << row << "][" << col << "] = " << dRow[col] << "\n";
-			// 	std::cout << "staticImage_[" << row << "][" << col << "] = " << (int)sRow[col] << "\n";
-			// 	std::cout << "Diff = " << diff << "\n";
-			// 	std::cout << "Gradient[" << POSR << "][" << POSC << "] = [" << gradients.getVectorAt(POSR,POSC)[0] << "][" << gradients.getVectorAt(POSR,POSC)[1] << "]\n";
-			// 	std::cout << "Denominator = " << denominator << "\n";
-			// }
 			if (denominator > 0.0) {
 				float rowValue = 2*(sGrad[0]+dGrad[0])*diff/denominator;
 				float colValue = 2*(sGrad[1]+dGrad[1])*diff/denominator;
@@ -163,45 +113,9 @@ VectorField Demons::newDeltaField(VectorField gradients, Gradient deformedImageG
 			}
 		}
 	}
-	// std::cout << "DeltaField[" << POSR << "][" << POSC << "] = [" << deltaField.getVectorAt(POSR,POSC)[0] << "][" << deltaField.getVectorAt(POSR,POSC)[1] << "]\n";
 	return deltaField;
-}
-
-void Demons::printDeformedImage(int iteration) {
-	std::string imageName("Iteration");
-	std::ostringstream converter;
-	converter << iteration;
-	imageName += converter.str() + ".jpg";
-    imwrite(imageName.c_str(), deformedImage_, compression_params);
-}
-
-void Demons::printVFN(VectorField vectorField, VectorField deltaField, int iteration) {
-	std::string filename("VFN-Iteration");
-	std::ostringstream converter;
-	converter << iteration;
-	filename += converter.str() + ".dat";
-	VectorField normalized = vectorField.getNormalized();
-	normalized.printField(filename.c_str());
-	std::string vfName("VectorFieldInformation.info");
-	vectorField.printFieldInfos(vfName, iteration);
-	std::string dfName("DeltaFieldInformation.info");
-	deltaField.printFieldInfos(dfName, iteration);
-}
-
-void Demons::printVFI(VectorField vectorField, int iteration) {
-	vectorField.printFieldImage(iteration, compression_params);
-}
-
-double Demons::getIterationTime(time_t startTime) {
-	double iterationTime = difftime(time(NULL), startTime);
-	totalTime += iterationTime;
-	return iterationTime;
 }
 
 cv::Mat Demons::getRegistration() {
 	return deformedImage_;
-}
-
-VectorField Demons::getDisplField() {
-	return displField;
 }
