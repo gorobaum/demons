@@ -12,7 +12,8 @@ add_executable(demon
 	src/interpolation.cxx
 	src/demons.cxx
 	src/vectorfield.cxx
-	src/imagefunctions.cxx)
+	src/imagefunctions.cxx
+	src/gradient.cxx)
 
 add_executable(deform 
 	src/deform.cxx

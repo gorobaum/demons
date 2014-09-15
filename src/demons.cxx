@@ -4,12 +4,10 @@
 #include <iostream>
 #include <ctime>
 #include <vector>
-#include <opencv2/imgproc/imgproc.hpp>
 #include <sstream>
+#include <opencv2/imgproc/imgproc.hpp>
 
 #include "demons.h"
-#include "interpolation.h"
-#include "debug.h"
 
 #define RMSEcriteria 10
 #define CORRCOEFcriteria 0.95
@@ -23,7 +21,9 @@ void Demons::demons() {
 	// Create the deformed image
 	movingImage_.convertTo(deformedImage_, CV_32F, 1);
 	std::vector<float> norm(10,0.0);
-	VectorField gradients = findGradSobel(staticImage_);
+	Gradient staticGradient(staticImage_);
+	Gradient deformedImageGradient(deformedImage_);
+	VectorField gradients = staticGradient.getSobelGradient();
 	gradients.printField("Gradients.dat");
 	std::string gfName("GradientInformation.info");
 	gradients.printFieldInfos(gfName, 1);
@@ -54,7 +54,7 @@ void Demons::demons() {
 		// 	std::cout << "\n";
 		// }
 		time(&startTime);
-		deltaField = newDeltaField(gradients);
+		deltaField = newDeltaField(gradients, deformedImageGradient);
 		// if(iteration != 1 && stopCriteria(norm, displField, deltaField)) break;
 		updateDisplField(displField, deltaField);
 		updateDeformedImage(displField);
@@ -136,10 +136,10 @@ void Demons::updateDisplField(VectorField displField, VectorField deltaField) {
 	displField.applyGaussianFilter();
 }
 
-VectorField Demons::newDeltaField(VectorField gradients) {
+VectorField Demons::newDeltaField(VectorField gradients, Gradient deformedImageGradient) {
 	int rows = gradients.getRows(), cols = gradients.getCols();
 	VectorField deltaField(rows, cols);
-	VectorField gradientDeformed = findGradSobel(deformedImage_);
+	VectorField gradientDeformed = deformedImageGradient.getSobelGradient();
 	for(int row = 0; row < rows; row++) {
 		const float* dRow = deformedImage_.ptr<float>(row);
 		uchar* sRow = staticImage_.ptr(row);
@@ -165,42 +165,6 @@ VectorField Demons::newDeltaField(VectorField gradients) {
 	}
 	// std::cout << "DeltaField[" << POSR << "][" << POSC << "] = [" << deltaField.getVectorAt(POSR,POSC)[0] << "][" << deltaField.getVectorAt(POSR,POSC)[1] << "]\n";
 	return deltaField;
-}
-
-VectorField Demons::findGrad(cv::Mat image) {
-	int rows = image.rows, cols = image.cols;
-	cv::Mat kernelRow = cv::Mat::zeros(3, 3, CV_32F); 
-	cv::Mat kernelCol = cv::Mat::zeros(3, 3, CV_32F);
-	cv::Mat gradRow = cv::Mat::zeros(rows, cols, CV_32F);
-	cv::Mat gradCol = cv::Mat::zeros(rows, cols, CV_32F);
-	kernelRow.at<float>(1,0) = -1;
-	kernelRow.at<float>(1,2) = 1;
-	kernelCol.at<float>(0,1) = -1;
-	kernelCol.at<float>(2,1) = 1;
-	filter2D(image, gradRow, CV_32F , kernelRow);
-	filter2D(image, gradCol, CV_32F , kernelCol);
-	VectorField grad(gradRow, gradCol);
-	return grad;
-}
-
-VectorField Demons::findGradSobel(cv::Mat image) {
-	int rows = image.rows, cols = image.cols;
-	cv::Mat gradRow = cv::Mat::zeros(rows, cols, CV_32F);
-	cv::Mat gradCol = cv::Mat::zeros(rows, cols, CV_32F);
-	cv::Sobel(image, gradRow, CV_32F, 0, 1);
-	cv::Sobel(image, gradCol, CV_32F, 1, 0);
-	// gradCol = normalizeSobelImage(gradCol);
-	// gradRow = normalizeSobelImage(gradRow);
-	VectorField grad(gradRow, gradCol);
-	return grad;
-}
-
-cv::Mat Demons::normalizeSobelImage(cv::Mat sobelImage) {
-	double minVal, maxVal;
-	minMaxLoc(sobelImage, &minVal, &maxVal); //find minimum and maximum intensities
-	cv::Mat normalized;
-	sobelImage.convertTo(normalized, CV_32F, 255.0/(maxVal - minVal), -minVal * 255.0/(maxVal - minVal));
-	return normalized;
 }
 
 void Demons::printDeformedImage(int iteration) {

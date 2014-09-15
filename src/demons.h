@@ -9,6 +9,7 @@
 
 #include "vectorfield.h"
 #include "interpolation.h"
+#include "gradient.h"
 
 class Demons {
 	public:
@@ -33,7 +34,7 @@ class Demons {
 		VectorField findGradSobel(cv::Mat image);
 		double getIterationTime(time_t startTime);
 		cv::Mat normalizeSobelImage(cv::Mat sobelImage);
-		VectorField newDeltaField(VectorField gradients);
+		VectorField newDeltaField(VectorField gradients, Gradient deformedImageGradient);
 		void updateDisplField(VectorField displField, VectorField deltaField);
 		void printVFN(VectorField vectorField, VectorField deltaField, int iteration);
 		void printVFI(VectorField vectorField, int iteration);
