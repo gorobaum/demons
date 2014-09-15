@@ -8,28 +8,31 @@
 
 class Interpolation {
 	public:
+		Interpolation(cv::Mat &image) : image_(image) {};
 		template<typename T> 
-		static T bilinearInterpolation(cv::Mat image, float row, float col, bool print);
+		T bilinearInterpolation(float row, float col, bool print);
 		template<typename T> 
-		static T NNInterpolation(cv::Mat image, float row, float col);
+		T NNInterpolation(float row, float col);
 	private:
-		static int getNearestInteger(float number);
+		cv::Mat &image_;
+		int getNearestInteger(float number);
 };
 
 template<typename T>
-T Interpolation::bilinearInterpolation(cv::Mat image, float row, float col, bool print) {
+T Interpolation::bilinearInterpolation(float row, float col, bool print) {
 	int u = trunc(row);
 	int v = trunc(col);
-	uchar pixelOne = ImageFunctions::getValue<uchar>(image, u, v);
-	uchar pixelTwo = ImageFunctions::getValue<uchar>(image, u+1, v);
-	uchar pixelThree = ImageFunctions::getValue<uchar>(image, u, v+1);
-	uchar pixelFour = ImageFunctions::getValue<uchar>(image, u+1, v+1);
+	uchar pixelOne = ImageFunctions::getValue<uchar>(image_, u, v);
+	uchar pixelTwo = ImageFunctions::getValue<uchar>(image_, u+1, v);
+	uchar pixelThree = ImageFunctions::getValue<uchar>(image_, u, v+1);
+	uchar pixelFour = ImageFunctions::getValue<uchar>(image_, u+1, v+1);
 
 	T interpolation = (u+1-row)*(v+1-col)*pixelOne
 												+ (row-u)*(v+1-col)*pixelTwo 
 												+ (u+1-row)*(col-v)*pixelThree
 												+ (row-u)*(col-v)*pixelFour;
 	if (print) {
+		std::cout<< "Image Rows = " << image_.rows << "\n";
 		std::cout<< "Row = " << row << " Col = " << col << "\n";
 		std::cout<< "u = " << u << " v = " << v << "\n";
 		std::cout<< "(u+1-row) = " << (u+1-row) << " (v+1-col) = " << (v+1-col) << " pixelOne = " << (int)pixelOne << "\n";
@@ -42,10 +45,10 @@ T Interpolation::bilinearInterpolation(cv::Mat image, float row, float col, bool
 }
 
 template<typename T>
-T Interpolation::NNInterpolation(cv::Mat image, float row, float col) {
+T Interpolation::NNInterpolation(float row, float col) {
 	int nearRow = getNearestInteger(row);
 	int nearCol = getNearestInteger(col);
-	T aux = ImageFunctions::getValue<T>(image, nearRow, nearCol);
+	T aux = ImageFunctions::getValue<T>(image_, nearRow, nearCol);
 	return aux;
 }
 

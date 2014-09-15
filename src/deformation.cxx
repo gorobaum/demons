@@ -9,12 +9,13 @@
 
 cv::Mat Deform::applySinDeformation(double amp, double freq) {
     cv::Mat deformatedImage(originalImage_.rows, originalImage_.cols, CV_LOAD_IMAGE_GRAYSCALE);
+    Interpolation imageInterpolator(originalImage_);
     for(int row = 0; row < deformatedImage.rows; row++) {
         uchar* di = deformatedImage.ptr(row);
         for(int col = 0; col < deformatedImage.cols; col++) {
             float newRow = row + amp*sin(col/freq);
             float newCol = col ;
-            di[col] = Interpolation::bilinearInterpolation<uchar>(originalImage_, newRow, newCol, false);
+            di[col] = imageInterpolator.bilinearInterpolation<uchar>(newRow, newCol, false);
         }
     }
     return deformatedImage;

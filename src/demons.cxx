@@ -122,7 +122,7 @@ void Demons::updateDeformedImage(VectorField displField) {
 				std::cout << "newRow = " << newRow << " newCol = " << newCol << "\n";
 				print = true;
 			}
-			deformedImageRow[col] = Interpolation::bilinearInterpolation<float>(movingImage_, newRow, newCol, print);
+			deformedImageRow[col] = movingInterpolator.bilinearInterpolation<float>(newRow, newCol, print);
 			// if (col == POSC && row == POSR) std::cout << "Interpolation = " << deformedImageRow[col] << "\n";
 		}
 	}
