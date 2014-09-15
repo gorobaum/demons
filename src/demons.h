@@ -17,22 +17,24 @@ class Demons {
 			staticImage_(staticImage), 
 			movingImage_(movingImage),
 			movingInterpolator(movingImage),
-			displField(staticImage.rows, staticImage.cols) {}
+			displField(staticImage.rows, staticImage.cols) {
+				rows = staticImage_.rows;
+				cols = staticImage_.cols;
+				movingImage_.convertTo(deformedImage_, CV_32F, 1);
+			}
 		void demons();
 		cv::Mat getRegistration();
 		VectorField getDisplField();
-	private:
+	protected:
+		int rows, cols;
 		cv::Mat staticImage_;
 		cv::Mat movingImage_;
 		cv::Mat deformedImage_;
 		Interpolation movingInterpolator;
 		VectorField displField;
-		VectorField newDeltaField(VectorField gradients, Gradient deformedImageGradient);
+		virtual VectorField newDeltaField(VectorField gradients, Gradient deformedImageGradient) = 0;
 		void updateDisplField(VectorField displField, VectorField deltaField);
 		void updateDeformedImage(VectorField displField);
-		bool stopCriteria(std::vector<float> &norm, VectorField displField, VectorField deltaField);
-		bool correlationCoef();
-		bool rootMeanSquareError();
 };
 
 #endif

@@ -13,7 +13,9 @@ add_executable(demon
 	src/demons.cxx
 	src/vectorfield.cxx
 	src/imagefunctions.cxx
-	src/gradient.cxx)
+	src/gradient.cxx
+	src/symmetricdemons.cxx
+	src/asymmetricdemons.cxx)
 
 add_executable(deform 
 	src/deform.cxx
