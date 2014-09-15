@@ -44,7 +44,6 @@ void Demons::updateDeformedImage(VectorField displField) {
 }
 
 void Demons::updateDisplField(VectorField displField, VectorField deltaField) {
-	// deltaField.applyGaussianFilter();
 	displField.add(deltaField);
 	displField.applyGaussianFilter();
 }

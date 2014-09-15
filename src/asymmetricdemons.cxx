@@ -10,8 +10,8 @@ VectorField AsymmetricDemons::newDeltaField(VectorField gradients, Gradient defo
 			double diff = dRow[col] - sRow[col];
 			double denominator = (diff*diff) + (sGrad[0])*(sGrad[0]) + (sGrad[1])*(sGrad[1]);
 			if (denominator > 0.0) {
-				double rowValue = 2*(sGrad[0])*diff/denominator;
-				double colValue = 2*(sGrad[1])*diff/denominator;
+				double rowValue = (sGrad[0])*diff/denominator;
+				double colValue = (sGrad[1])*diff/denominator;
 				deltaField.updateVector(row, col, rowValue, colValue);
 			}
 		}
