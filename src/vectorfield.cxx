@@ -50,8 +50,8 @@ void VectorField::updateVector(int row, int col, double rowValue, double colValu
 }
 
 void VectorField::applyGaussianFilter() {
-	GaussianBlur(vectorRow_, vectorRow_, cv::Size(3,3), 1.0);
-	GaussianBlur(vectorCol_, vectorCol_, cv::Size(3,3), 1.0);
+	GaussianBlur(vectorRow_, vectorRow_, cv::Size(3,3), 1);
+	GaussianBlur(vectorCol_, vectorCol_, cv::Size(3,3), 1);
 }
 
 double VectorField::vectorNorm(std::vector<double> v) {
