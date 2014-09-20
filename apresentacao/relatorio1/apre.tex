@@ -14,7 +14,7 @@
 \date{}
 
 \begin{document}
-\graphicspath{ {itk/}{rotacao/}{sobel/} }
+\graphicspath{ {itk/}{rotacao/}{sobel/}{assym/} }
 \frame{\titlepage}
 
 \section{Comparação com ITK}
@@ -189,6 +189,130 @@
 
 \begin{frame}
   Comparação entre a utilização do filtro Sobel para o cálculo do gradiente e o gradiente básico.
+\end{frame}
+
+\begin{frame}
+  \begin{picture}(320,250)
+    \put(25,10){\includegraphics[scale=0.9]{lenaStatic.png}}
+    \put(25,242){\begin{minipage}[t]{\linewidth}
+    {Imagem de referência}
+    \end{minipage}}
+  \end{picture}
+\end{frame}
+
+\begin{frame}
+  \begin{picture}(320,250)
+    \put(25,10){\includegraphics[scale=0.9]{lenaMoving.png}}
+    \put(25,242){\begin{minipage}[t]{\linewidth}
+    {Imagem deformada}
+    \end{minipage}}
+  \end{picture}
+\end{frame}
+
+\begin{frame}
+  \begin{picture}(320,250)
+    \put(25,10){\includegraphics[scale=0.9]{lenaBasicsymmetric.png}}
+    \put(25,242){\begin{minipage}[t]{\linewidth}
+    {Resultado com o gradiente básico}
+    \end{minipage}}
+  \end{picture}
+\end{frame}
+
+\begin{frame}
+  \begin{picture}(320,250)
+    \put(25,10){\includegraphics[scale=0.9]{lenaSobelasymmetric.png}}
+    \put(25,242){\begin{minipage}[t]{\linewidth}
+    {Imagem com o gradiente Sobel}
+    \end{minipage}}
+  \end{picture}
+\end{frame}
+
+\begin{frame}
+  \begin{picture}(320,250)
+    \put(20,140){\includegraphics[scale=0.4]{lenaStatic.png}}
+    \put(20,130){\begin{minipage}[t]{0.4\linewidth}{Referência}\end{minipage}}
+    \put(165,140){\includegraphics[scale=0.4]{lenaMoving.png}}
+    \put(165,130){\begin{minipage}[t]{0.4\linewidth}{Deformada}\end{minipage}}
+    \put(20,20){\includegraphics[scale=0.4]{lenaBasicsymmetric.png}}
+    \put(20,10){\begin{minipage}[t]{0.4\linewidth}{Gradiente básico}\end{minipage}}
+    \put(165,20){\includegraphics[scale=0.4]{lenaSobelasymmetric.png}}
+    \put(165,10){\begin{minipage}[t]{0.4\linewidth}{Gradiente Sobel}\end{minipage}}
+  \end{picture}
+\end{frame}
+
+\section{Simétrico x Assimétrico}
+
+\begin{frame}
+  Demons asimétrico: 
+  \begin{equation*}
+    d = \frac{(m - s)*\overrightarrow{\nabla}s}{(m - s)^2 + \overrightarrow{\nabla}s^2}
+  \end{equation*}
+  Demons simétrico: 
+  \begin{equation*}
+    d = 2*\frac{(m - s)*(\overrightarrow{\nabla}s+\overrightarrow{\nabla}m)}{(m - s)^2 + (\overrightarrow{\nabla}s+\overrightarrow{\nabla}m)^2}
+  \end{equation*}
+\end{frame}
+
+\begin{frame}
+  \begin{picture}(320,250)
+    \put(25,10){\includegraphics[scale=0.9]{brainStatic.png}}
+    \put(25,242){\begin{minipage}[t]{\linewidth}
+    {Imagem de referência}
+    \end{minipage}}
+  \end{picture}
+\end{frame}
+
+\begin{frame}
+  \begin{picture}(320,250)
+    \put(25,10){\includegraphics[scale=0.9]{brainMoving.png}}
+    \put(25,242){\begin{minipage}[t]{\linewidth}
+    {Imagem deformada}
+    \end{minipage}}
+  \end{picture}
+\end{frame}
+
+\begin{frame}
+  \begin{picture}(320,250)
+    \put(25,10){\includegraphics[scale=0.9]{brainBasicasymmetric.png}}
+    \put(25,242){\begin{minipage}[t]{\linewidth}
+    {Resultado com o demons asimétrico}
+    \end{minipage}}
+  \end{picture}
+\end{frame}
+
+\begin{frame}
+  \begin{picture}(320,250)
+    \put(25,10){\includegraphics[scale=0.9]{brainBasicsymmetric.png}}
+    \put(25,242){\begin{minipage}[t]{\linewidth}
+    {Imagem com o demons simétrico}
+    \end{minipage}}
+  \end{picture}
+\end{frame}
+
+\begin{frame}
+  \begin{picture}(320,250)
+    \put(20,140){\includegraphics[scale=0.4]{brainStatic.png}}
+    \put(20,130){\begin{minipage}[t]{0.4\linewidth}{Referência}\end{minipage}}
+    \put(165,140){\includegraphics[scale=0.4]{brainMoving.png}}
+    \put(165,130){\begin{minipage}[t]{0.4\linewidth}{Deformada}\end{minipage}}
+    \put(165,20){\includegraphics[scale=0.4]{brainBasicasymmetric.png}}
+    \put(165,10){\begin{minipage}[t]{0.4\linewidth}{Asimétrico}\end{minipage}}
+    \put(20,20){\includegraphics[scale=0.4]{brainBasicsymmetric.png}}
+    \put(20,10){\begin{minipage}[t]{0.4\linewidth}{Simétrico}\end{minipage}}
+  \end{picture}
+\end{frame}
+
+\begin{frame}
+  \begin{picture}(320,250)
+    \put(20,140){\includegraphics[scale=0.4]{lenaStatic.png}}
+    \put(20,130){\begin{minipage}[t]{0.4\linewidth}{Referência}\end{minipage}}
+    \put(165,140){\includegraphics[scale=0.4]{lenaMoving.png}}
+    \put(165,130){\begin{minipage}[t]{0.4\linewidth}{Deformada}\end{minipage}}
+    \put(20,20){\includegraphics[scale=0.4]{lenaBasicsymmetric.png}}
+    \put(20,10){\begin{minipage}[t]{0.4\linewidth}{Simétrico}\end{minipage}}
+    \put(165,20){\includegraphics[scale=0.4]{lenaBasicasymmetric.png}}
+    \put(165,10){\begin{minipage}[t]{0.4\linewidth}{Asimétrico}\end{minipage}}
+  \end{picture}
 \end{frame}
 
 \end{document}
