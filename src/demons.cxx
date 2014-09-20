@@ -19,7 +19,7 @@
 void Demons::demons() {
 	Gradient staticGradient(staticImage_);
 	Gradient deformedImageGradient(deformedImage_);
-	VectorField gradients = staticGradient.getBasicGradient();
+	VectorField gradients = staticGradient.getSobelGradient();
 	VectorField deltaField(rows, cols);
 
 	for(int iteration = 1; iteration <= 50; iteration++) {

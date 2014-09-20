@@ -1,4 +1,3 @@
-- Separar o codigo bonitinho
 - Estudar o histogram matching
 - setar criterio de parada para o RMS
 - Rodar o octave
@@ -11,6 +10,7 @@
 
 = finished =
 
+- Separar o codigo bonitinho (ok)
 - Escolher entre spline ou bicubic interpolation (O itk usa linear http://www.itk.org/Doxygen46/html/classitk_1_1DemonsRegistrationFilter.html)
 - testar com uma imagem mais básica (ok)
 - Rodar o itk (ok)

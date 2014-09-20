@@ -2,7 +2,7 @@
 
 VectorField SymmetricDemons::newDeltaField(VectorField gradients, Gradient deformedImageGradient) {
 	VectorField deltaField(rows, cols);
-	VectorField gradientDeformed = deformedImageGradient.getBasicGradient();
+	VectorField gradientDeformed = deformedImageGradient.getSobelGradient();
 	for(int row = 0; row < rows; row++) {
 		const double* dRow = deformedImage_.ptr<double>(row);
 		uchar* sRow = staticImage_.ptr(row);
