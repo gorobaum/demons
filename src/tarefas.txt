@@ -1,3 +1,11 @@
+- Voltar pra float
+- Recolocar a impressão dos campos
+- Transformar as C++ references em smart pointers
+- Registro em GPU
+- Código 3D
+- Lena com maior resolução
+- Procurar uma imagem deformada naturalmente ( Osiryx )
+- TPS
 - Estudar o histogram matching
 - setar criterio de parada para o RMS
 - Rodar o octave

@@ -5,7 +5,6 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
-
 class ImageFunctions {
 public:
 	template<typename T> static T getValue(const cv::Mat &image, int row, int col);

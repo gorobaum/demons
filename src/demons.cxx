@@ -26,6 +26,7 @@ void Demons::demons() {
 		deltaField = newDeltaField(gradients, deformedImageGradient);
 		updateDisplField(displField, deltaField);
 		updateDeformedImage(displField);
+		debug(iteration);
 		std::cout << "Iteration " << iteration << "\n";
 	}
 	std::cout << "termino rapa\n";
@@ -43,6 +44,15 @@ void Demons::updateDeformedImage(VectorField displField) {
 	}
 }
 
+void Demons::debug(int iteration) {
+	std::string filename("VFN-Iteration");
+	std::ostringstream converter;
+	converter << iteration;
+	filename += converter.str() + ".dat";
+	VectorField normalized = displField.getNormalized();
+	normalized.printField(filename.c_str());
+}
+
 void Demons::updateDisplField(VectorField displField, VectorField deltaField) {
 	displField.add(deltaField);
 	displField.applyGaussianFilter();
@@ -50,4 +60,8 @@ void Demons::updateDisplField(VectorField displField, VectorField deltaField) {
 
 cv::Mat Demons::getRegistration() {
 	return deformedImage_;
+}
+
+VectorField Demons::getDisplField() {
+	return displField;
 }
