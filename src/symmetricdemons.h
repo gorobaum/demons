@@ -12,7 +12,8 @@
 class SymmetricDemons : public Demons {
 	using Demons::Demons;
 	private:
-		VectorField newDeltaField(VectorField gradients, Gradient deformedImageGradient);
+		VectorField newDeltaField(VectorField gradients);
+		std::vector<double> calculateDeformedGradientAt(int row, int col);
 };
 
 #endif

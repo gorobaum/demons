@@ -9,39 +9,36 @@
 
 #include "demons.h"
 
+#define SPACING 1
+#define IMAGEDIMENSION 2
 #define RMSEcriteria 10
 #define CORRCOEFcriteria 0.95
 #define STOPcriteria 0.0001
-#define SPACING 0.16
 #define POSR 130
 #define POSC 131
 
-void Demons::demons() {
+void Demons::run() {
 	Gradient staticGradient(staticImage_);
-	Gradient deformedImageGradient(deformedImage_);
 	VectorField gradients = staticGradient.getBasicGradient();
 	VectorField deltaField(rows, cols);
+	int dimensions;
+	for (dimensions = 0; dimensions < IMAGEDIMENSION; dimensions++) normalizer = SPACING*SPACING;
+	normalizer /= dimensions;
 
 	for(int iteration = 1; iteration <= 50; iteration++) {
-		deltaField = newDeltaField(gradients, deformedImageGradient);
+		deltaField = newDeltaField(gradients);
 		updateDisplField(displField, deltaField);
-		updateDeformedImage(displField);
 		debug(iteration);
 		std::cout << "Iteration " << iteration << "\n";
 	}
 	std::cout << "termino rapa\n";
 }
 
-void Demons::updateDeformedImage(VectorField displField) {
-	for(int row = 0; row < rows; row++) {
-		double* deformedImageRow = deformedImage_.ptr<double>(row);
-		for(int col = 0; col < cols; col++) {
-			std::vector<double> displVector = displField.getVectorAt(row, col);
-			double newRow = row - displVector[0];
-			double newCol = col - displVector[1];
-			deformedImageRow[col] = movingInterpolator.bilinearInterpolation<double>(newRow, newCol);
-		}
-	}
+double Demons::getDeformedValue(int row, int col) {
+    std::vector<double> displVector = displField.getVectorAt(row, col);
+    double newRow = row - displVector[0];
+    double newCol = col - displVector[1];
+    return movingInterpolator.bilinearInterpolation<double>(newRow, newCol);
 }
 
 void Demons::debug(int iteration) {
@@ -56,10 +53,6 @@ void Demons::debug(int iteration) {
 void Demons::updateDisplField(VectorField displField, VectorField deltaField) {
 	displField.add(deltaField);
 	displField.applyGaussianFilter();
-}
-
-cv::Mat Demons::getRegistration() {
-	return deformedImage_;
 }
 
 VectorField Demons::getDisplField() {

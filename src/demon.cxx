@@ -50,7 +50,7 @@ int main(int argc, char** argv) {
     char* extension = std::strrchr(argv[2], '.');
 
     // AsymmetricDemons asymmetricDemons(staticImage, movingImage);
-    // asymmetricDemons.demons();
+    // asymmetricDemons.run();
     // VectorField displacementField = asymmetricDemons.getDisplField();
     // cv::Mat result = applyVectorField(movingImage, displacementField);
     // fileName = argv[3];
@@ -59,7 +59,7 @@ int main(int argc, char** argv) {
     // imwrite(fileName.c_str(), deformed, compression_params);
 
     SymmetricDemons symmetricDemons(staticImage, movingImage);
-    symmetricDemons.demons();
+    symmetricDemons.run();
     VectorField displacementField = symmetricDemons.getDisplField();
     cv::Mat result = applyVectorField(movingImage, displacementField);
     fileName = argv[3];

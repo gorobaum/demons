@@ -12,7 +12,7 @@
 class AsymmetricDemons : public Demons {
 	using Demons::Demons;
 	private:
-		VectorField newDeltaField(VectorField gradients, Gradient deformedImageGradient);
+		VectorField newDeltaField(VectorField gradients);
 };
 
 #endif

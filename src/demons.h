@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <array>
+#include <cmath>
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -20,21 +21,20 @@ class Demons {
 			displField(staticImage.rows, staticImage.cols) {
 				rows = staticImage_.rows;
 				cols = staticImage_.cols;
-				movingImage_.convertTo(deformedImage_, CV_64F, 1);
 			}
-		void demons();
-		cv::Mat getRegistration();
+		void run();
 		VectorField getDisplField();
 	protected:
 		int rows, cols;
+		double normalizer;
 		cv::Mat staticImage_;
 		cv::Mat movingImage_;
-		cv::Mat deformedImage_;
 		Interpolation movingInterpolator;
 		VectorField displField;
-		virtual VectorField newDeltaField(VectorField gradients, Gradient deformedImageGradient) = 0;
+		virtual VectorField newDeltaField(VectorField gradients) = 0;
 		void updateDisplField(VectorField displField, VectorField deltaField);
 		void updateDeformedImage(VectorField displField);
+		double getDeformedValue(int row, int col);
 		void debug(int interation);
 };
 
