@@ -34,7 +34,7 @@ void Demons::run() {
 	std::cout << "termino rapa\n";
 }
 
-double Demons::getDeformedValue(int row, int col) {
+double Demons::getDeformedImageValueAt(int row, int col) {
     std::vector<double> displVector = displField.getVectorAt(row, col);
     double newRow = row - displVector[0];
     double newCol = col - displVector[1];

@@ -34,7 +34,7 @@ class Demons {
 		virtual VectorField newDeltaField(VectorField gradients) = 0;
 		void updateDisplField(VectorField displField, VectorField deltaField);
 		void updateDeformedImage(VectorField displField);
-		double getDeformedValue(int row, int col);
+		double getDeformedImageValueAt(int row, int col);
 		void debug(int interation);
 };
 

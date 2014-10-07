@@ -45,23 +45,22 @@ int main(int argc, char** argv) {
     // GaussianBlur(movingImage, movingImage, cv::Size(3,3), 1.0);
     // Mat lut = ImageFunctions::histogramMatching(staticImage, movingImage);
     // cv::LUT(movingImage, lut, movingImage);
-    Mat deformed;
     std::string fileName;
     char* extension = std::strrchr(argv[2], '.');
 
-    // AsymmetricDemons asymmetricDemons(staticImage, movingImage);
-    // asymmetricDemons.run();
-    // VectorField displacementField = asymmetricDemons.getDisplField();
-    // cv::Mat result = applyVectorField(movingImage, displacementField);
-    // fileName = argv[3];
-    // fileName += "asymmetric";
-    // fileName += extension;
-    // imwrite(fileName.c_str(), deformed, compression_params);
+    AsymmetricDemons asymmetricDemons(staticImage, movingImage);
+    asymmetricDemons.run();
+    VectorField displacementField = asymmetricDemons.getDisplField();
+    cv::Mat result = applyVectorField(movingImage, displacementField);
+    fileName = argv[3];
+    fileName += "asymmetric";
+    fileName += extension;
+    imwrite(fileName.c_str(), result, compression_params);
 
     SymmetricDemons symmetricDemons(staticImage, movingImage);
     symmetricDemons.run();
-    VectorField displacementField = symmetricDemons.getDisplField();
-    cv::Mat result = applyVectorField(movingImage, displacementField);
+    displacementField = symmetricDemons.getDisplField();
+    result = applyVectorField(movingImage, displacementField);
     fileName = argv[3];
     fileName += "symmetric";
     fileName += extension;
