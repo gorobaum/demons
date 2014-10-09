@@ -43,8 +43,8 @@ int main(int argc, char** argv) {
 	Mat movingImage = imread(argv[2], CV_LOAD_IMAGE_GRAYSCALE);
     // GaussianBlur(staticImage, staticImage, cv::Size(3,3), 1.0);
     // GaussianBlur(movingImage, movingImage, cv::Size(3,3), 1.0);
-    // Mat lut = ImageFunctions::histogramMatching(staticImage, movingImage);
-    // cv::LUT(movingImage, lut, movingImage);
+    Mat lut = ImageFunctions::histogramMatching(staticImage, movingImage);
+    cv::LUT(movingImage, lut, movingImage);
     std::string fileName;
     char* extension = std::strrchr(argv[2], '.');
 

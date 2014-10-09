@@ -28,6 +28,8 @@ class VectorField {
 		cv::Mat vectorCol_;
 		cv::Mat vectorRow_;
 		double vectorNorm(std::vector<double> v);
+		void applyGaussianFilterRow(cv::Mat image);
+		void applyGaussianFilterCol(cv::Mat image);
 		std::vector<double> getInfos();
 		int rows_;
 		int cols_;
