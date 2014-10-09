@@ -23,8 +23,8 @@ cv::Mat applyVectorField(cv::Mat image, VectorField displacementField) {
         uchar* resultRow = result.ptr<uchar>(row);
         for(int col = 0; col < cols; col++) {
             std::vector<double> displVector = displacementField.getVectorAt(row, col);
-            uchar newRow = row - displVector[0];
-            uchar newCol = col - displVector[1];
+            double newRow = row - displVector[0];
+            double newCol = col - displVector[1];
             resultRow[col] = imageInterpolator.bilinearInterpolation<uchar>(newRow, newCol);
         }
     }
@@ -48,19 +48,19 @@ int main(int argc, char** argv) {
     std::string fileName;
     char* extension = std::strrchr(argv[2], '.');
 
-    AsymmetricDemons asymmetricDemons(staticImage, movingImage);
-    asymmetricDemons.run();
-    VectorField displacementField = asymmetricDemons.getDisplField();
-    cv::Mat result = applyVectorField(movingImage, displacementField);
-    fileName = argv[3];
-    fileName += "asymmetric";
-    fileName += extension;
-    imwrite(fileName.c_str(), result, compression_params);
+    // AsymmetricDemons asymmetricDemons(staticImage, movingImage);
+    // asymmetricDemons.run();
+    // VectorField displacementField = asymmetricDemons.getDisplField();
+    // cv::Mat result = applyVectorField(movingImage, displacementField);
+    // fileName = argv[3];
+    // fileName += "asymmetric";
+    // fileName += extension;
+    // imwrite(fileName.c_str(), result, compression_params);
 
     SymmetricDemons symmetricDemons(staticImage, movingImage);
     symmetricDemons.run();
-    displacementField = symmetricDemons.getDisplField();
-    result = applyVectorField(movingImage, displacementField);
+    VectorField displacementField = symmetricDemons.getDisplField();
+    cv::Mat result = applyVectorField(movingImage, displacementField);
     fileName = argv[3];
     fileName += "symmetric";
     fileName += extension;

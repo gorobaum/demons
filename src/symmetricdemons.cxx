@@ -9,10 +9,12 @@ VectorField SymmetricDemons::newDeltaField(VectorField gradients) {
 			std::vector<double> deformedGrad = calculateDeformedGradientAt(row, col);
 			double deformedImageValueAt = getDeformedImageValueAt(row, col);
 			double diff = deformedImageValueAt - sRow[col];
-			double denominator = (diff*diff) + ((staticGrad[0]+deformedGrad[0])*(staticGrad[0]+deformedGrad[0]) + (staticGrad[1]+deformedGrad[1])*(staticGrad[1]+deformedGrad[1]));
+			double gradRow = staticGrad[0]+deformedGrad[0];
+			double gradCol = staticGrad[1]+deformedGrad[1];
+			double denominator = (diff*diff) + (gradRow*gradRow) + (gradCol*gradCol);
 			if (denominator > 0) {
-				double rowValue = 2*(staticGrad[0]+deformedGrad[0])*diff/denominator;
-				double colValue = 2*(staticGrad[1]+deformedGrad[1])*diff/denominator;
+				double rowValue = 2*gradRow*diff/denominator;
+				double colValue = 2*gradCol*diff/denominator;
 				deltaField.updateVector(row, col, rowValue, colValue);
 			}
 		}

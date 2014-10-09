@@ -2,7 +2,7 @@
 
 cv::Mat ImageFunctions::histogramMatching(cv::Mat staticImage, cv::Mat movingImage) {
 	cv::Mat staticImageHist, movingImageHist;
-	int channels[] = {0};
+	int channels[] = {0}; 
 	int histSize = 256;
 	float range[] = { 0, 255 };
 	const float* ranges[] = { range };
@@ -38,4 +38,15 @@ cv::Mat ImageFunctions::histogramMatching(cv::Mat staticImage, cv::Mat movingIma
 	    mean = (freqSIH.at<float>(j+1) - freqSIH.at<float>(j))/2;
 	}
 	return LUT;
+}
+
+void ImageFunctions::printAround(cv::Mat image, int row, int col) {
+	for (int auxRow = row-1; auxRow <= row+1; auxRow++) {
+		for (int auxCol = col-1; auxCol <= col+1; auxCol++) {
+			double pixelValue = getValue<double>(image, auxRow, auxCol);
+			std::cout << pixelValue << " ";
+		}
+		std::cout << "\n";
+	}
+	std::cout << "\n";
 }

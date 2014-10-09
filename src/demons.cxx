@@ -14,8 +14,8 @@
 #define RMSEcriteria 10
 #define CORRCOEFcriteria 0.95
 #define STOPcriteria 0.0001
-#define POSR 130
-#define POSC 131
+#define POSR 20
+#define POSC 20
 
 void Demons::run() {
 	Gradient staticGradient(staticImage_);
@@ -28,7 +28,7 @@ void Demons::run() {
 	for(int iteration = 1; iteration <= 50; iteration++) {
 		deltaField = newDeltaField(gradients);
 		updateDisplField(displField, deltaField);
-		debug(iteration);
+		debug(iteration, deltaField, gradients);
 		std::cout << "Iteration " << iteration << "\n";
 	}
 	std::cout << "termino rapa\n";
@@ -41,7 +41,13 @@ double Demons::getDeformedImageValueAt(int row, int col) {
     return movingInterpolator.bilinearInterpolation<double>(newRow, newCol);
 }
 
-void Demons::debug(int iteration) {
+void Demons::debug(int iteration, VectorField deltaField, VectorField gradients) {
+	// ImageFunctions::printAround(staticImage_, POSR, POSC);
+	// ImageFunctions::printAround(movingImage_, POSR, POSC);
+	// gradients.printFieldAround(POSR,POSC);
+	// deltaField.printFieldAround(POSR,POSC);
+	// displField.printFieldAround(POSR,POSC);
+
 	std::string filename("VFN-Iteration");
 	std::ostringstream converter;
 	converter << iteration;

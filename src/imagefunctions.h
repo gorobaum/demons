@@ -9,6 +9,7 @@ class ImageFunctions {
 public:
 	template<typename T> static T getValue(const cv::Mat &image, int row, int col);
 	static cv::Mat histogramMatching(cv::Mat staticImage, cv::Mat movingImage);
+	static void printAround(cv::Mat image, int row, int col);
 };
 
 template<typename T>

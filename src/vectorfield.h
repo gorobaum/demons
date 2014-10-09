@@ -14,6 +14,7 @@ class VectorField {
 		void updateVector(int row, int col, double rowValue, double colValue);
 		void applyGaussianFilter();
 		VectorField getNormalized();
+		void printFieldAround(int row, int col);
 		void printField(std::string filename);
 		void printFieldInfos(std::string filename, int iteration);
 		void printFieldImage(int iteration, std::vector<int> compression_params);

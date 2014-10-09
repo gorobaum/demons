@@ -49,10 +49,10 @@ void VectorField::updateVector(int row, int col, double rowValue, double colValu
 	vectorCol_.at<double>(row, col) = colValue;
 }
 
-void VectorField::applyGaussianFilter() {
-	GaussianBlur(vectorRow_, vectorRow_, cv::Size(3,3), 1);
-	GaussianBlur(vectorCol_, vectorCol_, cv::Size(3,3), 1);
-}
+// void VectorField::applyGaussianFilter() {
+// 	GaussianBlur(vectorRow_, vectorRow_, cv::Size(3,3), 1);
+// 	GaussianBlur(vectorCol_, vectorCol_, cv::Size(3,3), 1);
+// }
 
 double VectorField::vectorNorm(std::vector<double> v) {
 	return sqrt(pow(v[0],2)+pow(v[1],2));
@@ -74,6 +74,30 @@ VectorField VectorField::getNormalized() {
 	return normalized;
 }
 
+void VectorField::applyGaussianFilter() {
+	double m[3][3] = {{1, 2, 1},{2,4,2},{1,2,1}};
+	cv::Mat gaussianKernel = cv::Mat(3,3, CV_64F, m)*1/16;
+	for(int row = 0; row < rows_; row++) {
+        for(int col = 0; col < cols_; col++) {
+        	std::vector<double> vector = getVectorAt(row, col);
+        	double newPixelValueRow = 0.0;
+        	double newPixelValueCol = 0.0;
+        	if (vector[0] != 0.0 || vector[1] != 0.0) {
+	        	for (int i = -1; i <= 1; i++) {
+	        		for (int j = -1; j <= 1; j++) {
+	        			double pixelAtVectorRow = ImageFunctions::getValue<double>(vectorRow_, row+i, col+j);
+	        			double pixelAtVectorCol = ImageFunctions::getValue<double>(vectorCol_, row+i, col+j);
+	        			double gaussianKernelValue = ImageFunctions::getValue<double>(gaussianKernel, i+1, j+1);
+	        			newPixelValueRow += gaussianKernelValue*pixelAtVectorRow;
+	        			newPixelValueCol += gaussianKernelValue*pixelAtVectorCol;
+	        		}
+	        	}
+	        	updateVector(row, col, newPixelValueRow, newPixelValueCol);
+        	}
+    	}
+    }
+}
+
 void VectorField::add(VectorField adding) {
 	vectorRow_ = vectorRow_ + adding.vectorRow_;
 	vectorCol_ = vectorCol_ + adding.vectorCol_;
@@ -87,6 +111,17 @@ double VectorField::sumOfAbs() {
 		}
 	}
 	return total;
+}
+
+void VectorField::printFieldAround(int row, int col) {
+	for (int auxRow = row-1; auxRow <= row+1; auxRow++) {
+		for (int auxCol = col-1; auxCol <= col+1; auxCol++) {
+			std::vector<double> macaco = getVectorAt(auxRow,auxCol);
+			std::cout << "(" << macaco[0] << ")(" << macaco[1] << ") ";
+		}
+		std::cout << "\n";
+	}
+	std::cout << "\n";
 }
 
 void VectorField::printFieldImage(int iteration, std::vector<int> compression_params) {
