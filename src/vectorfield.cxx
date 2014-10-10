@@ -75,8 +75,7 @@ VectorField VectorField::getNormalized() {
 }
 
 void VectorField::applyGaussianFilter() {
-	double m[3][3] = {{1, 2, 1},{2,4,2},{1,2,1}};
-	cv::Mat gaussianKernel = cv::Mat(3,3, CV_64F, m)*1/16;
+	cv::Mat gaussianKernel = cv::getGaussianKernel(3, 1, CV_64F);
 	for(int row = 0; row < rows_; row++) {
         for(int col = 0; col < cols_; col++) {
         	std::vector<double> vector = getVectorAt(row, col);
@@ -84,13 +83,28 @@ void VectorField::applyGaussianFilter() {
         	double newPixelValueCol = 0.0;
         	if (vector[0] != 0.0 || vector[1] != 0.0) {
 	        	for (int i = -1; i <= 1; i++) {
-	        		for (int j = -1; j <= 1; j++) {
-	        			double pixelAtVectorRow = ImageFunctions::getValue<double>(vectorRow_, row+i, col+j);
-	        			double pixelAtVectorCol = ImageFunctions::getValue<double>(vectorCol_, row+i, col+j);
-	        			double gaussianKernelValue = ImageFunctions::getValue<double>(gaussianKernel, i+1, j+1);
-	        			newPixelValueRow += gaussianKernelValue*pixelAtVectorRow;
-	        			newPixelValueCol += gaussianKernelValue*pixelAtVectorCol;
-	        		}
+        			double pixelAtVectorRow = ImageFunctions::getValue<double>(vectorRow_, row+i, col);
+        			double pixelAtVectorCol = ImageFunctions::getValue<double>(vectorCol_, row+i, col);
+        			double gaussianKernelValue = ImageFunctions::getValue<double>(gaussianKernel, i+1, 0);
+        			newPixelValueRow += gaussianKernelValue*pixelAtVectorRow;
+        			newPixelValueCol += gaussianKernelValue*pixelAtVectorCol;
+	        	}
+	        	updateVector(row, col, newPixelValueRow, newPixelValueCol);
+        	}
+    	}
+    }
+    for(int row = 0; row < rows_; row++) {
+        for(int col = 0; col < cols_; col++) {
+        	std::vector<double> vector = getVectorAt(row, col);
+        	double newPixelValueRow = 0.0;
+        	double newPixelValueCol = 0.0;
+        	if (vector[0] != 0.0 || vector[1] != 0.0) {
+	        	for (int i = -1; i <= 1; i++) {
+        			double pixelAtVectorRow = ImageFunctions::getValue<double>(vectorRow_, row, col+i);
+        			double pixelAtVectorCol = ImageFunctions::getValue<double>(vectorCol_, row, col+i);
+        			double gaussianKernelValue = ImageFunctions::getValue<double>(gaussianKernel, i+1, 0);
+        			newPixelValueRow += gaussianKernelValue*pixelAtVectorRow;
+        			newPixelValueCol += gaussianKernelValue*pixelAtVectorCol;
 	        	}
 	        	updateVector(row, col, newPixelValueRow, newPixelValueCol);
         	}
