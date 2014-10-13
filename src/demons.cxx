@@ -42,11 +42,11 @@ double Demons::getDeformedImageValueAt(int row, int col) {
 }
 
 void Demons::debug(int iteration, VectorField deltaField, VectorField gradients) {
-	// ImageFunctions::printAround(staticImage_, POSR, POSC);
-	// ImageFunctions::printAround(movingImage_, POSR, POSC);
-	// gradients.printFieldAround(POSR,POSC);
-	// deltaField.printFieldAround(POSR,POSC);
-	// displField.printFieldAround(POSR,POSC);
+	ImageFunctions::printAround(staticImage_, POSR, POSC);
+	ImageFunctions::printAround(movingImage_, POSR, POSC);
+	gradients.printFieldAround(POSR,POSC);
+	deltaField.printFieldAround(POSR,POSC);
+	displField.printFieldAround(POSR,POSC);
 
 	std::string filename("VFN-Iteration");
 	std::ostringstream converter;
