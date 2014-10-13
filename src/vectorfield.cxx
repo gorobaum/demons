@@ -125,8 +125,9 @@ void VectorField::applyGaussianFilter(double kernelSize, double deviation) {
 void VectorField::add(VectorField adding) {
 	for(int row = 0; row < rows_; row++) {
         for(int col = 0; col < cols_; col++) {
-        	vectorField[row][col][0] = vectorField[row][col][0] + adding.vectorField[row][col][0];
-        	vectorField[row][col][1] = vectorField[row][col][1] + adding.vectorField[row][col][1];
+        	double vectorRow = vectorField[row][col][0] + adding.vectorField[row][col][0];
+        	double vectorCol = vectorField[row][col][1] + adding.vectorField[row][col][1];
+        	updateVector(row, col, vectorRow, vectorCol);
         }
     }
 }
