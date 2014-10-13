@@ -74,8 +74,8 @@ VectorField VectorField::getNormalized() {
 	return normalized;
 }
 
-void VectorField::applyGaussianFilter() {
-	cv::Mat gaussianKernel = cv::getGaussianKernel(3, 1, CV_64F);
+void VectorField::applyGaussianFilter(double kernelSize, double deviation) {
+	cv::Mat gaussianKernel = cv::getGaussianKernel(kernelSize, deviation, CV_64F);
 	for(int row = 0; row < rows_; row++) {
         for(int col = 0; col < cols_; col++) {
         	std::vector<double> vector = getVectorAt(row, col);

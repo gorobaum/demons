@@ -12,7 +12,7 @@ class VectorField {
 		VectorField(int rows, int cols);
 		std::vector<double> getVectorAt(int row, int col);
 		void updateVector(int row, int col, double rowValue, double colValue);
-		void applyGaussianFilter();
+		void applyGaussianFilter(double kernelSize, double deviation);
 		VectorField getNormalized();
 		void printFieldAround(int row, int col);
 		void printField(std::string filename);

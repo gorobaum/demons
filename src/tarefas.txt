@@ -1,5 +1,11 @@
-- Voltar pra float
-- Recolocar a impressão dos campos
+- Implementar um registro rigido
+- Operacoes pós registros
+- HB Mitchell, Image Fusion
+- procurar um artigo recente de registro
+- pesquisar image demons registration
+- Usar o medsquare para transformar em analisy
+- GDCM
+- Recolocar a impressão dos campos (ok)
 - Transformar as C++ references em smart pointers
 - Registro em GPU
 - Código 3D

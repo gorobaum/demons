@@ -58,7 +58,7 @@ void Demons::debug(int iteration, VectorField deltaField, VectorField gradients)
 
 void Demons::updateDisplField(VectorField displField, VectorField deltaField) {
 	displField.add(deltaField);
-	displField.applyGaussianFilter();
+	displField.applyGaussianFilter(3, 1);
 }
 
 VectorField Demons::getDisplField() {
