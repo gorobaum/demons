@@ -43,8 +43,8 @@ cv::Mat ImageFunctions::histogramMatching(cv::Mat staticImage, cv::Mat movingIma
 void ImageFunctions::printAround(cv::Mat image, int row, int col) {
 	for (int auxRow = row-1; auxRow <= row+1; auxRow++) {
 		for (int auxCol = col-1; auxCol <= col+1; auxCol++) {
-			double pixelValue = getValue<double>(image, auxRow, auxCol);
-			std::cout << pixelValue << " ";
+			uchar pixelValue = getValue<uchar>(image, auxRow, auxCol);
+			std::cout << (int)pixelValue << " ";
 		}
 		std::cout << "\n";
 	}

@@ -5,7 +5,6 @@
 - pesquisar image demons registration
 - Usar o medsquare para transformar em analisy
 - GDCM
-- Recolocar a impressão dos campos (ok)
 - Transformar as C++ references em smart pointers
 - Registro em GPU
 - Código 3D
@@ -24,6 +23,7 @@
 
 = finished =
 
+- Recolocar a impressão dos campos (ok)
 - Separar o codigo bonitinho (ok)
 - Escolher entre spline ou bicubic interpolation (O itk usa linear http://www.itk.org/Doxygen46/html/classitk_1_1DemonsRegistrationFilter.html)
 - testar com uma imagem mais básica (ok)

@@ -8,7 +8,7 @@
 
 class VectorField {
 	public:
-		VectorField(cv::Mat &vectorRow, cv::Mat &vectorCol);
+		VectorField(cv::Mat vectorRow, cv::Mat vectorCol);
 		VectorField(int rows, int cols);
 		std::vector<double> getVectorAt(int row, int col);
 		void updateVector(int row, int col, double rowValue, double colValue);
@@ -22,14 +22,10 @@ class VectorField {
 		double sumOfAbs();
 		int getRows();
 		int getCols();
-		cv::Mat getMatRow();
-		cv::Mat getMatCol();
 	private:
-		cv::Mat vectorCol_;
-		cv::Mat vectorRow_;
+		typedef std::vector<std::vector<std::vector<double>>> Field;
+		Field vectorField;
 		double vectorNorm(std::vector<double> v);
-		void applyGaussianFilterRow(cv::Mat image);
-		void applyGaussianFilterCol(cv::Mat image);
 		std::vector<double> getInfos();
 		int rows_;
 		int cols_;

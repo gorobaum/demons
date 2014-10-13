@@ -7,18 +7,38 @@
 #include "vectorfield.h"
 #include "imagefunctions.h"
 
-VectorField::VectorField(cv::Mat &vectorRow, cv::Mat &vectorCol) {
+VectorField::VectorField(cv::Mat vectorRow, cv::Mat vectorCol) {
 	rows_ = vectorCol.rows;
 	cols_ = vectorCol.cols;
-	vectorRow_ = vectorRow.clone();
-  	vectorCol_ = vectorCol.clone();
+	Field auxField;
+	for(int row = 0; row < rows_; row++) {
+		std::vector<std::vector<double>> cols;
+        double* vrRow = vectorRow.ptr<double>(row);
+        double* vcRow = vectorCol.ptr<double>(row);
+        for(int col = 0; col < cols_; col++) {
+            std::vector<double> newVector;
+            newVector.push_back(vrRow[col]);
+            newVector.push_back(vcRow[col]);
+            cols.push_back(newVector);
+        }
+        auxField.push_back(cols);
+    }
+    vectorField = auxField;
 }
 
 VectorField::VectorField(int rows, int cols) {
 	rows_ = rows;
 	cols_ = cols;
-	vectorRow_ = cv::Mat::zeros(rows, cols, CV_64F);
-  	vectorCol_ = cv::Mat::zeros(rows, cols, CV_64F);
+	Field auxField;
+	for(int row = 0; row < rows_; row++) {
+		std::vector<std::vector<double>> cols;
+        for(int col = 0; col < cols_; col++) {
+            std::vector<double> newVector(2, 0.0);
+            cols.push_back(newVector);
+        }
+        auxField.push_back(cols);
+    }
+    vectorField = auxField;
 }
 
 int VectorField::getRows() {
@@ -27,32 +47,20 @@ int VectorField::getRows() {
 
 int VectorField::getCols() {
 	return cols_;
-}	
-
-cv::Mat VectorField::getMatRow() {
-	return vectorRow_;
-}	
-
-cv::Mat VectorField::getMatCol() {
-	return vectorCol_;
-}	
+}		
 
 std::vector<double> VectorField::getVectorAt(int row, int col) {
-	std::vector<double> auxVec;
-	auxVec.push_back(ImageFunctions::getValue<double>(vectorRow_, row, col));
-	auxVec.push_back(ImageFunctions::getValue<double>(vectorCol_, row, col));
-	return auxVec;
+	std::vector<double> retVector(2, 0.0);
+	if (row >= 0 && row <= rows_-1 && col >= 0 && col <= cols_-1) retVector = vectorField[row][col];
+	return retVector;
 }
 
 void VectorField::updateVector(int row, int col, double rowValue, double colValue) {
-	vectorRow_.at<double>(row, col) = rowValue;
-	vectorCol_.at<double>(row, col) = colValue;
+	if (row >= 0 && row <= rows_-1 && col >= 0 && col <= cols_-1) {
+		vectorField[row][col][0] = rowValue;
+		vectorField[row][col][1] = colValue;
+	}
 }
-
-// void VectorField::applyGaussianFilter() {
-// 	GaussianBlur(vectorRow_, vectorRow_, cv::Size(3,3), 1);
-// 	GaussianBlur(vectorCol_, vectorCol_, cv::Size(3,3), 1);
-// }
 
 double VectorField::vectorNorm(std::vector<double> v) {
 	return sqrt(pow(v[0],2)+pow(v[1],2));
@@ -62,7 +70,7 @@ VectorField VectorField::getNormalized() {
 	VectorField normalized(rows_, cols_);
 	for(int row = 0; row < rows_; row++) {
 	    for(int col = 0; col < cols_; col++) {
-	    	std::vector<double> vector = getVectorAt(row, col);
+	    	std::vector<double> vector = vectorField[row][col];
 	    	double normalizedRow = 0.0, normalizedCol = 0.0;
 	    	if ((vector[0]*vector[1]) != 0.0) {
 	    		normalizedRow = vector[0]/vectorNorm(vector);
@@ -78,13 +86,14 @@ void VectorField::applyGaussianFilter(double kernelSize, double deviation) {
 	cv::Mat gaussianKernel = cv::getGaussianKernel(kernelSize, deviation, CV_64F);
 	for(int row = 0; row < rows_; row++) {
         for(int col = 0; col < cols_; col++) {
-        	std::vector<double> vector = getVectorAt(row, col);
+        	std::vector<double> vector = vectorField[row][col];
         	double newPixelValueRow = 0.0;
         	double newPixelValueCol = 0.0;
         	if (vector[0] != 0.0 || vector[1] != 0.0) {
 	        	for (int i = -1; i <= 1; i++) {
-        			double pixelAtVectorRow = ImageFunctions::getValue<double>(vectorRow_, row+i, col);
-        			double pixelAtVectorCol = ImageFunctions::getValue<double>(vectorCol_, row+i, col);
+	        		std::vector<double> auxVector = getVectorAt(row+1,col);
+        			double pixelAtVectorRow = auxVector[0];
+        			double pixelAtVectorCol = auxVector[1];
         			double gaussianKernelValue = ImageFunctions::getValue<double>(gaussianKernel, i+1, 0);
         			newPixelValueRow += gaussianKernelValue*pixelAtVectorRow;
         			newPixelValueCol += gaussianKernelValue*pixelAtVectorCol;
@@ -95,13 +104,14 @@ void VectorField::applyGaussianFilter(double kernelSize, double deviation) {
     }
     for(int row = 0; row < rows_; row++) {
         for(int col = 0; col < cols_; col++) {
-        	std::vector<double> vector = getVectorAt(row, col);
+        	std::vector<double> vector = vectorField[row][col];
         	double newPixelValueRow = 0.0;
         	double newPixelValueCol = 0.0;
         	if (vector[0] != 0.0 || vector[1] != 0.0) {
 	        	for (int i = -1; i <= 1; i++) {
-        			double pixelAtVectorRow = ImageFunctions::getValue<double>(vectorRow_, row, col+i);
-        			double pixelAtVectorCol = ImageFunctions::getValue<double>(vectorCol_, row, col+i);
+	        		std::vector<double> auxVector = getVectorAt(row,col+1);
+        			double pixelAtVectorRow = auxVector[0];
+        			double pixelAtVectorCol = auxVector[1];
         			double gaussianKernelValue = ImageFunctions::getValue<double>(gaussianKernel, i+1, 0);
         			newPixelValueRow += gaussianKernelValue*pixelAtVectorRow;
         			newPixelValueCol += gaussianKernelValue*pixelAtVectorCol;
@@ -113,19 +123,23 @@ void VectorField::applyGaussianFilter(double kernelSize, double deviation) {
 }
 
 void VectorField::add(VectorField adding) {
-	vectorRow_ = vectorRow_ + adding.vectorRow_;
-	vectorCol_ = vectorCol_ + adding.vectorCol_;
+	for(int row = 0; row < rows_; row++) {
+        for(int col = 0; col < cols_; col++) {
+        	vectorField[row][col][0] = vectorField[row][col][0] + adding.vectorField[row][col][0];
+        	vectorField[row][col][1] = vectorField[row][col][1] + adding.vectorField[row][col][1];
+        }
+    }
 }
 
-double VectorField::sumOfAbs() {
-	double total = 0.0;
-	for(int row = 0; row < rows_; row++) {
-		for(int col = 0; col < cols_; col++) {
-			total += std::abs(vectorCol_.at<double>(row, col)) + std::abs(vectorRow_.at<double>(row, col));
-		}
-	}
-	return total;
-}
+// double VectorField::sumOfAbs() {
+// 	double total = 0.0;
+// 	for(int row = 0; row < rows_; row++) {
+// 		for(int col = 0; col < cols_; col++) {
+// 			total += std::abs(vectorCol_.at<double>(row, col)) + std::abs(vectorRow_.at<double>(row, col));
+// 		}
+// 	}
+// 	return total;
+// }
 
 void VectorField::printFieldAround(int row, int col) {
 	for (int auxRow = row-1; auxRow <= row+1; auxRow++) {
@@ -138,81 +152,81 @@ void VectorField::printFieldAround(int row, int col) {
 	std::cout << "\n";
 }
 
-void VectorField::printFieldImage(int iteration, std::vector<int> compression_params) {
-	cv::Mat abs_grad_col, abs_grad_row;
-	std::string filenamebase("DFI-Iteration"), flCol, flRow;
-	std::ostringstream converter;
-	converter << iteration;
-	filenamebase += converter.str();
-	flCol += filenamebase + "x.jpg";
-	flRow += filenamebase + "y.jpg";
-	convertScaleAbs(vectorRow_, abs_grad_row, 255);
-	convertScaleAbs(vectorCol_, abs_grad_col, 255);
-	imwrite(flRow.c_str(), abs_grad_row, compression_params);
-	imwrite(flCol.c_str(), abs_grad_col, compression_params);
-}
+// void VectorField::printFieldImage(int iteration, std::vector<int> compression_params) {
+// 	cv::Mat abs_grad_col, abs_grad_row;
+// 	std::string filenamebase("DFI-Iteration"), flCol, flRow;
+// 	std::ostringstream converter;
+// 	converter << iteration;
+// 	filenamebase += converter.str();
+// 	flCol += filenamebase + "x.jpg";
+// 	flRow += filenamebase + "y.jpg";
+// 	convertScaleAbs(vectorRow_, abs_grad_row, 255);
+// 	convertScaleAbs(vectorCol_, abs_grad_col, 255);
+// 	imwrite(flRow.c_str(), abs_grad_row, compression_params);
+// 	imwrite(flCol.c_str(), abs_grad_col, compression_params);
+// }
 
-std::vector<double> VectorField::getInfos() {
-	std::multiset<double> magnitudes;
-	int size = (rows_*cols_);
-	double max= 0.0, min = 0.0, mean = 0.0, median = 0.0, deviation = 0.0;
-	for(int row = 0; row < rows_; row++) {
-	    for(int col = 0; col < cols_; col++) {
-	    	std::vector<double> vector = getVectorAt(row, col);
-    		double mag = std::sqrt(vector[0]*vector[0] + vector[1]*vector[1]);
-    		if (max < mag) max = mag;
-    		if (min > mag) min = mag;
-    		mean += mag;
-			magnitudes.insert(mag);
-	    }
-	}
-	mean /= size;
-	int count = 1;
-	std::multiset<double>::iterator it;
-	for (it=magnitudes.begin(); it!=magnitudes.end(); ++it) {
-    	deviation += std::pow((*it - mean),2);
-    	if (count == size/2) median = *it;
-    	count++;
-	}
-	deviation /= size;
-	deviation = std::sqrt(deviation);
-	std::vector<double> results;
-	results.push_back(min);
-	results.push_back(max);
-	results.push_back(median);
-	results.push_back(mean);
-	results.push_back(deviation);
-	return results;
-}
+// std::vector<double> VectorField::getInfos() {
+// 	std::multiset<double> magnitudes;
+// 	int size = (rows_*cols_);
+// 	double max= 0.0, min = 0.0, mean = 0.0, median = 0.0, deviation = 0.0;
+// 	for(int row = 0; row < rows_; row++) {
+// 	    for(int col = 0; col < cols_; col++) {
+// 	    	std::vector<double> vector = getVectorAt(row, col);
+//     		double mag = std::sqrt(vector[0]*vector[0] + vector[1]*vector[1]);
+//     		if (max < mag) max = mag;
+//     		if (min > mag) min = mag;
+//     		mean += mag;
+// 			magnitudes.insert(mag);
+// 	    }
+// 	}
+// 	mean /= size;
+// 	int count = 1;
+// 	std::multiset<double>::iterator it;
+// 	for (it=magnitudes.begin(); it!=magnitudes.end(); ++it) {
+//     	deviation += std::pow((*it - mean),2);
+//     	if (count == size/2) median = *it;
+//     	count++;
+// 	}
+// 	deviation /= size;
+// 	deviation = std::sqrt(deviation);
+// 	std::vector<double> results;
+// 	results.push_back(min);
+// 	results.push_back(max);
+// 	results.push_back(median);
+// 	results.push_back(mean);
+// 	results.push_back(deviation);
+// 	return results;
+// }
 
-void VectorField::printFieldInfos(std::string filename, int iteration) {
-	std::ofstream myfile;
-	if (iteration <= 1) myfile.open(filename);
-	else myfile.open(filename, std::ios_base::app);
-	myfile << "Iteration " << iteration << "\n";
-	std::vector<double> results = getInfos();
-	myfile << "Min = " << results[0] << " Max = \t" << results[1] << " Median = \t" << results[2] << " Mean = \t" << results[3] << " Standard Deviaon = \t" << results[4] << "\n";
-	myfile.close();
-}
+// void VectorField::printFieldInfos(std::string filename, int iteration) {
+// 	std::ofstream myfile;
+// 	if (iteration <= 1) myfile.open(filename);
+// 	else myfile.open(filename, std::ios_base::app);
+// 	myfile << "Iteration " << iteration << "\n";
+// 	std::vector<double> results = getInfos();
+// 	myfile << "Min = " << results[0] << " Max = \t" << results[1] << " Median = \t" << results[2] << " Mean = \t" << results[3] << " Standard Deviaon = \t" << results[4] << "\n";
+// 	myfile.close();
+// }
 
-void VectorField::printField(std::string filename) {
-	std::ofstream myfile;
-	myfile.open(filename);
-	double minValCol, maxValCol;
-	double minValRow, maxValRow;
-	minMaxLoc(vectorCol_, &minValCol, &maxValCol);
-	minMaxLoc(vectorRow_, &minValRow, &maxValRow);
-	for(int row = 0; row < rows_; row++) {
-	    for(int col = 0; col < cols_; col++) {
-	    	std::vector<double> vector = getVectorAt(row, col);
-    		double redCol = 255*(vector[1]-minValCol)/(maxValCol-minValCol);
-			double blueCol = 255*(maxValCol-vector[1])/(maxValCol-minValCol);
-			double redRow = 255*(vector[0]-minValRow)/(maxValRow-minValRow);
-			double blueRow = 255*(maxValRow-vector[0])/(maxValRow-minValRow);
-			int red = (redCol + redRow)/2;
-			int blue = (blueCol + blueRow)/2;
-			myfile << col << " " << (vectorCol_.rows - row) << " " << vector[1] << " " << vector[0] << " " <<  red << " " << 0 << " " << blue << "\n";
-	    }
-	}
-	myfile.close();
-}
+// void VectorField::printField(std::string filename) {
+// 	std::ofstream myfile;
+// 	myfile.open(filename);
+// 	double minValCol, maxValCol;
+// 	double minValRow, maxValRow;
+// 	minMaxLoc(vectorCol_, &minValCol, &maxValCol);
+// 	minMaxLoc(vectorRow_, &minValRow, &maxValRow);
+// 	for(int row = 0; row < rows_; row++) {
+// 	    for(int col = 0; col < cols_; col++) {
+// 	    	std::vector<double> vector = getVectorAt(row, col);
+//     		double redCol = 255*(vector[1]-minValCol)/(maxValCol-minValCol);
+// 			double blueCol = 255*(maxValCol-vector[1])/(maxValCol-minValCol);
+// 			double redRow = 255*(vector[0]-minValRow)/(maxValRow-minValRow);
+// 			double blueRow = 255*(maxValRow-vector[0])/(maxValRow-minValRow);
+// 			int red = (redCol + redRow)/2;
+// 			int blue = (blueCol + blueRow)/2;
+// 			myfile << col << " " << (vectorCol_.rows - row) << " " << vector[1] << " " << vector[0] << " " <<  red << " " << 0 << " " << blue << "\n";
+// 	    }
+// 	}
+// 	myfile.close();
+// }
