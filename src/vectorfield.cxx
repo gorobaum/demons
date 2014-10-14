@@ -91,7 +91,7 @@ void VectorField::applyGaussianFilter(double kernelSize, double deviation) {
         	double newPixelValueCol = 0.0;
         	if (vector[0] != 0.0 || vector[1] != 0.0) {
 	        	for (int i = -1; i <= 1; i++) {
-	        		std::vector<double> auxVector = getVectorAt(row+1,col);
+	        		std::vector<double> auxVector = getVectorAt(row+i,col);
         			double pixelAtVectorRow = auxVector[0];
         			double pixelAtVectorCol = auxVector[1];
         			double gaussianKernelValue = ImageFunctions::getValue<double>(gaussianKernel, i+1, 0);
@@ -109,7 +109,7 @@ void VectorField::applyGaussianFilter(double kernelSize, double deviation) {
         	double newPixelValueCol = 0.0;
         	if (vector[0] != 0.0 || vector[1] != 0.0) {
 	        	for (int i = -1; i <= 1; i++) {
-	        		std::vector<double> auxVector = getVectorAt(row,col+1);
+	        		std::vector<double> auxVector = getVectorAt(row,col+i);
         			double pixelAtVectorRow = auxVector[0];
         			double pixelAtVectorCol = auxVector[1];
         			double gaussianKernelValue = ImageFunctions::getValue<double>(gaussianKernel, i+1, 0);

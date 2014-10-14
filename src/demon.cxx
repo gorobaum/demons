@@ -61,6 +61,7 @@ int main(int argc, char** argv) {
     SymmetricDemons symmetricDemons(staticImage, movingImage);
     symmetricDemons.run();
     VectorField displacementField = symmetricDemons.getDisplField();
+    displacementField.printFieldAround(20,20);
     cv::Mat result = applyVectorField(movingImage, displacementField);
     fileName = argv[3];
     fileName += "symmetric";
