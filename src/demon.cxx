@@ -17,7 +17,7 @@ using namespace cv;
 
 cv::Mat applyVectorField(cv::Mat image, VectorField displacementField) {
     int rows = image.rows, cols = image.cols;
-    cv::Mat result = cv::Mat::zeros(rows, cols, CV_64F);
+    cv::Mat result = cv::Mat::zeros(rows, cols, CV_8U);
     Interpolation imageInterpolator(image);
     for(int row = 0; row < rows; row++) {
         uchar* resultRow = result.ptr<uchar>(row);
@@ -25,10 +25,9 @@ cv::Mat applyVectorField(cv::Mat image, VectorField displacementField) {
             std::vector<double> displVector = displacementField.getVectorAt(row, col);
             double newRow = row - displVector[0];
             double newCol = col - displVector[1];
-            resultRow[col] = imageInterpolator.bilinearInterpolation<double>(newRow, newCol);
+            resultRow[col] = imageInterpolator.bilinearInterpolation<uchar>(newRow, newCol);
         }
     }
-    convertScaleAbs(result, result, 255);
     return result;
 }
 
@@ -61,7 +60,6 @@ int main(int argc, char** argv) {
     SymmetricDemons symmetricDemons(staticImage, movingImage);
     symmetricDemons.run();
     VectorField displacementField = symmetricDemons.getDisplField();
-    displacementField.printFieldAround(20,20);
     cv::Mat result = applyVectorField(movingImage, displacementField);
     fileName = argv[3];
     fileName += "symmetric";

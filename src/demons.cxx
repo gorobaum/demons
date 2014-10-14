@@ -26,10 +26,10 @@ void Demons::run() {
 	normalizer /= dimensions;
 
 	for(int iteration = 1; iteration <= 50; iteration++) {
+		std::cout << "Iteration " << iteration << "\n";
 		deltaField = newDeltaField(gradients);
 		updateDisplField(displField, deltaField);
 		debug(iteration, deltaField, gradients);
-		std::cout << "Iteration " << iteration << "\n";
 	}
 	std::cout << "termino rapa\n";
 }
@@ -46,7 +46,7 @@ void Demons::debug(int iteration, VectorField deltaField, VectorField gradients)
 	// ImageFunctions::printAround(movingImage_, POSR, POSC);
 	// gradients.printFieldAround(POSR,POSC);
 	// deltaField.printFieldAround(POSR,POSC);
-	displField.printFieldAround(POSR,POSC);
+	// displField.printFieldAround(POSR,POSC);
 
 	// std::string filename("VFN-Iteration");
 	// std::ostringstream converter;

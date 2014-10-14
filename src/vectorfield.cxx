@@ -171,16 +171,16 @@ void VectorField::printFieldAround(int row, int col) {
 // 	std::multiset<double> magnitudes;
 // 	int size = (rows_*cols_);
 // 	double max= 0.0, min = 0.0, mean = 0.0, median = 0.0, deviation = 0.0;
-// 	for(int row = 0; row < rows_; row++) {
-// 	    for(int col = 0; col < cols_; col++) {
-// 	    	std::vector<double> vector = getVectorAt(row, col);
-//     		double mag = std::sqrt(vector[0]*vector[0] + vector[1]*vector[1]);
-//     		if (max < mag) max = mag;
-//     		if (min > mag) min = mag;
-//     		mean += mag;
-// 			magnitudes.insert(mag);
-// 	    }
-// 	}
+	// for(int row = 0; row < rows_; row++) {
+	//     for(int col = 0; col < cols_; col++) {
+	//     	std::vector<double> vector = getVectorAt(row, col);
+ //    		double mag = std::sqrt(vector[0]*vector[0] + vector[1]*vector[1]);
+ //    		if (max < mag) max = mag;
+ //    		if (min > mag) min = mag;
+ //    		mean += mag;
+	// 		magnitudes.insert(mag);
+	//     }
+	// }
 // 	mean /= size;
 // 	int count = 1;
 // 	std::multiset<double>::iterator it;
