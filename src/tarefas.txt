@@ -1,23 +1,23 @@
-- Implementar um registro rigido
-- Operacoes pós registros
+- GDCM
+- Usar o medsquare para transformar em analisy
+- Procurar uma imagem deformada naturalmente ( Osiryx )
+- TPS
 - HB Mitchell, Image Fusion
 - procurar um artigo recente de registro
 - pesquisar image demons registration
-- Usar o medsquare para transformar em analisy
-- GDCM
 - Transformar as C++ references em smart pointers
 - Registro em GPU
 - Código 3D
 - Lena com maior resolução
-- Procurar uma imagem deformada naturalmente ( Osiryx )
-- TPS
+
+= pa depois =
+
 - Estudar o histogram matching
 - setar criterio de parada para o RMS
 - Rodar o octave
 - Rodar o bioimages
-
-= pa depois =
-
+- Implementar um registro rigido
+- Operacoes pós registros
 - Achar a lena em RGB e deformar um dos componentes.
 - teste com imagem de ressonancia cardiaca
 
