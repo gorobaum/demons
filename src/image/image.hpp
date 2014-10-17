@@ -25,8 +25,59 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
+#include "image/utility/basic_image.hpp"
+
+#include "image/morphology/morphology.hpp"
+#include "image/segmentation/segmentation.hpp"
+#include "image/algo/march_cube.hpp"
+
+#include "image/numerical/transformation.hpp"
+#include "image/numerical/index_algorithm.hpp"
+#include "image/numerical/interpolation.hpp"
+#include "image/numerical/window.hpp"
+#include "image/numerical/basic_op.hpp"
+#include "image/numerical/numerical.hpp"
+#include "image/numerical/resampling.hpp"
+#include "image/numerical/slice.hpp"
+#include "image/numerical/fft.hpp"
+#include "image/numerical/optimization.hpp"
+#include "image/numerical/statistics.hpp"
+
+
 #include "image/io/io.hpp"
 #include "image/io/dicom.hpp"
 #include "image/io/nifti.hpp"
+#include "image/io/bitmap.hpp"
+#include "image/io/mat.hpp"
+#include "image/io/2dseq.hpp"
+
+#include "image/filter/filter_model.hpp"
+#include "image/filter/anisotropic_diffusion.hpp"
+#include "image/filter/gaussian.hpp"
+#include "image/filter/mean.hpp"
+#include "image/filter/sobel.hpp"
+#include "image/filter/canny_edge.hpp"
+#include "image/filter/gradient_magnitude.hpp"
+
+
+#include "image/reg/linear.hpp"
+#include "image/reg/lddmm.hpp"
+#include "image/reg/dmdm.hpp"
+#include "image/reg/bfnorm.hpp"
+
+
+
+#include "image/ml/utility.hpp"
+#include "image/ml/nb.hpp"
+#include "image/ml/lg.hpp"
+#include "image/ml/non_parametric.hpp"
+#include "image/ml/ada_boost.hpp"
+#include "image/ml/decision_tree.hpp"
+#include "image/ml/k_means.hpp"
+#include "image/ml/em.hpp"
+#include "image/ml/hmc.hpp"
+#include "image/ml/svm.hpp"
+
 
 #endif//IMAGE_HPP

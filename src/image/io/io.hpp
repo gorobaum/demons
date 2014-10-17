@@ -22,7 +22,7 @@ private:
     std::vector<nifti*> nifti_reader;
     float orientation_matrix[9];
     float spatial_resolution[3];
-    int dim_order[3]; // used to rotate the volume to axial view
+    char dim_order[3]; // used to rotate the volume to axial view
     char flip[3];        // used to rotate the volume to axial view
 
     void free_all(void)
@@ -95,7 +95,7 @@ public:
     template<typename file_name_type>
     bool load_from_file(const file_name_type& file_name)
     {
-        std::unique_ptr<dicom> dicom_header(new dicom);
+        std::auto_ptr<dicom> dicom_header(new dicom);
         if (dicom_header->load_from_file(file_name))
         {
             dicom_header->get_voxel_size(spatial_resolution);
@@ -106,7 +106,7 @@ public:
             reorientation();
             return true;
         }
-        std::unique_ptr<nifti> nifti_header(new nifti);
+        std::auto_ptr<nifti> nifti_header(new nifti);
         if (nifti_header->load_from_file(file_name))
         {
             nifti_header->get_voxel_size(spatial_resolution);
@@ -130,7 +130,7 @@ public:
         free_all();
         for (unsigned int index = 0;index < count;++index)
         {
-            std::unique_ptr<dicom> dicom_header(new dicom);
+            std::auto_ptr<dicom> dicom_header(new dicom);
             if (dicom_header->load_from_file(files[index]))
             {
                 if(dicom_reader.empty())
@@ -141,7 +141,7 @@ public:
                 dicom_reader.push_back(dicom_header.release());
                 continue;
             }
-            std::unique_ptr<nifti> nifti_header(new nifti);
+            std::auto_ptr<nifti> nifti_header(new nifti);
             if (nifti_header->load_from_file(files[index].c_str()))
             {
                 if(nifti_reader.empty())

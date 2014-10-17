@@ -160,7 +160,7 @@ public:
 
     bool is_string(void) const
     {
-        return ((lt0 == 'D' ||  // DA DS DT
+        return (lt0 == 'D' ||  // DA DS DT
                 lt0 == 'P' ||  // PN
                 lt0 == 'T' ||  // TM
                 lt0 == 'L' ||  // LO LT
@@ -168,7 +168,7 @@ public:
                 lt1 == 'H' ||  // SH
                 (lt0 != 'A' && lt1 == 'T') || // ST UT LT
                 (lt0 == 'A' && lt1 == 'E') || // AE
-                (lt0 == 'A' || lt0 == 'C' || lt0 == 'I')) && lt1 == 'S');//AS CS IS
+                (lt0 == 'A' || lt0 == 'C' || lt0 == 'I') && lt1 == 'S');//AS CS IS
     }
     bool is_int16(void) const
     {
