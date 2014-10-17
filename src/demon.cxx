@@ -13,6 +13,8 @@
 #include "interpolation.h"
 #include "imagefunctions.h"
 
+#include "image/image.hpp"
+
 using namespace cv;
 
 cv::Mat applyVectorField(cv::Mat image, VectorField displacementField) {
@@ -36,17 +38,14 @@ int main(int argc, char** argv) {
 		std::cout << "Precisa passar o nome dos arquivos coração! \n";    
 		return 0;
 	}
-	vector<int> compression_params;
-    compression_params.push_back(CV_IMWRITE_JPEG_QUALITY);
-    compression_params.push_back(95);
-	Mat staticImage = imread(argv[1], CV_LOAD_IMAGE_GRAYSCALE);
-	Mat movingImage = imread(argv[2], CV_LOAD_IMAGE_GRAYSCALE);
-    // GaussianBlur(staticImage, staticImage, cv::Size(3,3), 1.0);
-    // GaussianBlur(movingImage, movingImage, cv::Size(3,3), 1.0);
-    Mat lut = ImageFunctions::histogramMatching(staticImage, movingImage);
-    cv::LUT(movingImage, lut, movingImage);
-    std::string fileName;
-    char* extension = std::strrchr(argv[2], '.');
+    image::basic_image<short,3> image_data,label_data;
+    image::io::nifti nifti_parser, out_file;
+
+    if(nifti_parser.load_from_file(argv[1]))
+        nifti_parser >> image_data;
+    
+    out_file << image_data;
+    out_file.save_to_file(argv[3]);
 
     // AsymmetricDemons asymmetricDemons(staticImage, movingImage);
     // asymmetricDemons.run();
@@ -57,14 +56,14 @@ int main(int argc, char** argv) {
     // fileName += extension;
     // imwrite(fileName.c_str(), result, compression_params);
 
-    SymmetricDemons symmetricDemons(staticImage, movingImage);
-    symmetricDemons.run();
-    VectorField displacementField = symmetricDemons.getDisplField();
-    cv::Mat result = applyVectorField(movingImage, displacementField);
-    fileName = argv[3];
-    fileName += "symmetric";
-    fileName += extension;
-    imwrite(fileName.c_str(), result, compression_params);
+    // SymmetricDemons symmetricDemons(staticImage, movingImage);
+    // symmetricDemons.run();
+    // VectorField displacementField = symmetricDemons.getDisplField();
+    // cv::Mat result = applyVectorField(movingImage, displacementField);
+    // fileName = argv[3];
+    // fileName += "symmetric";
+    // fileName += extension;
+    // imwrite(fileName.c_str(), result, compression_params);
 	return 0;
 
 }
