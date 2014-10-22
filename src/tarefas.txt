@@ -1,17 +1,16 @@
-- GDCM
+- Código 3D
 - Usar o medsquare para transformar em analisy
 - Procurar uma imagem deformada naturalmente ( Osiryx )
 - TPS
 - HB Mitchell, Image Fusion
 - procurar um artigo recente de registro
 - pesquisar image demons registration
-- Transformar as C++ references em smart pointers
 - Registro em GPU
-- Código 3D
 - Lena com maior resolução
 
 = pa depois =
 
+- Transformar as C++ references em smart pointers
 - Estudar o histogram matching
 - setar criterio de parada para o RMS
 - Rodar o octave
@@ -23,6 +22,7 @@
 
 = finished =
 
+- GDCM (ok)
 - Recolocar a impressão dos campos (ok)
 - Separar o codigo bonitinho (ok)
 - Escolher entre spline ou bicubic interpolation (O itk usa linear http://www.itk.org/Doxygen46/html/classitk_1_1DemonsRegistrationFilter.html)
