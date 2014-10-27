@@ -1,4 +1,5 @@
 import sys
+import callDemon
 import nibabel as nib
 
 if len(sys.argv) <= 2:
@@ -12,5 +13,5 @@ else:
 
 	data = staticHeader.get_data()
 
-	print data[45][45]
+	callDemon.calldemon(1)
 
