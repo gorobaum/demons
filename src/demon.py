@@ -7,9 +7,10 @@ if len(sys.argv) <= 2:
 	sys.exit()
 else:
 	try:
-		staticHeader = nib.load(sys.argv[1])
+		staticImage = nib.load(sys.argv[1])
+		movingImage = nib.load(sys.argv[1])
 	except:
 		print "Unable to load image!"
-	print staticHeader.get_data()[0][1]
-	print staticHeader.get_data().dtype
-	callDemon.calldemon(staticHeader)
+	print staticImage.get_data()[0][1]
+	print staticImage.get_data().dtype
+	callDemon.calldemon(staticImage, movingImage)

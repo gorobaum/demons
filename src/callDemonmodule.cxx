@@ -16,29 +16,40 @@ loadImageData(PyArrayObject * data, Image<unsigned char>& image) {
             }
 }
 
+PyArrayObject * transformToArray(PyObject * image) {
+    PyObject * data = PyObject_CallMethod(image, "get_data", NULL);
+    return (PyArrayObject*)PyArray_FROM_OTF(data, 2, 0);
+}
+
 extern "C"
 PyObject *
 callDemon(PyObject *self, PyObject *args) {
-    PyObject * image = NULL;
-    PyObject * dataAux = NULL;
-    PyArrayObject * array = NULL;
+    PyObject * staticImagePy = NULL;
+    PyObject * movingImagePy = NULL;
+    PyArrayObject * staticImageDataArray = NULL;
+    PyArrayObject * movingImageDataArray = NULL;
 
-    if (!PyArg_ParseTuple(args, "O", &image)) return NULL;
-    dataAux = PyObject_CallMethod(image, "get_data", NULL);
-    array = (PyArrayObject*)PyArray_FROM_OTF(dataAux, 2, 0);
+    if (!PyArg_ParseTuple(args, "OO", &staticImagePy, &movingImagePy)) return NULL;
+    staticImageDataArray = transformToArray(staticImagePy);
+    movingImageDataArray = transformToArray(movingImagePy);
+
 
     std::vector<int> dims;
-    dims.push_back(PyArray_SHAPE(array)[0]);
-    dims.push_back(PyArray_SHAPE(array)[1]);
-    dims.push_back(PyArray_SHAPE(array)[2]);
+    dims.push_back(PyArray_SHAPE(staticImageDataArray)[0]);
+    dims.push_back(PyArray_SHAPE(staticImageDataArray)[1]);
+    dims.push_back(PyArray_SHAPE(staticImageDataArray)[2]);
 
-    Image<unsigned char> imageC(dims);
+    Image<unsigned char> staticImage(dims);
+    Image<unsigned char> movingImage(dims);
 
-    loadImageData(array, imageC);
+    loadImageData(staticImageDataArray, staticImage);
+    loadImageData(movingImageDataArray, movingImage);
 
-    std::cout << "Dae = " << (int)imageC(0,0,0) << "\n";
+    std::cout << "Dae = " << (int)staticImage(0,0,0) << "\n";
+    std::cout << "Dae = " << (int)movingImage(0,0,0) << "\n";
 
-    Py_DECREF(array);
+    Py_DECREF(staticImageDataArray);
+    Py_DECREF(movingImageDataArray);
     Py_INCREF(Py_None);
     return Py_None;
 }
