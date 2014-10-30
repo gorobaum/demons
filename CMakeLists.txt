@@ -15,13 +15,15 @@ add_executable(demon
 	src/imagefunctions.cxx
 	src/gradient.cxx
 	src/symmetricdemons.cxx
-	src/asymmetricdemons.cxx)
+	src/asymmetricdemons.cxx
+	src/image.cxx)
 
 add_executable(deform 
 	src/deform.cxx
 	src/deformation.cxx
 	src/interpolation.cxx
-	src/imagefunctions.cxx)
+	src/imagefunctions.cxx
+	src/image.cxx)
 
 if (X11_FOUND)
 include_directories(${X11_INCLUDE_DIRS})
@@ -36,5 +38,3 @@ add_custom_target (
 	cleanShit
 	COMMAND ${CMAKE_COMMAND} -E remove VFN-Iteration* Iteration* DFI-Iteration* VectorFieldInformation.info deformed* Gradient* DeltaFieldInformation.info
 )
-
-

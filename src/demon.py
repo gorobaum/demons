@@ -10,5 +10,6 @@ else:
 		staticHeader = nib.load(sys.argv[1])
 	except:
 		print "Unable to load image!"
-	print staticHeader.get_data()[0][0]
+	print staticHeader.get_data()[0][1]
+	print staticHeader.get_data().dtype
 	callDemon.calldemon(staticHeader)
