@@ -6,7 +6,6 @@
 #include <set>
 
 #include "vectorfield.h"
-#include "imagefunctions.h"
 
 VectorField::VectorField(VectorField3D vectorField) {
 	std::vector<int> dimensions;

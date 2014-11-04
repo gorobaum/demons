@@ -3,15 +3,8 @@
 #include <vector>
 #include <cstring>
 
-#include <opencv2/core/core.hpp>
-#include <opencv2/opencv.hpp>
-#include <opencv2/highgui/highgui.hpp>
-
-#include "interpolation.h"
-#include "imagefunctions.h"
 #include "vectorfield.h"
-
-using namespace cv;
+#include "image.h"
 
 int main(int argc, char** argv) {
     std::vector<int> dimensions;
@@ -26,6 +19,9 @@ int main(int argc, char** argv) {
     VectorField sum2(dimensions, 3.0);
     sum1.add(sum2);
     sum1.printFieldAround(1,1,1);
+
+    Image<unsigned char> image(dimensions);
+    image.printAround(1,1,1);
 	return 0;
 
 }
