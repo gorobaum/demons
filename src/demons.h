@@ -16,9 +16,7 @@ class Demons {
 	public:
 		explicit Demons (cv::Mat &staticImage, cv::Mat &movingImage):
 			staticImage_(staticImage), 
-			movingImage_(movingImage),
-			movingInterpolator(movingImage),
-			displField(staticImage.rows, staticImage.cols) {
+			movingImage_(movingImage) {
 				rows = staticImage_.rows;
 				cols = staticImage_.cols;
 			}

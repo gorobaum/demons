@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <vector>
 #include "image.h"
+#include "demons.h"
 
 static void
 loadImageData(PyArrayObject * data, Image<unsigned char>& image) {
@@ -44,9 +45,6 @@ callDemon(PyObject *self, PyObject *args) {
 
     loadImageData(staticImageDataArray, staticImage);
     loadImageData(movingImageDataArray, movingImage);
-
-    std::cout << "Dae = " << (int)staticImage(0,0,0) << "\n";
-    std::cout << "Dae = " << (int)movingImage(0,0,0) << "\n";
 
     Py_DECREF(staticImageDataArray);
     Py_DECREF(movingImageDataArray);

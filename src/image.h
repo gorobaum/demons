@@ -15,7 +15,6 @@ public:
 			imageData_ = createCube(dims[0], dims[1], dims[2]);
 		}
 	T& operator() (const size_t& i, const size_t& j, const size_t& k);
-	T operator() (const size_t& i, const size_t& j, const size_t& k) const;
 	std::vector<int> getDims() {return dims_;}
 	int getDim() {return dims_.size();}
 	T getPixelAt(float x, float y, float z);
@@ -38,8 +37,13 @@ T& Image<T>::operator() (const size_t& i, const size_t& j, const size_t& k) {
 }
 
 template <class T>
-T Image<T>::operator() (const size_t& i, const size_t& j, const size_t& k) const {
-	return imageData_[i][j][k];
+T Image<T>::getPixelAt (int x, int y, int z) {
+	T value = T();
+	if (x >= 0 && x <= dims_[0])
+		if (y >= 0 && y <= dims_[1])
+			if (z >= 0 && z <= dims_[2])
+				value = imageData_[x][y][z];
+	return value;
 }
 
 #endif
