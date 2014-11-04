@@ -5,6 +5,7 @@
 
 #include "vectorfield.h"
 #include "image.h"
+#include "interpolation.h"
 
 int main(int argc, char** argv) {
     std::vector<int> dimensions;
@@ -22,6 +23,8 @@ int main(int argc, char** argv) {
 
     Image<unsigned char> image(dimensions);
     image.printAround(1,1,1);
+    Interpolation interpolator(image);
+    std::cout << (int)interpolator.NNInterpolation<unsigned char>(1.1, 1.1, 1.1) << "\n";
 	return 0;
 
 }
