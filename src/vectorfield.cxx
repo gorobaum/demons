@@ -34,7 +34,7 @@ std::vector<double> VectorField::getVectorAt(int x, int y, int z) {
 }
 
 void VectorField::updateVector(int x, int y, int z, std::vector<double> newValues) {
-	getVectorAt(x,y,z) = newValues;
+	vectorField[x][y][z] = newValues;
 }
 
 // double VectorField::vectorNorm(std::vector<double> v) {
@@ -147,14 +147,14 @@ void VectorField::add(VectorField adding) {
 // // 	return total;
 // // }
 
-void VectorField::printFieldAround(int x, int y, int z) {
+void VectorField::printAround(int x, int y, int z) {
 	for (int aroundX = x-1; aroundX <= x+1; aroundX++) {
 		std::cout << "Plane x = " << aroundX << "\n";
 		for (int aroundY = y-1; aroundY <= y+1; aroundY++) {
 			std::cout << "\n";
 			for (int aroundZ = z-1; aroundZ <= z+1; aroundZ++) {
 				std::vector<double> macaco = getVectorAt(aroundX,aroundY,aroundZ);
-				std::cout << "(" << macaco[0] << ")" << "(" << macaco[1] << ")" << "(" << macaco[2] << ")\t";
+				std::cout << "(" << macaco[0] << ", " << macaco[1] << ", " << macaco[2] << ")\t";
 			}
 		}
 		std::cout << "\n";

@@ -4,19 +4,15 @@
 #include <vector>
 #include <array>
 
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-
 #include "vectorfield.h"
+#include "image.h"
 
 class Gradient {
 public:
-	Gradient(cv::Mat &image) : image_(image) {};
-	VectorField getSobelGradient();
+	Gradient(Image<unsigned char> &image) : image_(image) {};
 	VectorField getBasicGradient();
 private:
-	cv::Mat &image_;
-	cv::Mat normalizeSobelImage(cv::Mat sobelImage);
+	Image<unsigned char> &image_;
 };
 
 #endif

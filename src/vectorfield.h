@@ -14,7 +14,7 @@ class VectorField {
 		void applyGaussianFilter(int kernelSize, double deviation);
 		std::vector<double> generateGaussianFilter2D(int kernelSize, double deviation);
 		VectorField getNormalized();
-		void printFieldAround(int x, int y, int z);
+		void printAround(int x, int y, int z);
 		void printField(std::string filename);
 		void printFieldInfos(std::string filename, int iteration);
 		void printFieldImage(int iteration, std::vector<int> compression_params);
