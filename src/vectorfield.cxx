@@ -7,6 +7,8 @@
 
 #include "vectorfield.h"
 
+#define EPSILON 1e-5
+
 VectorField::VectorField(VectorField3D vectorField) {
 	std::vector<int> dimensions;
 	dimensions.push_back(vectorField.size());
@@ -72,13 +74,19 @@ std::vector<double> VectorField::generateGaussianFilter2D(int kernelSize, double
 	return gaussianFilter;
 }
 
+bool isZero(std::vector<double> vector) {
+	if ((vector[0] <= EPSILON) && (vector[1] <= EPSILON) && (vector[2] <= EPSILON)) return true;
+	return false;
+}
+
 void VectorField::applyGaussianFilter(int kernelSize, double deviation) {
 	std::vector<double> gaussianKernel = generateGaussianFilter2D(kernelSize, deviation);
-	VectorField3D auxVectorField = createVectorField3D(dimensions, 0.0);
+	VectorField3D auxVectorField = vectorField;
 	for (int x = 0; x < dimensions[0]; x++)
 		for (int y = 0; y < dimensions[1]; y++)
 			for (int z = 0; z < dimensions[2]; z++) {
 				std::vector<double> vector = vectorField[x][y][z];
+				if (isZero(vector)) continue;
 				std::vector<double> newValues(3, 0.0);
 				for (int i = -1; i <= 1; i++) {
 					std::vector<double> auxVector = getVectorAt(x+i,y,z);
@@ -93,6 +101,7 @@ void VectorField::applyGaussianFilter(int kernelSize, double deviation) {
 		for (int y = 0; y < dimensions[1]; y++)
 			for (int z = 0; z < dimensions[2]; z++) {
 				std::vector<double> vector = vectorField[x][y][z];
+				if (isZero(vector)) continue;
 				std::vector<double> newValues(3, 0.0);
 				for (int i = -1; i <= 1; i++) {
 					std::vector<double> auxVector = getVectorAt(x,y+i,z);
@@ -107,6 +116,7 @@ void VectorField::applyGaussianFilter(int kernelSize, double deviation) {
 		for (int y = 0; y < dimensions[1]; y++)
 			for (int z = 0; z < dimensions[2]; z++) {
 				std::vector<double> vector = vectorField[x][y][z];
+				if (isZero(vector)) continue;
 				std::vector<double> newValues(3, 0.0);
 				for (int i = -1; i <= 1; i++) {
 					std::vector<double> auxVector = getVectorAt(x,y,z+i);

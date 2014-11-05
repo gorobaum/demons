@@ -12,7 +12,7 @@ int main(int argc, char** argv) {
     dimensions.push_back(3);
     dimensions.push_back(3);
     dimensions.push_back(3);
-    VectorField teste(dimensions, 3.0);
+    VectorField teste(dimensions, 3);
     teste.printFieldAround(1,1,1);
     teste.applyGaussianFilter(3,1);
     teste.printFieldAround(1,1,1);
