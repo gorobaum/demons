@@ -37,6 +37,10 @@ int main(int argc, char** argv) {
     sDemons.run();
     VectorField result = sDemons.getDisplField();
     result.printAround(1,1,1);
+    
+    Interpolation staticInterpolator(staticImage);
+    staticImage(2,1,1) = 20;
+    std::cout << "Interpolation = " << staticInterpolator.trilinearInterpolation<double>(2.9,1,1) << "\n";
 	return 0;
 
 }

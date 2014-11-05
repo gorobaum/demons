@@ -8,7 +8,7 @@ VectorField SymmetricDemons::newDeltaField(VectorField gradients) {
 			std::vector<double> staticGrad = gradients.getVectorAt(x, y, z);
 			std::vector<double> deformedGrad = calculateDeformedGradientAt(x, y, z);
 			double deformedImageValueAt = getDeformedImageValueAt(x, y, z);
-			double diff = deformedImageValueAt - staticImage_.getPixelAt(x,y,z);
+			double diff = deformedImageValueAt - (int)staticImage_.getPixelAt(x,y,z);
 			double gradX = staticGrad[0]+deformedGrad[0];
 			double gradY = staticGrad[1]+deformedGrad[1];
 			double gradZ = staticGrad[2]+deformedGrad[2];

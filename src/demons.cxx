@@ -32,7 +32,7 @@ double Demons::getDeformedImageValueAt(int x, int y, int z) {
     double newX = x - displVector[0];
     double newY = y - displVector[1];
     double newZ = z - displVector[1];
-    return movingInterpolator.NNInterpolation<double>(newX, newY, newZ);
+    return movingInterpolator.trilinearInterpolation<double>(newX, newY, newZ);
 }
 
 void Demons::debug(int iteration, VectorField deltaField, VectorField gradients) {

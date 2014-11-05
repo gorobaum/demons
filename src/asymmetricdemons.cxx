@@ -7,7 +7,7 @@ VectorField AsymmetricDemons::newDeltaField(VectorField gradients) {
 			for(int z = 0; z < dimensions[2]; z++) {
 				std::vector<double> sGradVec = gradients.getVectorAt(x, y, z);
 				double deformedValue = getDeformedImageValueAt(x, y, z);
-				double diff = deformedValue - staticImage_.getPixelAt(x,y,z);
+				double diff = deformedValue - (int)staticImage_.getPixelAt(x,y,z);
 				double denominator = (diff*diff) + (sGradVec[0])*(sGradVec[0]) + (sGradVec[1])*(sGradVec[1]) + (sGradVec[2])*(sGradVec[2]);
 				if (denominator > 0.0) {
 					std::vector<double> deltaVector(3, 0.0);
