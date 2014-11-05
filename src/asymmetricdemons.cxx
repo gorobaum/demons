@@ -1,20 +1,21 @@
 #include "asymmetricdemons.h"
 
 VectorField AsymmetricDemons::newDeltaField(VectorField gradients) {
-	VectorField deltaField(rows, cols);
-	for(int row = 0; row < rows; row++) {
-		uchar* sRow = staticImage_.ptr(row);
-		for(int col = 0; col < cols; col++) {
-			std::vector<double> sGrad = gradients.getVectorAt(row, col);
-			double deformedValue = getDeformedImageValueAt(row, col);
-			double diff = deformedValue - sRow[col];
-			double denominator = (diff*diff) + (sGrad[0])*(sGrad[0]) + (sGrad[1])*(sGrad[1]);
-			if (denominator > 0.0) {
-				double rowValue = (sGrad[0])*diff/denominator;
-				double colValue = (sGrad[1])*diff/denominator;
-				deltaField.updateVector(row, col, rowValue, colValue);
+	VectorField deltaField(dimensions, 0.0);
+	for(int x = 0; x < dimensions[0]; x++)
+		for(int y = 0; y < dimensions[1]; y++)
+			for(int z = 0; z < dimensions[2]; z++) {
+				std::vector<double> sGradVec = gradients.getVectorAt(x, y, z);
+				double deformedValue = getDeformedImageValueAt(x, y, z);
+				double diff = deformedValue - staticImage_.getPixelAt(x,y,z);
+				double denominator = (diff*diff) + (sGradVec[0])*(sGradVec[0]) + (sGradVec[1])*(sGradVec[1]) + (sGradVec[2])*(sGradVec[2]);
+				if (denominator > 0.0) {
+					std::vector<double> deltaVector(3, 0.0);
+					deltaVector[0] = (sGradVec[0])*diff/denominator;
+					deltaVector[1] = (sGradVec[1])*diff/denominator;
+					deltaVector[2] = (sGradVec[2])*diff/denominator;
+					deltaField.updateVector(x, y, z, deltaVector);
+				}
 			}
-		}
-	}
 	return deltaField;
 }

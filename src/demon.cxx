@@ -6,6 +6,9 @@
 #include "vectorfield.h"
 #include "image.h"
 #include "interpolation.h"
+#include "demons.h"
+#include "asymmetricdemons.h"
+#include "symmetricdemons.h"
 
 int main(int argc, char** argv) {
     std::vector<int> dimensions;
@@ -21,14 +24,19 @@ int main(int argc, char** argv) {
     sum1.add(sum2);
     sum1.printAround(1,1,1);
 
-    Image<unsigned char> image(dimensions);
-    image.printAround(1,1,1);
-    Interpolation interpolator(image);
-    image(1,1,1) = 10;
-    std::cout << (int)interpolator.NNInterpolation<unsigned char>(1.1, 1.1, 1.1) << "\n";
+    Image<unsigned char> staticImage(dimensions);
+    Image<unsigned char> movingImage(dimensions);
+    for(int x = 0; x < dimensions[0]; x++)
+        for(int y = 0; y < dimensions[1]; y++)
+            for(int z = 0; z < dimensions[2]; z++){
+                staticImage(x,y,z) = 10;
+                movingImage(x,y,z) = 20;
+            }
 
-    VectorField grad = image.getGradient();
-    grad.printAround(1,1,1);
+    SymmetricDemons sDemons(staticImage, movingImage);
+    sDemons.run();
+    VectorField result = sDemons.getDisplField();
+    result.printAround(1,1,1);
 	return 0;
 
 }

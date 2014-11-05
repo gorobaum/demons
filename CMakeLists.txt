@@ -10,7 +10,10 @@ find_package( OpenCV REQUIRED )
 add_executable(demon 
 	src/demon.cxx
 	src/vectorfield.cxx
-	src/interpolation.cxx)
+	src/interpolation.cxx 
+	src/demons.cxx
+	src/symmetricdemons.cxx
+	src/asymmetricdemons.cxx)
 
 if (X11_FOUND)
 include_directories(${X11_INCLUDE_DIRS})

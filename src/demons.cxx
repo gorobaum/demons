@@ -1,16 +1,13 @@
-
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
 #include <ctime>
 #include <vector>
 #include <sstream>
-#include <opencv2/imgproc/imgproc.hpp>
 
 #include "demons.h"
 
 #define SPACING 1
-#define IMAGEDIMENSION 2
 #define RMSEcriteria 10
 #define CORRCOEFcriteria 0.95
 #define STOPcriteria 0.0001
@@ -18,27 +15,24 @@
 #define POSC 20
 
 void Demons::run() {
-	Gradient staticGradient(staticImage_);
-	VectorField gradients = staticGradient.getBasicGradient();
-	VectorField deltaField(rows, cols);
-	int dimensions;
-	for (dimensions = 0; dimensions < IMAGEDIMENSION; dimensions++) normalizer = SPACING*SPACING;
-	normalizer /= dimensions;
+	VectorField staticGradient = staticImage_.getGradient();
+	VectorField deltaField(dimensions, 0.0);
 
 	for(int iteration = 1; iteration <= 50; iteration++) {
 		std::cout << "Iteration " << iteration << "\n";
-		deltaField = newDeltaField(gradients);
+		deltaField = newDeltaField(staticGradient);
 		updateDisplField(displField, deltaField);
-		debug(iteration, deltaField, gradients);
+		debug(iteration, deltaField, staticGradient);
 	}
 	std::cout << "termino rapa\n";
 }
 
-double Demons::getDeformedImageValueAt(int row, int col) {
-    std::vector<double> displVector = displField.getVectorAt(row, col);
-    double newRow = row - displVector[0];
-    double newCol = col - displVector[1];
-    return movingInterpolator.bilinearInterpolation<double>(newRow, newCol);
+double Demons::getDeformedImageValueAt(int x, int y, int z) {
+    std::vector<double> displVector = displField.getVectorAt(x, y, z);
+    double newX = x - displVector[0];
+    double newY = y - displVector[1];
+    double newZ = z - displVector[1];
+    return movingInterpolator.NNInterpolation<double>(newX, newY, newZ);
 }
 
 void Demons::debug(int iteration, VectorField deltaField, VectorField gradients) {

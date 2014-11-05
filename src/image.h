@@ -18,7 +18,7 @@ public:
 			imageData_ = createCube(dims[0], dims[1], dims[2]);
 		}
 	T& operator() (const size_t& i, const size_t& j, const size_t& k);
-	std::vector<int> getDims() {return dimensions;}
+	std::vector<int> getDimensions() {return dimensions;}
 	int getDim() {return dimensions.size();}
 	T getPixelAt(float x, float y, float z);
 	T getPixelAt(int x, int y, int z);

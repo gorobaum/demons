@@ -5,34 +5,31 @@
 #include <array>
 #include <cmath>
 
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-
 #include "vectorfield.h"
 #include "interpolation.h"
-#include "gradient.h"
+#include "image.h"
 
 class Demons {
 	public:
-		explicit Demons (cv::Mat &staticImage, cv::Mat &movingImage):
+		explicit Demons (Image<unsigned char> &staticImage, Image<unsigned char> &movingImage):
 			staticImage_(staticImage), 
-			movingImage_(movingImage) {
-				rows = staticImage_.rows;
-				cols = staticImage_.cols;
-			}
+			movingImage_(movingImage),
+			dimensions(staticImage.getDimensions()),
+			movingInterpolator(movingImage),
+			displField(dimensions, 0.0) {}
 		void run();
 		VectorField getDisplField();
 	protected:
-		int rows, cols;
 		double normalizer;
-		cv::Mat staticImage_;
-		cv::Mat movingImage_;
+		Image<unsigned char> staticImage_;
+		Image<unsigned char> movingImage_;
+		std::vector<int> dimensions;
 		Interpolation movingInterpolator;
 		VectorField displField;
 		virtual VectorField newDeltaField(VectorField gradients) = 0;
 		void updateDisplField(VectorField &displField, VectorField deltaField);
 		void updateDeformedImage(VectorField displField);
-		double getDeformedImageValueAt(int row, int col);
+		double getDeformedImageValueAt(int x, int y, int z);
 		void debug(int interation, VectorField deltaField, VectorField gradients);
 };
 

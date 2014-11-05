@@ -1,38 +1,36 @@
 #include "symmetricdemons.h"
 
 VectorField SymmetricDemons::newDeltaField(VectorField gradients) {
-	VectorField deltaField(rows, cols);
-	for(int row = 0; row < rows; row++) {
-		uchar* sRow = staticImage_.ptr(row);
-		for(int col = 0; col < cols; col++) {
-			std::vector<double> staticGrad = gradients.getVectorAt(row, col);
-			std::vector<double> deformedGrad = calculateDeformedGradientAt(row, col);
-			double deformedImageValueAt = getDeformedImageValueAt(row, col);
-			double diff = deformedImageValueAt - sRow[col];
-			double gradRow = staticGrad[0]+deformedGrad[0];
-			double gradCol = staticGrad[1]+deformedGrad[1];
-			double denominator = (diff*diff) + (gradRow*gradRow) + (gradCol*gradCol);
+	VectorField deltaField(dimensions, 0.0);
+	for(int x = 0; x < dimensions[0]; x++)
+		for(int y = 0; y < dimensions[1]; y++)
+			for(int z = 0; z < dimensions[2]; z++) {
+			std::vector<double> staticGrad = gradients.getVectorAt(x, y, z);
+			std::vector<double> deformedGrad = calculateDeformedGradientAt(x, y, z);
+			double deformedImageValueAt = getDeformedImageValueAt(x, y, z);
+			double diff = deformedImageValueAt - staticImage_.getPixelAt(x,y,z);
+			double gradX = staticGrad[0]+deformedGrad[0];
+			double gradY = staticGrad[1]+deformedGrad[1];
+			double gradZ = staticGrad[2]+deformedGrad[2];
+			double denominator = (diff*diff) + (gradX*gradX) + (gradY*gradY) + (gradZ*gradZ);
 			if (denominator > 0) {
-				double rowValue = 2*gradRow*diff/denominator;
-				double colValue = 2*gradCol*diff/denominator;
-				deltaField.updateVector(row, col, rowValue, colValue);
+				std::vector<double> deltaVector(3, 0.0);
+				deltaVector[0] = 2*gradX*diff/denominator;
+				deltaVector[1] = 2*gradY*diff/denominator;
+				deltaVector[2] = 2*gradZ*diff/denominator;
+				deltaField.updateVector(x, y, z, deltaVector);
 			}
 		}
-	}
 	return deltaField;
 }
 
-std::vector<double> SymmetricDemons::calculateDeformedGradientAt(int row, int col) {
-	std::vector<double> deformedGrad;
-	double gradRow;
-	double rowAbove = getDeformedImageValueAt(row-1, col);
-	double rowBelow = getDeformedImageValueAt(row+1, col);
-	gradRow = (rowBelow - rowAbove)/2;
-	double gradCol;
-	double colLeft = getDeformedImageValueAt(row, col-1);
-	double colRight = getDeformedImageValueAt(row, col+1);
-	gradCol	= (colRight - colLeft)/2;
-	deformedGrad.push_back(gradRow);
-	deformedGrad.push_back(gradCol);
+std::vector<double> SymmetricDemons::calculateDeformedGradientAt(int x, int y, int z) {
+	std::vector<double> deformedGrad(3, 0.0);
+	deformedGrad[0] += getDeformedImageValueAt(x-1, y, z)*(-0.5);
+	deformedGrad[0] += getDeformedImageValueAt(x+1, y, z)*(0.5);
+	deformedGrad[1] += getDeformedImageValueAt(x, y-1, z)*(-0.5);
+	deformedGrad[1] += getDeformedImageValueAt(x, y+1, z)*(0.5);
+	deformedGrad[2] += getDeformedImageValueAt(x, y, z-1)*(-0.5);
+	deformedGrad[2] += getDeformedImageValueAt(x, y, z+1)*(0.5);
 	return deformedGrad;
 }
