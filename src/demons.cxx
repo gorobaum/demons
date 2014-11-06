@@ -18,7 +18,7 @@ void Demons::run() {
 	VectorField staticGradient = staticImage_.getGradient();
 	VectorField deltaField(dimensions, 0.0);
 
-	for(int iteration = 1; iteration <= 50; iteration++) {
+	for(int iteration = 1; iteration <= 5; iteration++) {
 		std::cout << "Iteration " << iteration << "\n";
 		deltaField = newDeltaField(staticGradient);
 		updateDisplField(displField, deltaField);

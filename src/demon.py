@@ -1,9 +1,10 @@
 import sys
 import callDemon
+import numpy as np
 import nibabel as nib
 
-if len(sys.argv) <= 2:
-	print "Please use as <Original Image Header> <Modified Image Header>"
+if len(sys.argv) <= 3:
+	print "Please use as <Original Image Header> <Modified Image Header> <New Image Name>"
 	sys.exit()
 else:
 	try:
@@ -11,6 +12,8 @@ else:
 		movingImage = nib.load(sys.argv[1])
 	except:
 		print "Unable to load image!"
-	print staticImage.get_data()[0][1]
-	print staticImage.get_data().dtype
-	callDemon.calldemon(staticImage, movingImage)
+	outputData = np.ones(staticImage.get_data().shape, staticImage.get_data().dtype)
+	callDemon.calldemon(staticImage, staticImage, outputData)
+	outputImage = nib.Nifti1Image(outputData, staticImage.get_affine())
+	print outputData[0][0][0]
+	outputImage.to_filename(sys.argv[3]);
