@@ -31,7 +31,7 @@ npArrayToImage(PyArrayObject * data, Image<unsigned char>& image) {
 
 PyArrayObject * transformToArray(PyObject * image) {
     PyObject * data = PyObject_CallMethod(image, "get_data", NULL);
-    return (PyArrayObject*)PyArray_FROM_OTF(data, 2, 0);
+    return (PyArrayObject*)PyArray_FROM_OTF(data, PyArray_DTYPE((PyArrayObject*)data)->type_num, 0);
 }
 
 Image<unsigned char>
@@ -57,13 +57,22 @@ callDemon(PyObject *self, PyObject *args) {
     PyObject * staticImagePy = NULL;
     PyObject * movingImagePy = NULL;
     PyArrayObject * outputArray = NULL;
+    PyArrayObject * spacingArray = NULL;
     PyArrayObject * staticImageDataArray = NULL;
     PyArrayObject * movingImageDataArray = NULL;
+    int iterations;
+    double kernelSize, deviation;
+    std::vector<double> spacing;
 
-    if (!PyArg_ParseTuple(args, "OOO", &staticImagePy, &movingImagePy, &outputArray)) return NULL;
+    if (!PyArg_ParseTuple(args, "OOOOidd", &staticImagePy, &movingImagePy, &outputArray, &spacingArray, &iterations, &kernelSize, &deviation)) return NULL;
+
+    for (int i = 0; i < 3; i++) {
+        double macaco = *static_cast<double*>(PyArray_GETPTR1(spacingArray, i));
+        spacing.push_back(macaco);
+    }
+
     staticImageDataArray = transformToArray(staticImagePy);
     movingImageDataArray = transformToArray(movingImagePy);
-
 
     std::vector<int> dims;
     dims.push_back(PyArray_SHAPE(staticImageDataArray)[0]);
@@ -73,10 +82,11 @@ callDemon(PyObject *self, PyObject *args) {
     Image<unsigned char> staticImage(dims);
     Image<unsigned char> movingImage(dims);
 
+
     npArrayToImage(staticImageDataArray, staticImage);
     npArrayToImage(movingImageDataArray, movingImage);
 
-    SymmetricDemons sDemons(staticImage, movingImage);
+    SymmetricDemons sDemons(staticImage, movingImage, iterations, kernelSize, deviation, spacing);
     sDemons.run();
     VectorField resultField = sDemons.getDisplField();
 

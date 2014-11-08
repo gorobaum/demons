@@ -7,18 +7,18 @@
 
 #include "demons.h"
 
-#define SPACING 1
 #define RMSEcriteria 10
 #define CORRCOEFcriteria 0.95
 #define STOPcriteria 0.0001
-#define POSR 20
-#define POSC 20
+#define POSX 128
+#define POSY 128
+#define POSZ 64
 
 void Demons::run() {
 	VectorField staticGradient = staticImage_.getGradient();
 	VectorField deltaField(dimensions, 0.0);
 
-	for(int iteration = 1; iteration <= 5; iteration++) {
+	for (int iteration = 1; iteration <= numOfIterations_; iteration++) {
 		std::cout << "Iteration " << iteration << "\n";
 		deltaField = newDeltaField(staticGradient);
 		updateDisplField(displField, deltaField);
@@ -38,7 +38,8 @@ double Demons::getDeformedImageValueAt(int x, int y, int z) {
 void Demons::debug(int iteration, VectorField deltaField, VectorField gradients) {
 	// ImageFunctions::printAround(staticImage_, POSR, POSC);
 	// ImageFunctions::printAround(movingImage_, POSR, POSC);
-	// gradients.printFieldAround(POSR,POSC);
+	// gradients.printAround(POSX,POSY,POSZ);
+	// staticImage_.printAround(POSX,POSY,POSZ);
 	// deltaField.printFieldAround(POSR,POSC);
 	// displField.printFieldAround(POSR,POSC);
 
@@ -50,9 +51,9 @@ void Demons::debug(int iteration, VectorField deltaField, VectorField gradients)
 	// normalized.printField(filename.c_str());
 }
 
-void Demons::updateDisplField(VectorField &displField, VectorField deltaField) {
+void Demons::updateDisplField(VectorField &displField, VectorField &deltaField) {
 	displField.add(deltaField);
-	displField.applyGaussianFilter(3, 1);
+	displField.applyGaussianFilter(gauKernelSize_, gauDeviation_);
 }
 
 VectorField Demons::getDisplField() {

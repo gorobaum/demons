@@ -12,7 +12,7 @@ VectorField SymmetricDemons::newDeltaField(VectorField gradients) {
 			double gradX = staticGrad[0]+deformedGrad[0];
 			double gradY = staticGrad[1]+deformedGrad[1];
 			double gradZ = staticGrad[2]+deformedGrad[2];
-			double denominator = (diff*diff) + (gradX*gradX) + (gradY*gradY) + (gradZ*gradZ);
+			double denominator = ((diff*diff)/spacing) + (gradX*gradX) + (gradY*gradY) + (gradZ*gradZ);
 			if (denominator > 0) {
 				std::vector<double> deltaVector(3, 0.0);
 				deltaVector[0] = 2*gradX*diff/denominator;
