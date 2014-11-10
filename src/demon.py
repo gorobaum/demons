@@ -11,9 +11,9 @@ def runDemon(staticImageName, movingImageName, outputName, iterations, kernelSiz
 		print "Unable to load images in execution", execution
 	outputData = np.ones(staticImage.get_data().shape, staticImage.get_data().dtype)
 	spacing = staticImage.get_header()['pixdim'][1:4]
-	callDemon.calldemon(staticImage, movingImage, outputData, spacing, int(iterations), float(kernelSize), float(deviation))
+	callDemon.calldemon(staticImage, movingImage, outputData, spacing[0], spacing[1], spacing[2], int(iterations), float(kernelSize), float(deviation))
 	outputImage = nib.Nifti1Image(outputData, staticImage.get_affine())
-	outputImage.to_filename(sys.argv[3]);
+	outputImage.to_filename(outputName);
 
 if len(sys.argv) <= 1:
 	print "Please use as <Conf file path>"

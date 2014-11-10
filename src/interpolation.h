@@ -43,7 +43,7 @@ T Interpolation::NNInterpolation(double x, double y, double z) {
 	int nearX = getNearestInteger(x);
 	int nearY = getNearestInteger(y);
 	int nearZ = getNearestInteger(z);
-	return image_.getPixelAt(nearX,nearY,nearZ);
+	return (int)image_.getPixelAt(nearX,nearY,nearZ);
 }
 
 #endif

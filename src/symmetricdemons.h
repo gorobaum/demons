@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <array>
+#include <omp.h>
 
 #include "demons.h"
 

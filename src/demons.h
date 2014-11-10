@@ -22,6 +22,7 @@ class Demons {
 			gauDeviation_(gauDeviation) {
 				for (int i = 0; i < 3; i++)
 					spacing += spacings[i]*spacings[i];
+				spacing /= 3;
 			}
 		void run();
 		VectorField getDisplField();

@@ -30,17 +30,20 @@ int main(int argc, char** argv) {
         for(int y = 0; y < dimensions[1]; y++)
             for(int z = 0; z < dimensions[2]; z++){
                 staticImage(x,y,z) = 10;
-                movingImage(x,y,z) = 20;
+                movingImage(x,y,z) = 30;
             }
 
-    SymmetricDemons sDemons(staticImage, movingImage);
+    std::vector<double> spacing(3, 1.0);
+    SymmetricDemons sDemons(staticImage, movingImage, 50, 3, 1, spacing);
     sDemons.run();
     VectorField result = sDemons.getDisplField();
     result.printAround(1,1,1);
     
     Interpolation staticInterpolator(staticImage);
     staticImage(2,1,1) = 20;
-    std::cout << "Interpolation = " << staticInterpolator.trilinearInterpolation<double>(2.9,1,1) << "\n";
+    staticImage(2,2,1) = 30;
+    staticImage(1,2,1) = 40;
+    std::cout << "Interpolation = " << staticInterpolator.trilinearInterpolation<double>(1.5,1.5,1) << "\n";
 	return 0;
 
 }

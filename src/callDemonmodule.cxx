@@ -17,7 +17,6 @@ imageToNpArray(PyArrayObject * data, Image<unsigned char>& image) {
             }
 }
 
-
 static void
 npArrayToImage(PyArrayObject * data, Image<unsigned char>& image) {
     std::vector<int> dims = image.getDimensions();
@@ -57,19 +56,20 @@ callDemon(PyObject *self, PyObject *args) {
     PyObject * staticImagePy = NULL;
     PyObject * movingImagePy = NULL;
     PyArrayObject * outputArray = NULL;
-    PyArrayObject * spacingArray = NULL;
     PyArrayObject * staticImageDataArray = NULL;
     PyArrayObject * movingImageDataArray = NULL;
     int iterations;
-    double kernelSize, deviation;
+    double kernelSize, deviation, sx, sy, sz;
     std::vector<double> spacing;
 
-    if (!PyArg_ParseTuple(args, "OOOOidd", &staticImagePy, &movingImagePy, &outputArray, &spacingArray, &iterations, &kernelSize, &deviation)) return NULL;
+    if (!PyArg_ParseTuple(args, "OOOdddidd", &staticImagePy, &movingImagePy, &outputArray, &sx, &sy, &sz, &iterations, &kernelSize, &deviation)) return NULL;
+    std::cout << "iterations = " << iterations << "\n";
+    std::cout << "kernelSize = " << kernelSize << "\n";
+    std::cout << "deviation = " << deviation << "\n";
 
-    for (int i = 0; i < 3; i++) {
-        double macaco = *static_cast<double*>(PyArray_GETPTR1(spacingArray, i));
-        spacing.push_back(macaco);
-    }
+    spacing.push_back(sx);
+    spacing.push_back(sy);
+    spacing.push_back(sz);
 
     staticImageDataArray = transformToArray(staticImagePy);
     movingImageDataArray = transformToArray(movingImagePy);
