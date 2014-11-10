@@ -2,6 +2,7 @@ import sys
 import callDemon
 import numpy as np
 import nibabel as nib
+import time
 
 def runDemon(staticImageName, movingImageName, outputName, iterations, kernelSize, deviation, execution):
 	try:
@@ -11,7 +12,9 @@ def runDemon(staticImageName, movingImageName, outputName, iterations, kernelSiz
 		print "Unable to load images in execution", execution
 	outputData = np.ones(staticImage.get_data().shape, staticImage.get_data().dtype)
 	spacing = staticImage.get_header()['pixdim'][1:4]
+	start_time = time.time()
 	callDemon.calldemon(staticImage, movingImage, outputData, spacing[0], spacing[1], spacing[2], int(iterations), float(kernelSize), float(deviation))
+	print "--- seconds ---", (time.time() - start_time)
 	outputImage = nib.Nifti1Image(outputData, staticImage.get_affine())
 	outputImage.to_filename(outputName);
 

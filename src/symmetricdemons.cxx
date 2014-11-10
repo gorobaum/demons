@@ -1,16 +1,18 @@
 #include "symmetricdemons.h"
+#include "profiler.h"
 
 VectorField SymmetricDemons::newDeltaField(VectorField gradients) {
 	VectorField deltaField(dimensions, 0.0);
-	int i;
-	#pragma omp parallel for
-		for(i = 0; i < dimensions[0]; i++)
-			for(int y = 0; y < dimensions[1]; y++)
-				for(int z = 0; z < dimensions[2]; z++) {
-				std::vector<double> staticGrad = gradients.getVectorAt(i, y, z);
-				std::vector<double> deformedGrad = calculateDeformedGradientAt(i, y, z);
-				double deformedImageValueAt = getDeformedImageValueAt(i, y, z);
-				double diff = deformedImageValueAt - staticImage_.getPixelAt(i,y,z);
+	int x, y, z;
+	int size = dimensions[0]*dimensions[1]*dimensions[2]/4;
+	#pragma omp parallel for collapse(3) schedule(static, size)
+	for(x = 0; x < dimensions[0]; x++)
+		for(y = 0; y < dimensions[1]; y++)
+			for(z = 0; z < dimensions[2]; z++) {
+				std::vector<double> staticGrad = gradients.getVectorAt(x, y, z);
+				std::vector<double> deformedGrad = calculateDeformedGradientAt(x, y, z);
+				double deformedImageValueAt = getDeformedImageValueAt(x, y, z);
+				double diff = deformedImageValueAt - staticImage_.getPixelAt(x,y,z);
 				double gradX = staticGrad[0]+deformedGrad[0];
 				double gradY = staticGrad[1]+deformedGrad[1];
 				double gradZ = staticGrad[2]+deformedGrad[2];
@@ -20,7 +22,7 @@ VectorField SymmetricDemons::newDeltaField(VectorField gradients) {
 					deltaVector[0] = 2*gradX*diff/denominator;
 					deltaVector[1] = 2*gradY*diff/denominator;
 					deltaVector[2] = 2*gradZ*diff/denominator;
-					deltaField.updateVector(i, y, z, deltaVector);
+					deltaField.updateVector(x, y, z, deltaVector);
 				}
 			}
 	return deltaField;

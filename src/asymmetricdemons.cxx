@@ -2,9 +2,11 @@
 
 VectorField AsymmetricDemons::newDeltaField(VectorField gradients) {
 	VectorField deltaField(dimensions, 0.0);
-	for(int x = 0; x < dimensions[0]; x++)
-		for(int y = 0; y < dimensions[1]; y++)
-			for(int z = 0; z < dimensions[2]; z++) {
+	int x, y, z;
+	#pragma omp parallel for collapse(3)
+	for(x = 0; x < dimensions[0]; x++)
+		for(y = 0; y < dimensions[1]; y++)
+			for(z = 0; z < dimensions[2]; z++) {
 				std::vector<double> sGradVec = gradients.getVectorAt(x, y, z);
 				double deformedValue = getDeformedImageValueAt(x, y, z);
 				double diff = deformedValue - (int)staticImage_.getPixelAt(x,y,z);

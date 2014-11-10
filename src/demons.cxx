@@ -6,6 +6,7 @@
 #include <sstream>
 
 #include "demons.h"
+#include "profiler.h"
 
 #define RMSEcriteria 10
 #define CORRCOEFcriteria 0.95

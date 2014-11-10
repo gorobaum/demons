@@ -1,4 +1,4 @@
-- Código 3D
+- Vetorizar o loop principal do demons pra utilizar #pragma simd
 - Usar o medsquare para transformar em analisy
 - Procurar uma imagem deformada naturalmente ( Osiryx )
 - TPS
@@ -6,10 +6,10 @@
 - procurar um artigo recente de registro
 - pesquisar image demons registration
 - Registro em GPU
-- Lena com maior resolução
 
 = pa depois =
 
+- Lena com maior resolução
 - Transformar as C++ references em smart pointers
 - Estudar o histogram matching
 - setar criterio de parada para o RMS
@@ -22,6 +22,7 @@
 
 = finished =
 
+- Código 3D (ok)
 - GDCM (ok)
 - Recolocar a impressão dos campos (ok)
 - Separar o codigo bonitinho (ok)
