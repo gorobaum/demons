@@ -37,6 +37,16 @@ double DemonsFunction::getDeformedImageValueAt(int x, int y, int z) {
     return movingInterpolator.trilinearInterpolation<double>(newX, newY, newZ);
 }
 
+void DemonsFunction::setExecutionParameters(int numOfIterations, int pyramidSize) {
+	numOfIterations_ = numOfIterations;
+	pyramidSize_ = pyramidSize;
+}
+
+void DemonsFunction::setGaussianParameters(double gauKernelSize, double gauDeviation) {
+	gauKernelSize_ = gauKernelSize;
+	gauDeviation_ = gauDeviation;
+}
+
 void DemonsFunction::debug(int iteration, VectorField deltaField, VectorField gradients) {
 	// ImageFunctions::printAround(staticImage_, POSR, POSC);
 	// ImageFunctions::printAround(movingImage_, POSR, POSC);

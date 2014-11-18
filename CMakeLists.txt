@@ -8,7 +8,7 @@ find_package(Threads)
 find_package( OpenCV REQUIRED )
 
 add_executable(demon 
-	src/demon.cxx
+	src/demons.cxx
 	src/vectorfield.cxx
 	src/interpolation.cxx 
 	src/demonsfunction.cxx

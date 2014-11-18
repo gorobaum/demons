@@ -1,5 +1,5 @@
-#ifndef DEMONS_DEMONS_H_
-#define DEMONS_DEMONS_H_
+#ifndef DEMONS_DEMONSFUNCTION_H_
+#define DEMONS_DEMONSFUNCTION_H_
 
 #include <vector>
 #include <array>
@@ -11,20 +11,19 @@
 
 class DemonsFunction {
 	public:
-		explicit DemonsFunction (Image<unsigned char> &staticImage, Image<unsigned char> &movingImage, int numOfIterations, double gauKernelSize, double gauDeviation, std::vector<double> spacings):
+		explicit DemonsFunction (Image<unsigned char> &staticImage, Image<unsigned char> &movingImage, std::vector<double> spacings):
 			staticImage_(staticImage), 
 			movingImage_(movingImage),
 			dimensions(staticImage.getDimensions()),
 			movingInterpolator(movingImage),
-			displField(dimensions, 0.0),
-			numOfIterations_(numOfIterations),
-			gauKernelSize_(gauKernelSize),
-			gauDeviation_(gauDeviation) {
+			displField(dimensions, 0.0) {
 				for (int i = 0; i < 3; i++)
 					spacing += spacings[i]*spacings[i];
 				spacing /= 3;
 			}
 		void run();
+		void setExecutionParameters(int numOfIterations, int pyramidSize);
+		void setGaussianParameters(double gauKernelSize, double gauDeviation);
 		VectorField getDisplField();
 	protected:
 		Image<unsigned char> staticImage_;
@@ -33,6 +32,7 @@ class DemonsFunction {
 		Interpolation movingInterpolator;
 		VectorField displField;
 		int numOfIterations_;
+		int pyramidSize_;
 		double gauKernelSize_;
 		double gauDeviation_;
 		double spacing;

@@ -94,7 +94,9 @@ callDemon(PyObject *self, PyObject *args) {
     // Image<unsigned char> aregistredImage = applyVectorField(movingImage, aresultField);
     // imageToNpArray(aoutputArray, aregistredImage);
 
-    SymmetricDemons sDemons(staticImage, movingImage, iterations, kernelSize, deviation, spacing);
+    SymmetricDemons sDemons(staticImage, movingImage, spacing);
+    sDemons.setExecutionParameters(iterations, 1);
+    sDemons.setGaussianParameters(kernelSize, deviation);
     sDemons.run();
     VectorField sresultField = sDemons.getDisplField();
     Image<unsigned char> sregistredImage = applyVectorField(movingImage, sresultField);
