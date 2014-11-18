@@ -20,10 +20,11 @@ void Demons::run() {
 	VectorField deltaField(dimensions, 0.0);
 
 	for (int iteration = 1; iteration <= numOfIterations_; iteration++) {
+		Profiler profiler("loop");
 		std::cout << "Iteration " << iteration << "\n";
 		deltaField = newDeltaField(staticGradient);
 		updateDisplField(displField, deltaField);
-		debug(iteration, deltaField, staticGradient);
+		// debug(iteration, deltaField, staticGradient);
 	}
 	std::cout << "termino rapa\n";
 }

@@ -10,13 +10,16 @@ def runDemon(staticImageName, movingImageName, outputName, iterations, kernelSiz
 		movingImage = nib.load(movingImageName)
 	except:
 		print "Unable to load images in execution", execution
-	outputData = np.ones(staticImage.get_data().shape, staticImage.get_data().dtype)
+	aoutputData = np.ones(staticImage.get_data().shape, staticImage.get_data().dtype)
+	soutputData = np.ones(staticImage.get_data().shape, staticImage.get_data().dtype)
 	spacing = staticImage.get_header()['pixdim'][1:4]
 	start_time = time.time()
-	callDemon.calldemon(staticImage, movingImage, outputData, spacing[0], spacing[1], spacing[2], int(iterations), float(kernelSize), float(deviation))
-	print "--- seconds ---", (time.time() - start_time)
-	outputImage = nib.Nifti1Image(outputData, staticImage.get_affine())
-	outputImage.to_filename(outputName);
+	callDemon.calldemon(staticImage, movingImage, aoutputData, soutputData, spacing[0], spacing[1], spacing[2], int(iterations), float(kernelSize), float(deviation))
+	print "Total execution time: ", (time.time() - start_time)
+	outputImage = nib.Nifti1Image(aoutputData, staticImage.get_affine(), staticImage.get_header())
+	outputImage.to_filename("a"+outputName);
+	outputImage = nib.Nifti1Image(soutputData, staticImage.get_affine(), staticImage.get_header())
+	outputImage.to_filename("s"+outputName);
 
 if len(sys.argv) <= 1:
 	print "Please use as <Conf file path>"

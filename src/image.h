@@ -44,10 +44,14 @@ T& Image<T>::operator() (const size_t& i, const size_t& j, const size_t& k) {
 template <class T>
 T Image<T>::getPixelAt (int x, int y, int z) {
 	T value = T();
-	if (x >= 0 && x < dimensions[0])
-		if (y >= 0 && y < dimensions[1])
-			if (z >= 0 && z < dimensions[2])
-				value = imageData_[x][y][z];
+	int nearX = x, nearY = y, nearZ = z;
+	if (x < 0) nearX = 0;
+	if (x >= dimensions[0]) nearX = dimensions[0]-1;
+	if (y < 0) nearY = 0;
+	if (y >= dimensions[1]) nearY = dimensions[1]-1;
+	if (z < 0) nearZ = 0;
+	if (z >= dimensions[2]) nearZ = dimensions[2]-1;
+	value = imageData_[nearX][nearY][nearZ];
 	return value;
 }
 
@@ -73,12 +77,12 @@ VectorField Image<T>::getGradient() {
 		for (int y = 0; y < dimensions[1]; y++)
 			for (int z = 0; z < dimensions[2]; z++) {
 				std::vector<double> gradVector(3, 0.0);
-				gradVector[0] += (int)getPixelAt(x-1,y,z)*(-0.5);
-				gradVector[0] += (int)getPixelAt(x+1,y,z)*(0.5);
-				gradVector[1] += (int)getPixelAt(x,y-1,z)*(-0.5);
-				gradVector[1] += (int)getPixelAt(x,y+1,z)*(0.5);
-				gradVector[2] += (int)getPixelAt(x,y,z-1)*(-0.5);
-				gradVector[2] += (int)getPixelAt(x,y,z+1)*(0.5);
+				gradVector[0] += getPixelAt(x-1,y,z)*(-0.5);
+				gradVector[0] += getPixelAt(x+1,y,z)*(0.5);
+				gradVector[1] += getPixelAt(x,y-1,z)*(-0.5);
+				gradVector[1] += getPixelAt(x,y+1,z)*(0.5);
+				gradVector[2] += getPixelAt(x,y,z-1)*(-0.5);
+				gradVector[2] += getPixelAt(x,y,z+1)*(0.5);
 				gradient.updateVector(x, y, z, gradVector);
 			}
 	return gradient;

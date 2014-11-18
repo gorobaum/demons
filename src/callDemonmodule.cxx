@@ -6,6 +6,7 @@
 #include "image.h"
 #include "demons.h"
 #include "symmetricdemons.h"
+#include "asymmetricdemons.h"
 
 static void
 imageToNpArray(PyArrayObject * data, Image<unsigned char>& image) {
@@ -55,14 +56,15 @@ PyObject *
 callDemon(PyObject *self, PyObject *args) {
     PyObject * staticImagePy = NULL;
     PyObject * movingImagePy = NULL;
-    PyArrayObject * outputArray = NULL;
+    PyArrayObject * aoutputArray = NULL;
+    PyArrayObject * soutputArray = NULL;
     PyArrayObject * staticImageDataArray = NULL;
     PyArrayObject * movingImageDataArray = NULL;
     int iterations;
     double kernelSize, deviation, sx, sy, sz;
     std::vector<double> spacing;
 
-    if (!PyArg_ParseTuple(args, "OOOdddidd", &staticImagePy, &movingImagePy, &outputArray, &sx, &sy, &sz, &iterations, &kernelSize, &deviation)) return NULL;
+    if (!PyArg_ParseTuple(args, "OOOOdddidd", &staticImagePy, &movingImagePy, &aoutputArray, &soutputArray, &sx, &sy, &sz, &iterations, &kernelSize, &deviation)) return NULL;
     std::cout << "iterations = " << iterations << "\n";
     std::cout << "kernelSize = " << kernelSize << "\n";
     std::cout << "deviation = " << deviation << "\n";
@@ -86,13 +88,25 @@ callDemon(PyObject *self, PyObject *args) {
     npArrayToImage(staticImageDataArray, staticImage);
     npArrayToImage(movingImageDataArray, movingImage);
 
+    // AsymmetricDemons aDemons(staticImage, movingImage, iterations, kernelSize, deviation, spacing);
+    // aDemons.run();
+    // VectorField aresultField = aDemons.getDisplField();
+    // Image<unsigned char> aregistredImage = applyVectorField(movingImage, aresultField);
+    // imageToNpArray(aoutputArray, aregistredImage);
+
     SymmetricDemons sDemons(staticImage, movingImage, iterations, kernelSize, deviation, spacing);
     sDemons.run();
-    VectorField resultField = sDemons.getDisplField();
+    VectorField sresultField = sDemons.getDisplField();
+    Image<unsigned char> sregistredImage = applyVectorField(movingImage, sresultField);
+    imageToNpArray(soutputArray, sregistredImage);
 
-    Image<unsigned char> registredImage = applyVectorField(movingImage, resultField);
+    // aresultField.printAround(122,57,102);
+    // sresultField.printAround(122,57,102);
+    // movingImage.printAround(122,57,102);
+    // staticImage.printAround(122,57,102);
+    // aregistredImage.printAround(122,57,102);
+    // sregistredImage.printAround(122,57,102);
 
-    imageToNpArray(outputArray, registredImage);
 
     Py_DECREF(staticImageDataArray);
     Py_DECREF(movingImageDataArray);

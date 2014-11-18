@@ -1,6 +1,6 @@
 images/nifti/anat.nii.gz
-images/nifti/anat1.nii.gz
-output-15x1.nii.gz
+images/nifti/anat-5.nii.gz
+output-15x1(Rot5).nii.gz
 50
 15
 1

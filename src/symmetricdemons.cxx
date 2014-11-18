@@ -1,14 +1,14 @@
 #include "symmetricdemons.h"
 #include "profiler.h"
 
+#define EPSILON 1e-5
+
 VectorField SymmetricDemons::newDeltaField(VectorField gradients) {
+	Profiler profiler("New Delta Field");
 	VectorField deltaField(dimensions, 0.0);
-	int x, y, z;
-	int size = dimensions[0]*dimensions[1]*dimensions[2]/4;
-	#pragma omp parallel for collapse(3) schedule(static, size)
-	for(x = 0; x < dimensions[0]; x++)
-		for(y = 0; y < dimensions[1]; y++)
-			for(z = 0; z < dimensions[2]; z++) {
+	for(int x = 0; x < dimensions[0]; x++)
+		for(int y = 0; y < dimensions[1]; y++)
+			for(int z = 0; z < dimensions[2]; z++) {
 				std::vector<double> staticGrad = gradients.getVectorAt(x, y, z);
 				std::vector<double> deformedGrad = calculateDeformedGradientAt(x, y, z);
 				double deformedImageValueAt = getDeformedImageValueAt(x, y, z);
@@ -17,7 +17,7 @@ VectorField SymmetricDemons::newDeltaField(VectorField gradients) {
 				double gradY = staticGrad[1]+deformedGrad[1];
 				double gradZ = staticGrad[2]+deformedGrad[2];
 				double denominator = ((diff*diff)/spacing) + (gradX*gradX) + (gradY*gradY) + (gradZ*gradZ);
-				if (denominator > 0) {
+				if (denominator != 0) {
 					std::vector<double> deltaVector(3, 0.0);
 					deltaVector[0] = 2*gradX*diff/denominator;
 					deltaVector[1] = 2*gradY*diff/denominator;

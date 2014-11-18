@@ -15,15 +15,7 @@ int main(int argc, char** argv) {
     dimensions.push_back(3);
     dimensions.push_back(3);
     dimensions.push_back(3);
-    VectorField teste(dimensions, 3);
-    teste.printAround(1,1,1);
-    teste.applyGaussianFilter(3,1);
-    teste.printAround(1,1,1);
-    VectorField sum1(dimensions, 3.0);
-    VectorField sum2(dimensions, 3.0);
-    sum1.add(sum2);
-    sum1.printAround(1,1,1);
-
+    
     Image<unsigned char> staticImage(dimensions);
     Image<unsigned char> movingImage(dimensions);
     for(int x = 0; x < dimensions[0]; x++)

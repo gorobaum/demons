@@ -81,14 +81,12 @@ bool isZero(std::vector<double> vector) {
 }
 
 void VectorField::applyGaussianFilter(int kernelSize, double deviation) {
+	Profiler profiler("applyGaussianFilter");
 	std::vector<double> gaussianKernel = generateGaussianFilter2D(kernelSize, deviation);
 	VectorField3D auxVectorField = vectorField;
-	int x, y, z;
-	int size = dimensions[0]*dimensions[1]*dimensions[2]/4;
-	#pragma omp parallel for collapse(3) schedule(dynamic, size)
-	for(x = 0; x < dimensions[0]; x++)
-		for(y = 0; y < dimensions[1]; y++)
-			for(z = 0; z < dimensions[2]; z++) {
+	for(int x = 0; x < dimensions[0]; x++)
+		for(int y = 0; y < dimensions[1]; y++)
+			for(int z = 0; z < dimensions[2]; z++) {
 				std::vector<double> vector = vectorField[x][y][z];
 				if (isZero(vector)) continue;
 				std::vector<double> newValues(3, 0.0);
@@ -101,10 +99,9 @@ void VectorField::applyGaussianFilter(int kernelSize, double deviation) {
 				auxVectorField[x][y][z] = newValues;
 			}
 	vectorField = auxVectorField;
-	#pragma omp parallel for collapse(3) schedule(dynamic, size)
-	for(x = 0; x < dimensions[0]; x++)
-		for(y = 0; y < dimensions[1]; y++)
-			for(z = 0; z < dimensions[2]; z++) {
+	for(int x = 0; x < dimensions[0]; x++)
+		for(int y = 0; y < dimensions[1]; y++)
+			for(int z = 0; z < dimensions[2]; z++) {
 				std::vector<double> vector = vectorField[x][y][z];
 				if (isZero(vector)) continue;
 				std::vector<double> newValues(3, 0.0);
@@ -117,10 +114,9 @@ void VectorField::applyGaussianFilter(int kernelSize, double deviation) {
 				auxVectorField[x][y][z] = newValues;
 			}
 	vectorField = auxVectorField;
-	#pragma omp parallel for collapse(3) schedule(dynamic, size)
-	for(x = 0; x < dimensions[0]; x++)
-		for(y = 0; y < dimensions[1]; y++)
-			for(z = 0; z < dimensions[2]; z++) {
+	for(int x = 0; x < dimensions[0]; x++)
+		for(int y = 0; y < dimensions[1]; y++)
+			for(int z = 0; z < dimensions[2]; z++) {
 				std::vector<double> vector = vectorField[x][y][z];
 				if (isZero(vector)) continue;
 				std::vector<double> newValues(3, 0.0);
@@ -136,9 +132,8 @@ void VectorField::applyGaussianFilter(int kernelSize, double deviation) {
 }
 
 void VectorField::add(VectorField adding) {
+	Profiler profiler("add");
 	int x, y, z, i;
-	int size = dimensions[0]*dimensions[1]*dimensions[2]/4;
-	#pragma omp parallel for collapse(4) schedule(dynamic, size)
 	for(x = 0; x < dimensions[0]; x++)
 		for(y = 0; y < dimensions[1]; y++)
 			for(z = 0; z < dimensions[2]; z++) {
@@ -147,15 +142,15 @@ void VectorField::add(VectorField adding) {
 			}
 }
 
-// // double VectorField::sumOfAbs() {
-// // 	double total = 0.0;
-// // 	for(int row = 0; row < rows_; row++) {
-// // 		for(int col = 0; col < cols_; col++) {
-// // 			total += std::abs(vectorCol_.at<double>(row, col)) + std::abs(vectorRow_.at<double>(row, col));
-// // 		}
-// // 	}
-// // 	return total;
-// // }
+// double VectorField::sumOfAbs() {
+// 	double total = 0.0;
+// 	for(int row = 0; row < rows_; row++) {
+// 		for(int col = 0; col < cols_; col++) {
+// 			total += std::abs(vectorCol_.at<double>(row, col)) + std::abs(vectorRow_.at<double>(row, col));
+// 		}
+// 	}
+// 	return total;
+// }
 
 void VectorField::printAround(int x, int y, int z) {
 	for (int aroundX = x-1; aroundX <= x+1; aroundX++) {
