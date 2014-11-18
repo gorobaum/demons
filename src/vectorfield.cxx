@@ -37,9 +37,9 @@ std::vector<double> VectorField::getVectorAt(int x, int y, int z) {
 void VectorField::updateVector(Demon demon, std::vector<double> newValues) {
 	std::vector<int> position = demon.getPosition();
 	std::vector<int> volumeOfInfluence = demon.getVolumeOfInfluence();
-	for (int x = position[0]-volumeOfInfluence[0]; x <= position[0]+volumeOfInfluence[0]; x++)
-		for (int y = position[1]-volumeOfInfluence[1]; y <= position[1]+volumeOfInfluence[1]; y++)
-			for (int z = position[2]-volumeOfInfluence[2]; z <= position[2]+volumeOfInfluence[2]; z++){
+	for (int x = position[0]-volumeOfInfluence[0]; x < position[0]+volumeOfInfluence[0]; x++)
+		for (int y = position[1]-volumeOfInfluence[1]; y < position[1]+volumeOfInfluence[1]; y++)
+			for (int z = position[2]-volumeOfInfluence[2]; z < position[2]+volumeOfInfluence[2]; z++){
 				// std::cout << "x = " << position[0] << "\n";
 				// std::cout << "y = " << position[1] << "\n";
 				// std::cout << "z = " << position[2] << "\n";

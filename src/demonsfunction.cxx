@@ -75,10 +75,10 @@ void DemonsFunction::createDemons(int currentPyramidLevel) {
 		xStep = dimensions[0]/divisionFactor;
 		yStep = dimensions[1]/divisionFactor;
 		zStep = dimensions[2]/divisionFactor;
-		std::cout << "divisionFactor = " << divisionFactor << "\n";
-		std::cout << "xStep = " << xStep << "\n";
-		std::cout << "yStep = " << yStep << "\n";
-		std::cout << "zStep = " << zStep << "\n";
+		// std::cout << "divisionFactor = " << divisionFactor << "\n";
+		// std::cout << "xStep = " << xStep << "\n";
+		// std::cout << "yStep = " << yStep << "\n";
+		// std::cout << "zStep = " << zStep << "\n";
 	}
 	for (int x = 0; x < dimensions[0]; x+=xStep)
 		for (int y = 0; y < dimensions[1]; y+=yStep)
@@ -88,8 +88,8 @@ void DemonsFunction::createDemons(int currentPyramidLevel) {
 				position.push_back(x+volumeOfInfluence[0]);
 				position.push_back(y+volumeOfInfluence[1]);
 				position.push_back(z+volumeOfInfluence[2]);
-				std::cout << "(x,y,z) = (" << x << "," << y << "," << z << ")\n";
-				std::cout << "VoI(x,y,z) = (" << volumeOfInfluence[0] << "," << volumeOfInfluence[1] << "," << volumeOfInfluence[2] << ")\n";
+				// std::cout << "(x,y,z) = (" << x << "," << y << "," << z << ")\n";
+				// std::cout << "VoI(x,y,z) = (" << volumeOfInfluence[0] << "," << volumeOfInfluence[1] << "," << volumeOfInfluence[2] << ")\n";
 				Demon demon(position, volumeOfInfluence);
 				demons.push_back(demon);
 			}
