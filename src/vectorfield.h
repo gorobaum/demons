@@ -3,6 +3,8 @@
 
 #include <vector>
 
+#include "demon.h"
+
 class VectorField {
 	public:
 		typedef std::vector<std::vector<std::vector<std::vector<double> > > > VectorField3D;
@@ -10,6 +12,7 @@ class VectorField {
 		VectorField(std::vector<int> dimensions, double defaultValue);
 		VectorField::VectorField3D createVectorField3D(std::vector<int> dimensions, double defaultValue);
 		std::vector<double> getVectorAt(int x, int y, int z);
+		void updateVector(Demon demon, std::vector<double> newValues);
 		void updateVector(int x, int y, int z, std::vector<double> newValues);
 		void applyGaussianFilter(int kernelSize, double deviation);
 		std::vector<double> generateGaussianFilter2D(int kernelSize, double deviation);

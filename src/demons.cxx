@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
 
     std::vector<double> spacing(3, 1.0);
     SymmetricDemonsFunction sDemons(staticImage, movingImage, spacing);
-    sDemons.setExecutionParameters(50, 2);
+    sDemons.setExecutionParameters(50, 0);
     sDemons.setGaussianParameters(3, 1);
     sDemons.run();
     VectorField result = sDemons.getDisplField();
