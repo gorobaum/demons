@@ -8,6 +8,7 @@
 #include "vectorfield.h"
 #include "interpolation.h"
 #include "image.h"
+#include "demon.h"
 
 class DemonsFunction {
 	public:
@@ -29,6 +30,7 @@ class DemonsFunction {
 		Image<unsigned char> staticImage_;
 		Image<unsigned char> movingImage_;
 		std::vector<int> dimensions;
+		std::vector<Demon> demons;
 		Interpolation movingInterpolator;
 		VectorField displField;
 		int numOfIterations_;
@@ -37,6 +39,8 @@ class DemonsFunction {
 		double gauDeviation_;
 		double spacing;
 		virtual VectorField newDeltaField(VectorField gradients) = 0;
+		void createDemons(int currentPyramidLevel);
+		std::vector<int> calculateVolumeOfInfluence(int x, int y, int z, int xStep, int yStep, int zStep);
 		void updateDisplField(VectorField &displField, VectorField &deltaField);
 		void updateDeformedImage(VectorField displField);
 		double getDeformedImageValueAt(int x, int y, int z);

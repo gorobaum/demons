@@ -4,9 +4,9 @@
 #include <cstdlib>
 #include <vector>
 #include "image.h"
-#include "demons.h"
-#include "symmetricdemons.h"
-#include "asymmetricdemons.h"
+#include "demonsfunction.h"
+#include "symmetricdemonsfunction.h"
+#include "asymmetricdemonsfunction.h"
 
 static void
 imageToNpArray(PyArrayObject * data, Image<unsigned char>& image) {
@@ -94,8 +94,8 @@ callDemon(PyObject *self, PyObject *args) {
     // Image<unsigned char> aregistredImage = applyVectorField(movingImage, aresultField);
     // imageToNpArray(aoutputArray, aregistredImage);
 
-    SymmetricDemons sDemons(staticImage, movingImage, spacing);
-    sDemons.setExecutionParameters(iterations, 1);
+    SymmetricDemonsFunction sDemons(staticImage, movingImage, spacing);
+    sDemons.setExecutionParameters(iterations, 0);
     sDemons.setGaussianParameters(kernelSize, deviation);
     sDemons.run();
     VectorField sresultField = sDemons.getDisplField();
