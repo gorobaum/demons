@@ -11,9 +11,9 @@ add_executable(demon
 	src/demon.cxx
 	src/vectorfield.cxx
 	src/interpolation.cxx 
-	src/demons.cxx
-	src/symmetricdemons.cxx
-	src/asymmetricdemons.cxx)
+	src/demonsfunction.cxx
+	src/symmetricdemonsfunction.cxx
+	src/asymmetricdemonsfunction.cxx)
 
 if (X11_FOUND)
 include_directories(${X11_INCLUDE_DIRS})

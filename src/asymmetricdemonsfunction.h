@@ -4,10 +4,10 @@
 #include <vector>
 #include <array>
 
-#include "demons.h"
+#include "demonsfunction.h"
 
-class AsymmetricDemons : public Demons {
-	using Demons::Demons;
+class AsymmetricDemonsFunction : public DemonsFunction {
+	using DemonsFunction::DemonsFunction;
 	private:
 		VectorField newDeltaField(VectorField gradients);
 };

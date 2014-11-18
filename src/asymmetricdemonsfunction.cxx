@@ -1,6 +1,6 @@
-#include "asymmetricdemons.h"
+#include "asymmetricdemonsfunction.h"
 
-VectorField AsymmetricDemons::newDeltaField(VectorField gradients) {
+VectorField AsymmetricDemonsFunction::newDeltaField(VectorField gradients) {
 	VectorField deltaField(dimensions, 0.0);
 	for(int x = 0; x < dimensions[0]; x++)
 		for(int y = 0; y < dimensions[1]; y++)

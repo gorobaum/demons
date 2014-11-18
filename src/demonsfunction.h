@@ -9,9 +9,9 @@
 #include "interpolation.h"
 #include "image.h"
 
-class Demons {
+class DemonsFunction {
 	public:
-		explicit Demons (Image<unsigned char> &staticImage, Image<unsigned char> &movingImage, int numOfIterations, double gauKernelSize, double gauDeviation, std::vector<double> spacings):
+		explicit DemonsFunction (Image<unsigned char> &staticImage, Image<unsigned char> &movingImage, int numOfIterations, double gauKernelSize, double gauDeviation, std::vector<double> spacings):
 			staticImage_(staticImage), 
 			movingImage_(movingImage),
 			dimensions(staticImage.getDimensions()),

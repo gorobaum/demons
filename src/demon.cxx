@@ -6,9 +6,9 @@
 #include "vectorfield.h"
 #include "image.h"
 #include "interpolation.h"
-#include "demons.h"
-#include "asymmetricdemons.h"
-#include "symmetricdemons.h"
+#include "demonsfunction.h"
+#include "symmetricdemonsfunction.h"
+#include "asymmetricdemonsfunction.h"
 
 int main(int argc, char** argv) {
     std::vector<int> dimensions;
@@ -26,7 +26,7 @@ int main(int argc, char** argv) {
             }
 
     std::vector<double> spacing(3, 1.0);
-    SymmetricDemons sDemons(staticImage, movingImage, 50, 3, 1, spacing);
+    SymmetricDemonsFunction sDemons(staticImage, movingImage, 50, 3, 1, spacing);
     sDemons.run();
     VectorField result = sDemons.getDisplField();
     result.printAround(1,1,1);

@@ -1,9 +1,9 @@
-#include "symmetricdemons.h"
+#include "symmetricdemonsfunction.h"
 #include "profiler.h"
 
 #define EPSILON 1e-5
 
-VectorField SymmetricDemons::newDeltaField(VectorField gradients) {
+VectorField SymmetricDemonsFunction::newDeltaField(VectorField gradients) {
 	Profiler profiler("New Delta Field");
 	VectorField deltaField(dimensions, 0.0);
 	for(int x = 0; x < dimensions[0]; x++)
@@ -28,7 +28,7 @@ VectorField SymmetricDemons::newDeltaField(VectorField gradients) {
 	return deltaField;
 }
 
-std::vector<double> SymmetricDemons::calculateDeformedGradientAt(int x, int y, int z) {
+std::vector<double> SymmetricDemonsFunction::calculateDeformedGradientAt(int x, int y, int z) {
 	std::vector<double> deformedGrad(3, 0.0);
 	deformedGrad[0] += getDeformedImageValueAt(x-1, y, z)*(-0.5);
 	deformedGrad[0] += getDeformedImageValueAt(x+1, y, z)*(0.5);

@@ -5,7 +5,7 @@
 #include <vector>
 #include <sstream>
 
-#include "demons.h"
+#include "demonsfunction.h"
 #include "profiler.h"
 
 #define RMSEcriteria 10
@@ -15,7 +15,7 @@
 #define POSY 128
 #define POSZ 64
 
-void Demons::run() {
+void DemonsFunction::run() {
 	VectorField staticGradient = staticImage_.getGradient();
 	VectorField deltaField(dimensions, 0.0);
 
@@ -29,7 +29,7 @@ void Demons::run() {
 	std::cout << "termino rapa\n";
 }
 
-double Demons::getDeformedImageValueAt(int x, int y, int z) {
+double DemonsFunction::getDeformedImageValueAt(int x, int y, int z) {
     std::vector<double> displVector = displField.getVectorAt(x, y, z);
     double newX = x - displVector[0];
     double newY = y - displVector[1];
@@ -37,7 +37,7 @@ double Demons::getDeformedImageValueAt(int x, int y, int z) {
     return movingInterpolator.trilinearInterpolation<double>(newX, newY, newZ);
 }
 
-void Demons::debug(int iteration, VectorField deltaField, VectorField gradients) {
+void DemonsFunction::debug(int iteration, VectorField deltaField, VectorField gradients) {
 	// ImageFunctions::printAround(staticImage_, POSR, POSC);
 	// ImageFunctions::printAround(movingImage_, POSR, POSC);
 	// gradients.printAround(POSX,POSY,POSZ);
@@ -53,11 +53,11 @@ void Demons::debug(int iteration, VectorField deltaField, VectorField gradients)
 	// normalized.printField(filename.c_str());
 }
 
-void Demons::updateDisplField(VectorField &displField, VectorField &deltaField) {
+void DemonsFunction::updateDisplField(VectorField &displField, VectorField &deltaField) {
 	displField.add(deltaField);
 	displField.applyGaussianFilter(gauKernelSize_, gauDeviation_);
 }
 
-VectorField Demons::getDisplField() {
+VectorField DemonsFunction::getDisplField() {
 	return displField;
 }

@@ -5,10 +5,10 @@
 #include <array>
 #include <omp.h>
 
-#include "demons.h"
+#include "demonsfunction.h"
 
-class SymmetricDemons : public Demons {
-	using Demons::Demons;
+class SymmetricDemonsFunction : public DemonsFunction {
+	using DemonsFunction::DemonsFunction;
 	private:
 		VectorField newDeltaField(VectorField gradients);
 		std::vector<double> calculateDeformedGradientAt(int x, int y, int z);
