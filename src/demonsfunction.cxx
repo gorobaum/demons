@@ -28,13 +28,13 @@ void DemonsFunction::run() {
 			// debug(iteration, deltaField, staticGradient);
 		}
 	}
-	createDemons(0);
+	createDemons(4);
 	for (int iteration = 1; iteration <= numOfIterations_; iteration++) {
 		Profiler profiler("loop");
 		std::cout << "Iteration " << iteration << "\n";
 		deltaField = newDeltaField(staticGradient);
 		updateDisplField(displField, deltaField);
-		// debug(iteration, deltaField, staticGradient);
+		debug(iteration, deltaField, staticGradient);
 	}
 	std::cout << "termino rapa\n";
 }
@@ -100,8 +100,8 @@ void DemonsFunction::debug(int iteration, VectorField deltaField, VectorField gr
 	// ImageFunctions::printAround(movingImage_, POSR, POSC);
 	// gradients.printAround(POSX,POSY,POSZ);
 	// staticImage_.printAround(POSX,POSY,POSZ);
-	// deltaField.printFieldAround(POSR,POSC);
-	// displField.printFieldAround(POSR,POSC);
+	// deltaField.printAround(POSX,POSY,POSZ);
+	// displField.printAround(POSX,POSY,POSZ);
 
 	// std::string filename("VFN-Iteration");
 	// std::ostringstream converter;

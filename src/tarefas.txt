@@ -1,3 +1,8 @@
+- Utilizar as imagens de teste depois de um filtro anisotropico
+- Escrever fluxo da quali
+- Transformar em float as imagens
+- MAtriz hessiana
+- Imprimir o campo vetorail em nifti
 - Vetorizar o loop principal do demons pra utilizar #pragma simd
 - Usar o medsquare para transformar em analisy
 - Procurar uma imagem deformada naturalmente ( Osiryx )
