@@ -11,7 +11,7 @@ class SymmetricDemonsFunction : public DemonsFunction {
 	using DemonsFunction::DemonsFunction;
 	private:
 		VectorField newDeltaField(VectorField gradients);
-		std::vector<double> calculateDeformedGradientAt(int x, int y, int z);
+		std::vector<float> calculateDeformedGradientAt(int x, int y, int z);
 };
 
 #endif

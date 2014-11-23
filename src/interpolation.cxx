@@ -7,7 +7,7 @@
 
 #include "interpolation.h"
 
-int Interpolation::getNearestInteger(double number) {
+int Interpolation::getNearestInteger(float number) {
 	if ((number - floor(number)) <= 0.5) return floor(number);
 	return floor(number) + 1.0;
 }

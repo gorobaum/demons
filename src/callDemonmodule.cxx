@@ -9,22 +9,24 @@
 #include "asymmetricdemonsfunction.h"
 
 static void
-imageToNpArray(PyArrayObject * data, Image<unsigned char>& image) {
+imageToNpArray(PyArrayObject * data, Image<float>& image) {
     std::vector<int> dims = image.getDimensions();
     for (int i = 0; i < dims[0]; i++)
         for (int j = 0; j < dims[1]; j++)
             for (int k = 0; k < dims[2]; k++) {
-                *static_cast<unsigned char*>(PyArray_GETPTR3(data, i, j, k)) = image(i, j, k);
+                if ( i == 128 && j == 128 && k == 64) std::cout << "Pixel Value = " << image(i, j, k) << "\n";
+                *static_cast<unsigned int*>(PyArray_GETPTR3(data, i, j, k)) = image(i, j, k);
             }
 }
 
 static void
-npArrayToImage(PyArrayObject * data, Image<unsigned char>& image) {
+npArrayToImage(PyArrayObject * data, Image<float>& image) {
     std::vector<int> dims = image.getDimensions();
     for (int i = 0; i < dims[0]; i++)
         for (int j = 0; j < dims[1]; j++)
             for (int k = 0; k < dims[2]; k++) {
-                unsigned char macaco = *static_cast<unsigned char*>(PyArray_GETPTR3(data, i, j, k));
+                float macaco = *static_cast<unsigned int*>(PyArray_GETPTR3(data, i, j, k));
+                if ( i == 128 && j == 128 && k == 64) std::cout << "Pixel Value = " << macaco << "\n";
                 image(i, j, k) = macaco;
             }
 }
@@ -34,19 +36,19 @@ PyArrayObject * transformToArray(PyObject * image) {
     return (PyArrayObject*)PyArray_FROM_OTF(data, PyArray_DTYPE((PyArrayObject*)data)->type_num, 0);
 }
 
-Image<unsigned char>
-applyVectorField(Image<unsigned char> image, VectorField displacementField) {
+Image<float>
+applyVectorField(Image<float> image, VectorField displacementField) {
     std::vector<int> dimensions = image.getDimensions();
-    Image<unsigned char> result(dimensions);
+    Image<float> result(dimensions);
     Interpolation imageInterpolator(image);
     for(int x = 0; x < dimensions[0]; x++)
         for(int y = 0; y < dimensions[1]; y++)
             for(int z = 0; z < dimensions[2]; z++) {
-                std::vector<double> displVector = displacementField.getVectorAt(x, y, z);
-                double newX = x - displVector[0];
-                double newY = y - displVector[1];
-                double newZ = z - displVector[1];
-                result(x,y,z) = imageInterpolator.trilinearInterpolation<unsigned char>(newX, newY, newZ);
+                std::vector<float> displVector = displacementField.getVectorAt(x, y, z);
+                float newX = x - displVector[0];
+                float newY = y - displVector[1];
+                float newZ = z - displVector[1];
+                result(x,y,z) = imageInterpolator.trilinearInterpolation<float>(newX, newY, newZ);
             }
     return result;
 }
@@ -61,10 +63,10 @@ callDemon(PyObject *self, PyObject *args) {
     PyArrayObject * staticImageDataArray = NULL;
     PyArrayObject * movingImageDataArray = NULL;
     int iterations;
-    double kernelSize, deviation, sx, sy, sz;
-    std::vector<double> spacing;
+    float kernelSize, deviation, sx, sy, sz;
+    std::vector<float> spacing;
 
-    if (!PyArg_ParseTuple(args, "OOOOdddidd", &staticImagePy, &movingImagePy, &aoutputArray, &soutputArray, &sx, &sy, &sz, &iterations, &kernelSize, &deviation)) return NULL;
+    if (!PyArg_ParseTuple(args, "OOOOfffiff", &staticImagePy, &movingImagePy, &aoutputArray, &soutputArray, &sx, &sy, &sz, &iterations, &kernelSize, &deviation)) return NULL;
     std::cout << "iterations = " << iterations << "\n";
     std::cout << "kernelSize = " << kernelSize << "\n";
     std::cout << "deviation = " << deviation << "\n";
@@ -81,8 +83,8 @@ callDemon(PyObject *self, PyObject *args) {
     dims.push_back(PyArray_SHAPE(staticImageDataArray)[1]);
     dims.push_back(PyArray_SHAPE(staticImageDataArray)[2]);
 
-    Image<unsigned char> staticImage(dims);
-    Image<unsigned char> movingImage(dims);
+    Image<float> staticImage(dims);
+    Image<float> movingImage(dims);
 
 
     npArrayToImage(staticImageDataArray, staticImage);
@@ -91,15 +93,15 @@ callDemon(PyObject *self, PyObject *args) {
     // AsymmetricDemons aDemons(staticImage, movingImage, iterations, kernelSize, deviation, spacing);
     // aDemons.run();
     // VectorField aresultField = aDemons.getDisplField();
-    // Image<unsigned char> aregistredImage = applyVectorField(movingImage, aresultField);
+    // Image<float> aregistredImage = applyVectorField(movingImage, aresultField);
     // imageToNpArray(aoutputArray, aregistredImage);
 
     SymmetricDemonsFunction sDemons(staticImage, movingImage, spacing);
-    sDemons.setExecutionParameters(iterations, 4);
+    sDemons.setExecutionParameters(iterations, 0);
     sDemons.setGaussianParameters(kernelSize, deviation);
     sDemons.run();
     VectorField sresultField = sDemons.getDisplField();
-    Image<unsigned char> sregistredImage = applyVectorField(movingImage, sresultField);
+    Image<float> sregistredImage = applyVectorField(movingImage, sresultField);
     imageToNpArray(soutputArray, sregistredImage);
 
     // aresultField.printAround(122,57,102);

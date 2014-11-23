@@ -12,7 +12,7 @@
 
 class DemonsFunction {
 	public:
-		explicit DemonsFunction (Image<unsigned char> &staticImage, Image<unsigned char> &movingImage, std::vector<double> spacings):
+		explicit DemonsFunction (Image<float> &staticImage, Image<float> &movingImage, std::vector<float> spacings):
 			staticImage_(staticImage), 
 			movingImage_(movingImage),
 			dimensions(staticImage.getDimensions()),
@@ -24,26 +24,26 @@ class DemonsFunction {
 			}
 		void run();
 		void setExecutionParameters(int numOfIterations, int pyramidSize);
-		void setGaussianParameters(double gauKernelSize, double gauDeviation);
+		void setGaussianParameters(float gauKernelSize, float gauDeviation);
 		VectorField getDisplField();
 	protected:
-		Image<unsigned char> staticImage_;
-		Image<unsigned char> movingImage_;
+		Image<float> staticImage_;
+		Image<float> movingImage_;
 		std::vector<int> dimensions;
 		std::vector<Demon> demons;
 		Interpolation movingInterpolator;
 		VectorField displField;
 		int numOfIterations_;
 		int pyramidSize_;
-		double gauKernelSize_;
-		double gauDeviation_;
-		double spacing;
+		float gauKernelSize_;
+		float gauDeviation_;
+		float spacing;
 		virtual VectorField newDeltaField(VectorField gradients) = 0;
 		void createDemons(int currentPyramidLevel);
 		std::vector<int> calculateVolumeOfInfluence(int x, int y, int z, int xStep, int yStep, int zStep);
 		void updateDisplField(VectorField &displField, VectorField &deltaField);
 		void updateDeformedImage(VectorField displField);
-		double getDeformedImageValueAt(int x, int y, int z);
+		float getDeformedImageValueAt(int x, int y, int z);
 		void debug(int interation, VectorField deltaField, VectorField gradients);
 };
 

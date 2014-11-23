@@ -28,7 +28,7 @@ void DemonsFunction::run() {
 			// debug(iteration, deltaField, staticGradient);
 		}
 	}
-	createDemons(4);
+	createDemons(0);
 	for (int iteration = 1; iteration <= numOfIterations_; iteration++) {
 		Profiler profiler("loop");
 		std::cout << "Iteration " << iteration << "\n";
@@ -39,12 +39,12 @@ void DemonsFunction::run() {
 	std::cout << "termino rapa\n";
 }
 
-double DemonsFunction::getDeformedImageValueAt(int x, int y, int z) {
-    std::vector<double> displVector = displField.getVectorAt(x, y, z);
-    double newX = x - displVector[0];
-    double newY = y - displVector[1];
-    double newZ = z - displVector[1];
-    return movingInterpolator.trilinearInterpolation<double>(newX, newY, newZ);
+float DemonsFunction::getDeformedImageValueAt(int x, int y, int z) {
+    std::vector<float> displVector = displField.getVectorAt(x, y, z);
+    float newX = x - displVector[0];
+    float newY = y - displVector[1];
+    float newZ = z - displVector[1];
+    return movingInterpolator.trilinearInterpolation<float>(newX, newY, newZ);
 }
 
 void DemonsFunction::setExecutionParameters(int numOfIterations, int pyramidSize) {
@@ -52,7 +52,7 @@ void DemonsFunction::setExecutionParameters(int numOfIterations, int pyramidSize
 	pyramidSize_ = pyramidSize;
 }
 
-void DemonsFunction::setGaussianParameters(double gauKernelSize, double gauDeviation) {
+void DemonsFunction::setGaussianParameters(float gauKernelSize, float gauDeviation) {
 	gauKernelSize_ = gauKernelSize;
 	gauDeviation_ = gauDeviation;
 }

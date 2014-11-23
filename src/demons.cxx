@@ -25,7 +25,7 @@ int main(int argc, char** argv) {
                 movingImage(x,y,z) = 30;
             }
 
-    std::vector<double> spacing(3, 1.0);
+    std::vector<float> spacing(3, 1.0);
     SymmetricDemonsFunction sDemons(staticImage, movingImage, spacing);
     sDemons.setExecutionParameters(50, 0);
     sDemons.setGaussianParameters(3, 1);

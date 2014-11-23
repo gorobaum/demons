@@ -63,7 +63,7 @@ void Image<T>::printAround(int x, int y, int z) {
 			std::cout << "\n";
 			for (int aroundZ = z-1; aroundZ <= z+1; aroundZ++) {
 				T macaco = getPixelAt(aroundX,aroundY,aroundZ);
-				std::cout << (int)macaco << "\t";
+				std::cout << macaco << "\t";
 			}
 		}
 		std::cout << "\n";
@@ -76,7 +76,7 @@ VectorField Image<T>::getGradient() {
 	for (int x = 0; x < dimensions[0]; x++)
 		for (int y = 0; y < dimensions[1]; y++)
 			for (int z = 0; z < dimensions[2]; z++) {
-				std::vector<double> gradVector(3, 0.0);
+				std::vector<float> gradVector(3, 0.0);
 				gradVector[0] += getPixelAt(x-1,y,z)*(-0.5);
 				gradVector[0] += getPixelAt(x+1,y,z)*(0.5);
 				gradVector[1] += getPixelAt(x,y-1,z)*(-0.5);
