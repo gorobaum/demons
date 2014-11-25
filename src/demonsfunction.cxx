@@ -28,7 +28,7 @@ void DemonsFunction::run() {
 			// debug(iteration, deltaField, staticGradient);
 		}
 	}
-	createDemons(4);
+	createDemons(0);
 	for (int iteration = 1; iteration <= numOfIterations_; iteration++) {
 		Profiler profiler("loop");
 		std::cout << "Iteration " << iteration << "\n";
