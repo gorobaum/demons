@@ -1,12 +1,7 @@
-- Código 3D
 - Usar o medsquare para transformar em analisy
 - Procurar uma imagem deformada naturalmente ( Osiryx )
-- TPS
 - HB Mitchell, Image Fusion
-- procurar um artigo recente de registro
 - pesquisar image demons registration
-- Registro em GPU
-- Lena com maior resolução
 
 = pa depois =
 
@@ -22,6 +17,11 @@
 
 = finished =
 
+- Código 3D (ok)
+- TPS (ok)
+- procurar um artigo recente de registro (ok)
+- Registro em GPU (ok)
+- Lena com maior resolução (ok)
 - GDCM (ok)
 - Recolocar a impressão dos campos (ok)
 - Separar o codigo bonitinho (ok)
