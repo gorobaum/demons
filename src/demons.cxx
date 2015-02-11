@@ -14,13 +14,13 @@
 #define RMSEcriteria 10
 #define CORRCOEFcriteria 0.95
 #define STOPcriteria 0.0001
-#define POSR 20
-#define POSC 20
+#define POSR 254
+#define POSC 254
 
 void Demons::run() {
 	Gradient staticGradient(staticImage_);
 	VectorField gradients = staticGradient.getBasicGradient();
-	VectorField deltaField(rows, cols);
+	VectorField deltaField(dimensions_, 0.0);
 	int dimensions;
 	for (dimensions = 0; dimensions < IMAGEDIMENSION; dimensions++) normalizer = SPACING*SPACING;
 	normalizer /= dimensions;
@@ -38,15 +38,15 @@ double Demons::getDeformedImageValueAt(int row, int col) {
     std::vector<double> displVector = displField.getVectorAt(row, col);
     double newRow = row - displVector[0];
     double newCol = col - displVector[1];
-    return movingInterpolator.bilinearInterpolation<double>(newRow, newCol);
+    return movingInterpolator.NNInterpolation<double>(newRow, newCol);
 }
 
 void Demons::debug(int iteration, VectorField deltaField, VectorField gradients) {
 	// ImageFunctions::printAround(staticImage_, POSR, POSC);
 	// ImageFunctions::printAround(movingImage_, POSR, POSC);
-	// gradients.printFieldAround(POSR,POSC);
-	// deltaField.printFieldAround(POSR,POSC);
-	// displField.printFieldAround(POSR,POSC);
+	gradients.printAround(POSR,POSC);
+	deltaField.printAround(POSR,POSC);
+	// displField.printAround(POSR,POSC);
 
 	// std::string filename("VFN-Iteration");
 	// std::ostringstream converter;
@@ -59,6 +59,7 @@ void Demons::debug(int iteration, VectorField deltaField, VectorField gradients)
 void Demons::updateDisplField(VectorField &displField, VectorField deltaField) {
 	displField.add(deltaField);
 	displField.applyGaussianFilter(3, 1);
+	std::cout << "displField[254,254] = " << displField.getVectorAt(254, 254)[0] << "," << displField.getVectorAt(254, 254)[1] << "\n";
 }
 
 VectorField Demons::getDisplField() {

@@ -41,10 +41,13 @@ int main(int argc, char** argv) {
     compression_params.push_back(95);
 	Mat staticImage = imread(argv[1], CV_LOAD_IMAGE_GRAYSCALE);
 	Mat movingImage = imread(argv[2], CV_LOAD_IMAGE_GRAYSCALE);
+    std::vector<int> dimensions;
+    dimensions.push_back(staticImage.rows);
+    dimensions.push_back(staticImage.cols);
     // GaussianBlur(staticImage, staticImage, cv::Size(3,3), 1.0);
     // GaussianBlur(movingImage, movingImage, cv::Size(3,3), 1.0);
-    Mat lut = ImageFunctions::histogramMatching(staticImage, movingImage);
-    cv::LUT(movingImage, lut, movingImage);
+    // Mat lut = ImageFunctions::histogramMatching(staticImage, movingImage);
+    // cv::LUT(movingImage, lut, movingImage);
     std::string fileName;
     char* extension = std::strrchr(argv[2], '.');
 
@@ -57,7 +60,7 @@ int main(int argc, char** argv) {
     // fileName += extension;
     // imwrite(fileName.c_str(), result, compression_params);
 
-    SymmetricDemons symmetricDemons(staticImage, movingImage);
+    SymmetricDemons symmetricDemons(staticImage, movingImage, dimensions);
     symmetricDemons.run();
     VectorField displacementField = symmetricDemons.getDisplField();
     cv::Mat result = applyVectorField(movingImage, displacementField);

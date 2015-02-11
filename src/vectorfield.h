@@ -3,32 +3,30 @@
 
 #include <vector>
 
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-
 class VectorField {
 	public:
-		VectorField(cv::Mat vectorRow, cv::Mat vectorCol);
-		VectorField(int rows, int cols);
-		std::vector<double> getVectorAt(int row, int col);
-		void updateVector(int row, int col, double rowValue, double colValue);
-		void applyGaussianFilter(double kernelSize, double deviation);
+		typedef std::vector<std::vector<std::vector<double> > > VectorField2D;
+		VectorField(VectorField2D vectorField);
+		VectorField(std::vector<int> dimensions, double defaultValue);
+		VectorField::VectorField2D createVectorField2D(std::vector<int> dimensions, double defaultValue);
+		std::vector<double> getVectorAt(int x, int y);
+		void updateVector(int x, int y, std::vector<double> newValues);
+		void applyGaussianFilter(int kernelSize, double deviation);
+		std::vector<double> generateGaussianFilter2D(int kernelSize, double deviation);
 		VectorField getNormalized();
-		void printFieldAround(int row, int col);
+		void printAround(int x, int y);
 		void printField(std::string filename);
 		void printFieldInfos(std::string filename, int iteration);
 		void printFieldImage(int iteration, std::vector<int> compression_params);
 		void add(VectorField adding);
 		double sumOfAbs();
-		int getRows();
-		int getCols();
+		std::vector<int> getDimensions() {return dimensions;}
 	private:
-		typedef std::vector<std::vector<std::vector<double>>> Field;
-		Field vectorField;
+		VectorField2D vectorField;
 		double vectorNorm(std::vector<double> v);
 		std::vector<double> getInfos();
-		int rows_;
-		int cols_;
+		std::vector<double> zeroVector = std::vector<double>(2, 0.0);
+		std::vector<int> dimensions;
 };
 
 #endif

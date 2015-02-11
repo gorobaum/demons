@@ -14,22 +14,20 @@
 
 class Demons {
 	public:
-		explicit Demons (cv::Mat &staticImage, cv::Mat &movingImage):
+		explicit Demons (cv::Mat &staticImage, cv::Mat &movingImage, std::vector<int> dimensions):
 			staticImage_(staticImage), 
 			movingImage_(movingImage),
 			movingInterpolator(movingImage),
-			displField(staticImage.rows, staticImage.cols) {
-				rows = staticImage_.rows;
-				cols = staticImage_.cols;
-			}
+			dimensions_(dimensions),
+			displField(dimensions, 0.0) {}
 		void run();
 		VectorField getDisplField();
 	protected:
-		int rows, cols;
 		double normalizer;
 		cv::Mat staticImage_;
 		cv::Mat movingImage_;
 		Interpolation movingInterpolator;
+		std::vector<int> dimensions_;
 		VectorField displField;
 		virtual VectorField newDeltaField(VectorField gradients) = 0;
 		void updateDisplField(VectorField &displField, VectorField deltaField);

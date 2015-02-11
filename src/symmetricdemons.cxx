@@ -1,10 +1,12 @@
+#include <iostream>
+
 #include "symmetricdemons.h"
 
 VectorField SymmetricDemons::newDeltaField(VectorField gradients) {
-	VectorField deltaField(rows, cols);
-	for(int row = 0; row < rows; row++) {
+	VectorField deltaField(dimensions_, 0.0);
+	for(int row = 0; row < dimensions_[0]; row++) {
 		uchar* sRow = staticImage_.ptr(row);
-		for(int col = 0; col < cols; col++) {
+		for(int col = 0; col < dimensions_[1]; col++) {
 			std::vector<double> staticGrad = gradients.getVectorAt(row, col);
 			std::vector<double> deformedGrad = calculateDeformedGradientAt(row, col);
 			double deformedImageValueAt = getDeformedImageValueAt(row, col);
@@ -13,9 +15,10 @@ VectorField SymmetricDemons::newDeltaField(VectorField gradients) {
 			double gradCol = staticGrad[1]+deformedGrad[1];
 			double denominator = (diff*diff) + (gradRow*gradRow) + (gradCol*gradCol);
 			if (denominator > 0) {
-				double rowValue = 2*gradRow*diff/denominator;
-				double colValue = 2*gradCol*diff/denominator;
-				deltaField.updateVector(row, col, rowValue, colValue);
+				std::vector<double> deltaVector(2, 0.0);
+				deltaVector[0] = 2*gradRow*diff/denominator;
+				deltaVector[1] = 2*gradCol*diff/denominator;
+				deltaField.updateVector(row, col, deltaVector);
 			}
 		}
 	}
@@ -23,16 +26,10 @@ VectorField SymmetricDemons::newDeltaField(VectorField gradients) {
 }
 
 std::vector<double> SymmetricDemons::calculateDeformedGradientAt(int row, int col) {
-	std::vector<double> deformedGrad;
-	double gradRow;
-	double rowAbove = getDeformedImageValueAt(row-1, col);
-	double rowBelow = getDeformedImageValueAt(row+1, col);
-	gradRow = (rowBelow - rowAbove)/2;
-	double gradCol;
-	double colLeft = getDeformedImageValueAt(row, col-1);
-	double colRight = getDeformedImageValueAt(row, col+1);
-	gradCol	= (colRight - colLeft)/2;
-	deformedGrad.push_back(gradRow);
-	deformedGrad.push_back(gradCol);
+	std::vector<double> deformedGrad(2, 0.0);
+	deformedGrad[0] += getDeformedImageValueAt(row-1, col)*(-0.5);
+	deformedGrad[0] += getDeformedImageValueAt(row+1, col)*(0.5);
+	deformedGrad[1] += getDeformedImageValueAt(row, col-1)*(-0.5);
+	deformedGrad[1] += getDeformedImageValueAt(row, col+1)*(0.5);
 	return deformedGrad;
 }
